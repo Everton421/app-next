@@ -7,12 +7,16 @@ import { useEffect, useState } from "react";
 import { api } from "../services/api";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import Link from "next/link";
+import { useRouter } from 'next/navigation'
 
 
 export default function Pedidos(){
-    const [dados, setDados] = useState([]);
-    const [ pesquisa , setPesquisa ] = useState('1');
-
+     const [dados, setDados] = useState([]);
+     const [ pesquisa , setPesquisa ] = useState('1');
+     const [ codigoPedido, setCodigoPedido ] = useState();
+ 
+     const router = useRouter() 
 
     useEffect( ()=>{
         async function busca(){
@@ -32,47 +36,67 @@ export default function Pedidos(){
       } , [  ])
 
 
+        function handleOrder(codigo:number){  
+         // setCodigoPedido(codigo);
+             router.push(`/pedidos/${codigo}`)
+        }
+
+
     return (
-        <div className=" flex flex-col sm:ml-14 p-4 w-full h-full  justify-itens-center items-center   bg-gray-100"  >
+        <div className=" min-h-screen flex flex-col sm:ml-14 p-4 w-full h-full  justify-itens-center items-center   bg-gray-100"  >
         <div  className=" w-9/12  mt-22 ">
-      
+
+        <div className="m-5  ">
+            <h1 className="text-4xl  font-sans font-bold  ">
+               Pedidos
+            </h1>
+         </div>
+
+
             <div className="w-full ">
                <div  className=" my-2.5 w-full  ">
-                <Input placeholder="pesquisar" className="bg-white rounded-3xl shadow-md w-2/4 " 
+                <Input placeholder="pesquisar" className="bg-white rounded-3xl shadow-neutral-400 w-2/4  " 
                 onChange={(v)=>setPesquisa(v.target.value) }
                   />
               </div>  
             </div>
-          <Table  className="w-full bg-white rounded-xl ">
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[100px]">Codigo</TableHead>
-                <TableHead>Cliente</TableHead>
-                <TableHead>Contato</TableHead>
-                <TableHead className="text-right">Total</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+        
             
             {
 
-            dados.length > 0 ? 
-            dados.map((i:any)=>(
-                  <TableRow> 
-                    <TableCell className="font-medium">    {i.codigo}   </TableCell>
-                    <TableCell className=" w-100">{i.cliente.nome}</TableCell>
-                    <TableCell className=" w-45" >{ i.contato } </TableCell>
-                    <TableCell className="text-right  w-10 ">  R$  {i.total_geral}</TableCell>
-                  </TableRow>
-              )
-              )
-              : (
-                <p > nenhum orcamento encontrado!</p>
+            dados.length > 0 ?
+              (
+                  <Table  className="w-full bg-white rounded-xl ">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className=" text-lg" >Codigo</TableHead>
+                      <TableHead  className="text-lg"> Cliente</TableHead>
+                      <TableHead className="text-lg text-center "  > Contato</TableHead>
+                      <TableHead className="text-center text-lg">Total</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+
+                 { dados.length > 0 &&
+                    dados.map((i:any)=>(
+
+                          <TableRow key={ i.codigo } onClick={ ( )=>handleOrder(i.codigo) }> 
+                            <TableCell className="font-medium text-center font-bold text-gray-600">    {i.codigo}          </TableCell>
+                            <TableCell className=" w-100 font-medium  font-bold text-gray-600 ">{i.cliente.nome}</TableCell>
+                            <TableCell className=" w-80 font-medium text-center font-bold text-gray-600" >{ i.contato } </TableCell>
+                            <TableCell className=" w-40 font-medium text-center font-bold text-gray-600 ">  R$  {i?.total_geral.toFixed(2)}</TableCell>
+                          </TableRow>
+
+                      ) )
+                    }
+                  </TableBody>
+                  </Table>
+                ) : (
+                 <p > nenhum orcamento encontrado!</p>
               )
           }
       
-            </TableBody>
-          </Table>
+          
           </div>
         </div>
 )

@@ -1,9 +1,18 @@
+import { ChartOverView } from "@/components/chart";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign } from "lucide-react";
+import { ChartContainer } from "@/components/ui/chart";
+  
+import {   DollarSign } from "lucide-react";
 import Image from "next/image";
+import { Bar, BarChart } from "recharts";
+ 
 
 export default function Home() {
+
+
+
+
   return (
 
      <main className="sm:ml-14 p-4 bg-gray-100">
@@ -76,9 +85,13 @@ export default function Home() {
             <p className="text-base sm:text-lg font-bold" > R$:10.00</p>
               </CardContent>
           </Card>
-      </section>
 
-     </main>
+      </section>
+  
+        <div className="w-full items-center justify-center flex mt-10">
+          <ChartOverView/>
+        </div>
+      </main>
 
   );
 }
