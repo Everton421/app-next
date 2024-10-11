@@ -57,7 +57,7 @@ export default function Pedidos(){
             {
 
             dados.length > 0 ? 
-            dados.map((i)=>(
+            dados.map((i:any)=>(
                   <TableRow> 
                     <TableCell className="font-medium">    {i.codigo}   </TableCell>
                     <TableCell className=" w-100">{i.cliente.nome}</TableCell>

@@ -18,7 +18,7 @@ export function Sidebar(){
                                text-primary-foreground rounded-full
                             ">
                         <Package className="h-4 w-4"/>
-                            <span className="sr-only " > Dashboard</span>
+                            <span className="sr-only">Dashboard</span>
                         </Link>
 
                       <Tooltip>
@@ -63,7 +63,7 @@ export function Sidebar(){
 
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                    <Link href="#" 
+                                    <Link href="/clientes" 
                                         className="flex h-9 w-9 shrink-0 items-center justify-center
                                         rounded-lg text-muted-foreground transition-colors hover:text-foreground
                                     ">

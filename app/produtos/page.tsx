@@ -89,7 +89,7 @@ busca()
       <TableBody>
       {
       produtos.length > 0 ? 
-        produtos.map((i)=>(
+        produtos.map(( i:any )=>(
             <TableRow> 
               <TableCell className="font-medium">    {i.codigo}   </TableCell>
               <TableCell className=" w-100">{i.descricao}</TableCell>

@@ -6,7 +6,7 @@ import Image from "next/image";
 export default function Home() {
   return (
 
-     <main className="sm:ml-14 p-4">
+     <main className="sm:ml-14 p-4 bg-gray-100">
 
       <section className="grid grid-cols-2 gap-4">
            <Card>
