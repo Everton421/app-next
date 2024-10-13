@@ -6,12 +6,17 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
+import { useRouter } from 'next/navigation'
 
 export default function Produtos(){
 
     const [likes, setLikes] =  useState(0);
     const [ pesquisa , setPesquisa ] = useState('1');
 
+    const  [ codigo, setCodigo ] = useState();
+
+    const router = useRouter();
+  
     const [produtos, setProdutos] =  useState<any>([ 
       {
         "codigo":1,
@@ -56,9 +61,10 @@ busca()
 
     } , [ pesquisa  ])
 
-    function handleClick() {
-  //  filter();
-        console.log( likes  );
+    function handleClick(i) {
+     setCodigo(i);
+     router.push(`/produtos/${i}`)
+ 
       }
 
     return (
@@ -105,7 +111,7 @@ busca()
         <TableBody>
           {produtos.length > 0 && 
             produtos.map(( i:any )=>(
-                  <TableRow> 
+                  <TableRow onClick={()=> handleClick(i.codigo)}> 
                   
                     <TableCell className="font-medium text-center font-bold text-gray-600 ">  <Checkbox/>   </TableCell>
                     <TableCell className="font-medium text-center font-bold text-gray-600 ">    {i.codigo}   </TableCell>
