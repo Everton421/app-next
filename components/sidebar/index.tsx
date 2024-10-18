@@ -31,7 +31,8 @@ export function Sidebar(){
                                     <span className="sr-only " > Inicio</span>
                                 </Link>
                             </TooltipTrigger>
-                            <TooltipContent side="right" className="m-5" >Inicio </TooltipContent>
+                            <TooltipContent side="right" className="m-5 bg-black text-white rounded-2xl p-1 " >Inicio </TooltipContent>
+                            
                         </Tooltip>
 
                         
@@ -45,7 +46,7 @@ export function Sidebar(){
                                     <span className="sr-only " > Pedidos</span>
                                 </Link>
                             </TooltipTrigger>
-                            <TooltipContent side="right" className="m-5" >Pedidos </TooltipContent>
+                            <TooltipContent side="right" className="m-5 bg-black text-white rounded-2xl p-1 " >Pedidos </TooltipContent>
                         </Tooltip>
 
                         <Tooltip>
@@ -58,7 +59,8 @@ export function Sidebar(){
                                     <span className="sr-only " > produtos</span>
                                 </Link>
                             </TooltipTrigger>
-                            <TooltipContent side="right" className="m-5" >produtos </TooltipContent>
+                            <TooltipContent side="right" className="m-5 bg-black text-white rounded-2xl p-1 " >produtos </TooltipContent>
+                        
                         </Tooltip>
 
                         <Tooltip>
@@ -71,7 +73,8 @@ export function Sidebar(){
                                     <span className="sr-only " > clientes</span>
                                 </Link>
                             </TooltipTrigger>
-                            <TooltipContent side="right" className="m-5" >clientes </TooltipContent>
+                            <TooltipContent side="right" className="m-5 bg-black text-white rounded-2xl p-1 " >clientes </TooltipContent>
+
                         </Tooltip>
 
                     </TooltipProvider>
@@ -88,7 +91,8 @@ export function Sidebar(){
                                         <span className="sr-only " > Configurações </span>
                                     </Link>
                                 </TooltipTrigger>
-                                <TooltipContent side="right" className="m-5" >Configurações </TooltipContent>
+                            <TooltipContent side="right" className="m-5 bg-black text-white rounded-2xl p-1 " >Configurações </TooltipContent>
+
                             </Tooltip>
                         </TooltipProvider>
             </nav>
