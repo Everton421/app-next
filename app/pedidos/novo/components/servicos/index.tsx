@@ -69,8 +69,8 @@ export default function ListaServicos( { selecionarServico}:any){
                 dados.length > 0 && (
                     <div className="absolute z-10    ">
                         {dados.slice(0, 2).map((i: any) => (
-                            <div key={i.codigo} onClick={() => seleciona(i)} className="sm:ml-14 m-1   bg-white shadow-lg border-current rounded-md   p-1">
-                                <span className=" text-gray-500 font-bold">Cód: {i.codigo}  {i.aplicacao} </span>
+                            <div key={i.codigo} onClick={() => seleciona(i)} className="sm:ml-14 m-1   bg-gray-500 shadow-lg border-current cursor-pointer  rounded-md   p-1">
+                                <span className=" text-white font-bold">Cód: {i.codigo}  {i.aplicacao} </span>
                                  
                             </div>
                         ))}

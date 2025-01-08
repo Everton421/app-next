@@ -7,11 +7,11 @@ import {   DollarSign } from "lucide-react";
 import Image from "next/image";
 import { Bar, BarChart } from "recharts";
  
+export const logado  = true;
 
-export default function Home() {
+export default function login() {
 
-
-
+  
 
   return (
 

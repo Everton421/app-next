@@ -28,7 +28,7 @@ export default function Pedidos(){
                 vendedor:110
             }
           });
-          console.log(aux.data)
+        //  console.log(aux.data)
           setDados(aux.data)
         }catch(e){ console.log(e)}
         }

@@ -2,7 +2,7 @@
 import { api } from "@/app/services/api"
 import { useEffect, useState } from "react"
 
-export default function ListaProdutos( { selecionarProduto}:any){
+export default function ListaProdutos( { selecionarProduto, itens }:any){
 
         const [pesquisa, setPesquisa] = useState('');
         const [dados, setDados] = useState([]);
@@ -14,7 +14,8 @@ export default function ListaProdutos( { selecionarProduto}:any){
             setSelecionado(i);
             setPesquisa('');
             if( selecionarProduto ){
-            selecionarProduto(i)
+
+            selecionarProduto((prev)=>[ ...prev, i])
             }
         }
 
@@ -69,8 +70,8 @@ export default function ListaProdutos( { selecionarProduto}:any){
                 dados.length > 0 && (
                     <div className="absolute z-10    ">
                         {dados.slice(0, 2).map((i: any) => (
-                            <div key={i.codigo} onClick={() => seleciona(i)} className="sm:ml-14 m-1   bg-white shadow-lg border-current rounded-md   p-1">
-                                <span className=" text-gray-500 font-bold">Cód: {i.codigo}  {i.descricao} </span>
+                            <div key={i.codigo} onClick={() => seleciona(i)} className="sm:ml-14 m-1   bg-gray-500 shadow-lg border-current rounded-md  cursor-pointer p-1">
+                                <span className=" text-white font-bold">Cód: {i.codigo}  {i.descricao} </span>
                                  
                             </div>
                         ))}

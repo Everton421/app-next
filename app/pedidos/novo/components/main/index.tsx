@@ -12,19 +12,68 @@ import ListaServicos from "../servicos";
 import Parcelas from "../parcelas";  
 import { api } from "@/app/services/api";
 import { stringify } from "querystring";
+import { AlertDemo } from "../alert/alert";
+import Detalhes from "../detalhes";
+import { useRouter } from 'next/navigation'
 
-export default function MainPedido( { codigo_pedido } ){
+export default function MainPedido( { codigo_pedido}  ){
 
  
     const  [ produtosSelecionados, setProdutosSelecionados  ] = useState<any>([]);
     const  [ servicosSelecionados, setServicosSelecionados  ] = useState<any>([]);
-    const  [ clienteSelecionado, setClienteSelecionado ] = useState({});
+    const  [ clienteSelecionado, setClienteSelecionado ] = useState<cliente>({});
     const  [ total , setTotal ] = useState(0);
     const  [ totalProdutos , setTotalProdutos ] = useState(0);
     const  [ totalServicos , setTotalServicos ] = useState(0);
     const  [ orcamento , setOrcamento ] = useState({});
     const  [ dadosOrcamento, setDadosOrcamento ] = useState();
     const  [ parcelas, setParcelas ] = useState([]);
+    
+    const  [ observacoes, setObservacoes ] = useState<string>()
+    const  [ visibleAlertQtdProdutos ,setVisibleAlertQtdProdutos ] = useState<boolean>( false );
+    const [visibleAlertPrice, setVisibleAlertPrice] = useState(false);
+
+        const router = useRouter();
+
+    type cliente =
+     {
+        celular: string,
+        cep: string,
+        cidade: string,
+        cnpj: string,
+        codigo: number,
+        data_cadastro: string,
+        data_recadastro: string,
+        endereco: string,
+        ie: string,
+        nome: string,
+        numero: number,
+        vendedor: number,
+    }
+
+     type Produto_pedido = 
+        {
+            codigo: number,
+            desconto:number,
+            descricao: String,
+            pedido?:number,
+            preco :number,
+            quantidade :number,
+            total :number,
+        }  
+
+        type  Servico_pedido = 
+        {
+            aplicacao: string ,
+            codigo: number ,
+            desconto: number ,
+            pedido: number ,
+            quantidade: number ,
+            total: number ,
+            valor: number ,
+        }
+
+
 
     // funções dos produtos/servicos
 {/*************************************************** */}
@@ -42,9 +91,6 @@ function dataHoraAtual ( ) {
     return `${ano}-${mes}-${dia} ${hora}:${min}:${sec}` ;
 }
 
- 
-
-
 function dataAtual() {
     const dataAtual = new Date();
     const dia = String(dataAtual.getDate()).padStart(2, '0');
@@ -55,17 +101,17 @@ function dataAtual() {
 
 
       const selecionarItens =  useCallback(
-        (i:any)=>{
+        ( i:Produto_pedido )=>{
                 if(i){
                     i.quantidade = 1 
                     if(!i.preco) i.preco = 0.00;
 
-                    let v = produtosSelecionados.some((p)=> p.codigo === i.codigo )
+                    let v = produtosSelecionados.some((p:Produto_pedido)=> p.codigo === i.codigo )
                     if(v){
                         console.log(`produto ${i.codigo} ja foi adicionado`)
                         return 
                     }
-                    setProdutosSelecionados( prev => [...prev, i])
+                    setProdutosSelecionados( ( prev:Produto_pedido[] ) => [...prev, i])
                     console.log(produtosSelecionados)
                 }
         
@@ -73,77 +119,92 @@ function dataAtual() {
       ) 
 
       const selecionarServicos =  useCallback(
-        (i:any)=>{
+        (i:Servico_pedido)=>{
                 if(i){
                     i.quantidade = 1 
-                    if(!i.preco) i.preco = 0.00;
+                    if(!i.valor) i.valor = 0.00;
 
                     let v = servicosSelecionados.some((p)=> p.codigo === i.codigo )
                     if(v){
                         console.log(`servicos ${i.codigo} ja foi adicionado`)
                         return 
                     }
-                    setServicosSelecionados( prev => [...prev, i])
+                    setServicosSelecionados( (prev:Servico_pedido[]) => [...prev, i])
                     console.log(servicosSelecionados)
                 }
         
         },[ servicosSelecionados ]
       ) 
  
-      const handleIncrement = (item, quantidade) => {
-        if( !quantidade || quantidade ==='' || isNaN(quantidade || !item.quantidade)){
-            quantidade = 0
+      const handleIncrement = (item:Produto_pedido, quantidade:number ) => {
+        if(   isNaN(quantidade) ){
+            console.log("é necessario informar uma quantidade valida")
+            quantidade = 1
         }
-        setProdutosSelecionados((prevSelectedItems) => {
+
+
+        setProdutosSelecionados((prevSelectedItems:Produto_pedido[]) => {
             return prevSelectedItems.map((i) => {
                 if (i.codigo === item.codigo) {
-                return { ...i, quantidade: parseInt(quantidade),  };
+                return { ...i, quantidade:  quantidade ,  };
                 }
                 return i;
             });
             });
       };
 
-      const handleIncrementServices = (item, quantidade) => {
-        if( !quantidade || quantidade ==='' || isNaN(quantidade || !item.quantidade)){
+      const handleIncrementServices = (item:Produto_pedido, quantidade:number ) => {
+        if( !quantidade  || isNaN(quantidade )){
             quantidade = 0
         }
-        setServicosSelecionados((prevSelectedItems) => {
+        setServicosSelecionados((prevSelectedItems:Produto_pedido[]) => {
             return prevSelectedItems.map((i) => {
                 if (i.codigo === item.codigo) {
-                return { ...i, quantidade: parseInt(quantidade),  };
+                return { ...i, quantidade: quantidade,  };
                 }
                 return i;
             });
             });
       };
 
-      const handlePrice = (item, preco) => {
-        setProdutosSelecionados((prevSelectedItems) => {
-            let auxPreco = Number(preco)
+      const handlePrice = (item:Produto_pedido, preco:any) => {
+
+          const price = parseFloat(preco);
+        setProdutosSelecionados((prevSelectedItems:Produto_pedido[]) => {
+            
+            if (isNaN(price) || price < 0) {
+                setVisibleAlertPrice(true);
+            } else {
+                setVisibleAlertPrice(false);
+                item.preco = price; // ou a lógica que você usa para atualizar o preço
+            }
+
+
             return prevSelectedItems.map((i) => {
                 if (i.codigo === item.codigo) {
-                  return { ...i, preco:   auxPreco.toFixed(2)   };
+                  return { ...i, preco:   price.toFixed(2)   };
                 }
             return i;
           });
         });
       };
 
-      const handlePriceServices = (item, valor) => {
-        setServicosSelecionados((prevSelectedItems) => {
-            let auxPreco = Number(valor)
+      const handlePriceServices = (item:Servico_pedido, valor:number) => {
+        setServicosSelecionados((prevSelectedItems:Servico_pedido[]) => {
+            
+            let auxPreco =     isNaN(valor) ?  0 : valor  
+
             return prevSelectedItems.map((i) => {
                 if (i.codigo === item.codigo) {
-                  return { ...i, valor:   auxPreco.toFixed(2)   };
+                  return { ...i, valor:   auxPreco    };
                 }
             return i;
           });
         });
       };
 
-      const deleteItem = (item ) => {
-        setProdutosSelecionados((prevSelectedItems) => {
+      const deleteItem = (item:Produto_pedido ) => {
+        setProdutosSelecionados((prevSelectedItems:Produto_pedido[]) => {
             const index = prevSelectedItems.findIndex(i => i.codigo === item.codigo);
             if (index !== -1) {
               return prevSelectedItems.filter(i => i.codigo !== item.codigo);
@@ -154,8 +215,8 @@ function dataAtual() {
              )
        }
 
-       const deleteServico = (item ) => {
-        servicosSelecionados((prevSelectedItems) => {
+       const deleteServico = (item:Servico_pedido ) => {
+        servicosSelecionados((prevSelectedItems:Servico_pedido[]) => {
             const index = prevSelectedItems.findIndex(i => i.codigo === item.codigo);
             if (index !== -1) {
               return prevSelectedItems.filter(i => i.codigo !== item.codigo);
@@ -166,14 +227,13 @@ function dataAtual() {
              )
        } 
 
-       function gerarCodigo(  vendedor ){
+       function gerarCodigo(  vendedor:number ){
             let codigo = Date.now() 
             let aux = `${String(codigo)}`+`${vendedor}`  
             return aux
        }
        
       async function gravar (){
-      
             console.log(dadosOrcamento)
             if( !dadosOrcamento.cliente.codigo){
                 console.log("é necessario informar o cliente")
@@ -181,10 +241,13 @@ function dataAtual() {
             }
 
             try{
-
                 let response = await api.post('pedidos', [ dadosOrcamento] );
 
-                console.log(response)
+                    if( response.status === 200 ){
+                        console.log(response.data)
+                            router.push('/pedidos')
+                    }
+                    
             }catch(e){
                 console.log(` Erro ao enviar o orcamento `+ e )
             }
@@ -229,6 +292,13 @@ useEffect(() => {
         if (dadosOrcamento.parcelas) {
             setParcelas(dadosOrcamento.parcelas);
         }
+
+        if( dadosOrcamento.observacoes ){
+            setObservacoes( dadosOrcamento.observacoes )
+        }
+        if( dadosOrcamento.codigo_site ){
+            dadosOrcamento.codigo = dadosOrcamento.codigo_site
+        }
     }
 }, [dadosOrcamento]);
 ////////////////////////
@@ -257,6 +327,7 @@ useEffect(
                     tipo: 1,
                     total_produtos: 0,
                     total_servicos: 0,
+                    produtos:[],
                     veiculo: 0,
                     contato: '',
                     codigo:aux,
@@ -273,8 +344,6 @@ useEffect(
 
     },[]
 )
-
-
  ////////////////////////
  useEffect(
      ()=>{
@@ -300,22 +369,24 @@ useEffect(
                      (prev)=>({
                          ...prev, 
                          cliente:clienteSelecionado,
+                         codigo_cliente: clienteSelecionado?.codigo,
                          produtos: produtosSelecionados,
                          servicos:servicosSelecionados,
                          parcelas:parcelas,
                          total_geral: totalGeral,
                          quantidade_parcelas: parcelas?.length,
+                         observacoes:observacoes
                      })
                  )
          }
      ajusteTotais()
-     },[parcelas,  produtosSelecionados , servicosSelecionados, clienteSelecionado ]
+     },[parcelas,  produtosSelecionados , servicosSelecionados, clienteSelecionado , observacoes]
  )
  ////////////////////////
 
 
 return(
-        <div className="  min-h-screen sm:ml-14 p-4   w-full     bg-gray-100">
+        <div className="  min-h-screen sm:ml-14 p-4   w-full     bg-gray-100  ">
              <div className="w-full   flex justify-start items-center">
          
             <div className="w-6/12  " >
@@ -347,8 +418,8 @@ return(
             </div>
 
        
-            <div className="w-full items-center justify-center mt-5 ">
-                <Tabs defaultValue="Produtos" className="w-11/12  ">
+            <div className="w-full items-center justify-center mt-5  ">
+                <Tabs defaultValue="Produtos" className="w-11/12   ">
                     <TabsList>
                         <TabsTrigger value="Produtos" > Produtos </TabsTrigger>
                         <TabsTrigger value="Servicos" > Servicos </TabsTrigger>
@@ -359,43 +430,45 @@ return(
                     <TabsContent value="Produtos">
                             <div className="w-full  flex justify-start items-center   ">
                                 <div className="w-6/12  ml-12" >
-                                    <ListaProdutos selecionarProduto={selecionarItens} />
+                                    <ListaProdutos selecionarProduto={selecionarItens} itens={produtosSelecionados} />
                                 </div>
                             </div>
-                            <div className="w-full items-center justify-center flex relative ">
+                            <div className="w-full items-center justify-center flex   ">
                                 <div className="  shadow-lg" >
                                         <Table  className=" bg-white rounded-md  ">
                                             <TableBody>
                                             { produtosSelecionados.length > 0 &&
-                                                produtosSelecionados.map((i:any)=>(
+                                                produtosSelecionados.map((i:Produto_pedido)=>(
                                                     
-                                                    <TableRow key={ i.codigo }  className=" gap-4"> 
+                                                    <TableRow key={ i.codigo }  className=" gap-4   " > 
                                                         <TableCell className="font-medium text-center font-bold text-gray-600">    {i.codigo}          </TableCell>
                                                         <TableCell className=" w-120 font-medium  font-bold text-gray-600 ">{i.descricao}</TableCell>
                                                         <TableCell className=" w-80 font-medium text-center font-bold text-gray-600" >
-                                                            <input className=" border-gray-400 border-2 rounded-md w-40 text-center "
-                                                                placeholder="Quantidade:"     
-                                                                onChange={ (e)=>  handleIncrement(i, e.target.value ) }
-                                                            />
-                                                            {
-                                                            i.quantidade &&
-                                                            <span className=" m-2">
-                                                                Qtd: {i.quantidade}
-                                                            </span>
-                                                                }
+                                                                <input className=" border-gray-400 border-2 rounded-md w-40 text-center "
+                                                                    placeholder="Quantidade:"     
+                                                                    onChange={ (e:any)=>  handleIncrement(i, e.target.value ) }
+                                                                    value={   i.quantidade  }
+                                                                />
+                                                                { i.quantidade &&  <span className=" m-2">  Qtd: {i.quantidade}  </span>  }
+
                                                         </TableCell>
-                                                        <TableCell className=" w-80 font-medium text-center font-bold text-gray-600" > 
-                                                            <input className=" border-gray-400 border-2 rounded-md w-20 text-center "
-                                                                    placeholder="Preco:"  onChange={ (e)=>  handlePrice(i, e.target.value ) }
-                                                                    defaultValue={i?.preco  }
-                                                                    />
-                                                            <span>  R$ { i?.preco   } </span>
-                                                        </TableCell>
+                                                        
+                                                        <TableCell className="w-80  text-center font-bold text-gray-600"> 
+                                                      
+                                                               <input 
+                                                                    className="border-gray-400 border-2 rounded-md w-20 text-center"
+                                                                    placeholder="Preço:"
+                                                                    onChange={(e) => handlePrice(i, e.target.value)}
+                                                                    defaultValue={i?.preco}
+                                                                />
+                                                                <span>  { isNaN(i.preco) ? "valor invalido" : 'R$' + i.preco} </span>
+                                                            </TableCell>
+
                                                             <TableCell className="  w-40  font-medium text-center font-bold text-gray-600 ">
                                                                     <span> total R$ { i.quantidade * i.preco  }</span>
                                                             </TableCell>
 
-                                                        <TableCell className=" w-40 font-medium text-center font-bold text-gray-600 ">
+                                                        <TableCell className=" w-40     text-center font-bold text-gray-600 ">
                                                         <Button  className=" rounded-full w-3 h-6"  onClick={ ( )=>deleteItem(i) } > X </Button>
                                                         </TableCell>
                                                         
@@ -428,7 +501,7 @@ return(
                                                             <TableCell className=" w-80 font-medium text-center font-bold text-gray-600" >
                                                                 <input className=" border-gray-400 border-2 rounded-md w-40 text-center "
                                                                     placeholder="Quantidade:"     
-                                                                    onChange={ (e)=>  handleIncrementServices(i, e.target.value ) }
+                                                                    onChange={ (e:any)=>  handleIncrementServices(i, e.target.value ) }
                                                                 />
                                                                 {  i.quantidade &&
                                                                     <span className=" m-2">
@@ -463,7 +536,9 @@ return(
                         <Parcelas  total={total}  parcelarGeradas={setParcelas}    />
                     </TabsContent>
                     <TabsContent value="Detalhes">
-                        <h2>teste</h2>
+                                                
+                         <Detalhes obsPedido={observacoes} setObsPedido={setObservacoes} />
+    
                     </TabsContent>
                 </Tabs>       
             </div>                                
@@ -483,7 +558,9 @@ return(
                                 <span className=" text-gray-500 font-bold text-xl "  > Total Servicos R$ { totalServicos?.toFixed(2)}</span>
                             </TableCell>
                             <TableCell >
-                                <Button onClick={()=>{console.log(dadosOrcamento)
+                                <Button onClick={()=>{
+                                    //  console.log(dadosOrcamento)
+                                     gravar()
                                 } 
                                 }>
                                             GRAVAR
