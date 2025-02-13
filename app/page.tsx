@@ -1,21 +1,18 @@
+'use client'
+
 import { ChartOverView } from "@/components/chart";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChartContainer } from "@/components/ui/chart";
-  
 import {   DollarSign } from "lucide-react";
-import Image from "next/image";
-import { Bar, BarChart } from "recharts";
- 
 export const logado  = true;
 
 export default function login() {
 
-  
-
   return (
 
      <main className="sm:ml-14 p-4 bg-gray-100">
+
+ 
+
 
       <section className="grid grid-cols-2 gap-4">
            <Card>

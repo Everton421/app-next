@@ -1,15 +1,15 @@
 'use client'
 
-import { api } from "@/app/services/api";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+import {    configApi } from "@/app/services/api";
 import { useEffect, useState } from "react"
 
-export default function ListaClientes({ selecionarCliente }:any){
+export default function ListaClientes({ selecionarCliente } ){
 
     const [ pesquisa, setPesquisa ] = useState('');
     const [ dadosClientes, setDadosClientes ] = useState([]);
     const [ loading, setLoading  ] = useState(false);
     const [ selecionado, setSelecionado ] = useState({});
+    const api = configApi();
 
 
 useEffect(
@@ -18,7 +18,7 @@ useEffect(
             if(pesquisa !== ''){
              try{
                     setLoading(true)
-                    let result = await api.get(`/clientes/${pesquisa}`)
+                    const result = await api.get(`/next/clientes/${pesquisa}`)
                     console.log(result)
                     if( result.status === 200 ){
                         setDadosClientes(result.data) 

@@ -1,5 +1,8 @@
 'use client';
-export default function Prod({params}){
+
+ 
+
+export default function Prod({ params } ){
     return (
  <div className= " min-h-screen flex flex-col sm:ml-14 p-4 w-full h-full    bg-gray-200"  >
 

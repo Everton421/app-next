@@ -1,5 +1,5 @@
 'use client'
-import { api } from "@/app/services/api"
+import {   configApi } from "@/app/services/api"
 import { useEffect, useState } from "react"
 
 export default function ListaProdutos( { selecionarProduto, itens }:any){
@@ -9,6 +9,7 @@ export default function ListaProdutos( { selecionarProduto, itens }:any){
         const [loading, setLoading] = useState(false);
         const [ selecionado , setSelecionado ] = useState({});
         const  [  valueInput, setValueInput  ] = useState('');
+        const api = configApi();
 
         function seleciona( i:any ){
             setSelecionado(i);
@@ -29,7 +30,7 @@ export default function ListaProdutos( { selecionarProduto, itens }:any){
                 if( pesquisa !== ''){
                     setLoading(true);
                 try{
-                    const response = await api.get(`/produtos/${pesquisa}`)
+                    const response = await api.get(`/next/produtos/${pesquisa}`)
 
                         if(response.status === 200 ){
                             setDados(response.data)
