@@ -4,7 +4,7 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import { api } from "../services/api";
+import { configApi } from "../services/api";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import Link from "next/link";
@@ -17,15 +17,16 @@ export default function Pedidos(){
      const [ pesquisa , setPesquisa ] = useState('1');
      const [ codigoPedido, setCodigoPedido ] = useState();
  
-     const router = useRouter() 
+   const router = useRouter() 
+   const api = configApi();
 
     useEffect( ()=>{
         async function busca(){
           try{
-          let aux = await api.get(`/pedidos`,{
+          let aux = await api.get(`/next/pedidoSimples`,{
             params:{
-                data: '2024-10-04 00:00:00',
-                vendedor:110
+                data: '2025-01-01 00:00:00',
+                vendedor:'2'
             }
           });
         //  console.log(aux.data)

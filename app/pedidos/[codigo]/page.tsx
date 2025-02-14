@@ -1,6 +1,6 @@
 'use client'
 
-import { api } from "@/app/services/api"
+ 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useCallback, useEffect, useState } from "react"
 import ListaClientes from "../novo/components/clientes";

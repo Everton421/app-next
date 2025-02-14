@@ -10,7 +10,7 @@ import ListaClientes from "../clientes";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ListaServicos from "../servicos"; 
 import Parcelas from "../parcelas";  
-import { api } from "@/app/services/api";
+import {   configApi } from "@/app/services/api";
 import { stringify } from "querystring";
 import { AlertDemo } from "../alert/alert";
 import Detalhes from "../detalhes";
@@ -34,6 +34,7 @@ export default function MainPedido( { codigo_pedido}  ){
     const [visibleAlertPrice, setVisibleAlertPrice] = useState(false);
 
         const router = useRouter();
+ const api = configApi();
 
     type cliente =
      {
@@ -264,10 +265,14 @@ useEffect(()=>{
         if( codigo_pedido !== null ){
        
             try{    
-                const response = await api.get(`pedidos/${codigo_pedido}`) 
-                if(response.status === 200  ){
-                    setDadosOrcamento(response.data)
-                    console.log( dadosOrcamento )
+                const response = await api.get(`/next/pedidoCompletoPorCodigo`,
+                    {
+                        params:{ codigo: codigo_pedido}
+                    }
+                ) 
+                if(response.status === 200 && response.data ){
+                    setDadosOrcamento(response.data[0])
+                  //  console.log( response.data[0] )
                 }
               }catch(e){console.log(e)}
         }
@@ -276,6 +281,7 @@ useEffect(()=>{
     filtro()
 
 },[ codigo_pedido ])
+ 
  
 ////////////////////////
 useEffect(() => {
@@ -302,6 +308,8 @@ useEffect(() => {
     }
 }, [dadosOrcamento]);
 ////////////////////////
+ 
+
 
 useEffect(
     ()=>{
@@ -389,32 +397,31 @@ return(
         <div className="  min-h-screen sm:ml-14 p-4   w-full     bg-gray-100  ">
              <div className="w-full   flex justify-start items-center">
          
-            <div className="w-6/12  " >
-            <span className="text-2xl m-3  font-sans font-bold  ">
-                    Cliente
-                </span>       
-            <ListaClientes selecionarCliente={setClienteSelecionado}/>
-            
-                        <div className=" mt-1    rounded-xl shadow-md flex bg-white  ">
-                                <Table  className=" ">
-                                    <TableBody>
-                                        <TableRow key={ clienteSelecionado?.codigo }  className=" gap-2"> 
-                                        
-                                                <TableCell className="font-medium text-center font-bold text-gray-600">  Codigo:  { clienteSelecionado?.codigo }   </TableCell>
-                                                <TableCell className=" w-120 font-medium  font-bold text-gray-600 "> nome: { clienteSelecionado?.nome }</TableCell>
-                                                    <TableCell className=" w-120 font-medium  font-bold text-gray-600 "> cnpj/cpf : { clienteSelecionado?.cnpj }</TableCell>
-                                                </TableRow>
-                                        </TableBody>
-                                </Table>
-                        </div>
-
-                </div>
+                  <div className="w-6/12  " >
+                    <span className="text-2xl m-3  font-sans font-bold  ">
+                        Cliente
+                    </span>       
+                   <ListaClientes selecionarCliente={setClienteSelecionado}/>
+                
+                            <div className=" mt-1    rounded-xl shadow-md flex bg-white  ">
+                                    <Table  className=" ">
+                                        <TableBody>
+                                            <TableRow key={ clienteSelecionado?.codigo }  className=" gap-2"> 
+                                            
+                                                    <TableCell className="font-medium text-center font-bold text-gray-600">  Codigo:  { clienteSelecionado?.codigo }   </TableCell>
+                                                    <TableCell className=" w-120 font-medium  font-bold text-gray-600 "> nome: { clienteSelecionado?.nome }</TableCell>
+                                                        <TableCell className=" w-120 font-medium  font-bold text-gray-600 "> cnpj/cpf : { clienteSelecionado?.cnpj }</TableCell>
+                                                    </TableRow>
+                                            </TableBody>
+                                    </Table>
+                            </div>
+                    </div>
             </div>
  
             <div className="w-full mt-4 flex justify-center items-center">
                 <div className="w-11/12">
-                <hr className=" border-gray-400"/> 
-            </div>
+                  <hr className=" border-gray-400"/> 
+                </div>
             </div>
 
        
@@ -572,7 +579,6 @@ return(
                     </TableBody>
                 </Table>
             </div>
-            
-     </div>
+       </div>
     )
 } 
