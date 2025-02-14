@@ -1,14 +1,13 @@
 import { Textarea } from "@/components/ui/textarea";
-import { useEffect, useState } from "react";
+import { FunctionComponentElement, FunctionComponentFactory, useEffect, useState } from "react";
 
 
+ 
 
-export default function Detalhes ({ obsPedido, setObsPedido}:any){
-
+export default function Detalhes ({ obsPedido, setObsPedido}){
 
 
     const [ observacoes, setObservacoes ] = useState<string>()
-
 
     useEffect(
         ()=>{

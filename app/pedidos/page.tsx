@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { configApi } from "../services/api";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import Link from "next/link";
 import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button";
 

@@ -4,8 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Sidebar } from "@/components/sidebar";
 import Navbar from "@/components/navbar";
-import Login from "./login/page";
-import { logado } from "./page";
+ 
 
 /**
 const geistSans = localFont({
@@ -30,23 +29,18 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+
   return (
     <html lang="en">
       <body
         className={ cn("min-h-screen bg-background font-sans antialiased"  )}
       >
         
-        { logado ? (
-          <>
           <Sidebar/>
            <Navbar/>
            {children}
 
-           </>
-           ) : (
-              <Login/>
-          )
-      }
 
       </body>
     </html>

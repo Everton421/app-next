@@ -3,9 +3,8 @@
 import { ChartOverView } from "@/components/chart";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {   DollarSign } from "lucide-react";
-export const logado  = true;
 
-export default function login() {
+export default function Home() {
 
   return (
 

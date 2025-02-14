@@ -60,10 +60,11 @@ useEffect(
                 dadosClientes.length > 0 && (
                     <div className="absolute z-10    ">
                         { dadosClientes.slice(0, 2).map((i: any) => (
-                            <div key={i.codigo} onClick={() => seleciona(i)} className=" flex sm:ml-14 m-1 shadow-lg bg-gray-500 border-current rounded-md cursor-pointer  p-1">
+                            <div key={i.codigo} onClick={() => seleciona(i)} className="   sm:ml-14 p-2 m-1 shadow-lg bg-gray-500 border-current rounded-md cursor-pointer  ">
                                 
-                                <span className=" text-white font-bold">Código: {i.codigo}  {i.nome}  cnpj: {i.cnpj}</span>
-                                 
+                                 <span className=" text-white font-bold">Código: {i.codigo}  {i.nome}  </span>
+                                    <br/>
+                                 <span className=" text-white font-bold">  cnpj: {i.cnpj}</span>
                             </div>
                         ))}
                     </div>

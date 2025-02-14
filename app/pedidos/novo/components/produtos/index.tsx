@@ -16,7 +16,7 @@ export default function ListaProdutos( { selecionarProduto, itens }:any){
             setPesquisa('');
             if( selecionarProduto ){
 
-            selecionarProduto((prev)=>[ ...prev, i])
+            selecionarProduto(i)
             }
         }
 
@@ -73,6 +73,11 @@ export default function ListaProdutos( { selecionarProduto, itens }:any){
                         {dados.slice(0, 2).map((i: any) => (
                             <div key={i.codigo} onClick={() => seleciona(i)} className="sm:ml-14 m-1   bg-gray-500 shadow-lg border-current rounded-md  cursor-pointer p-1">
                                 <span className=" text-white font-bold">Cód: {i.codigo}  {i.descricao} </span>
+                                <br/>
+                                <div className="items-center  justify-between flex">
+                                    <span className=" text-white font-bold">R$ {i.preco}  </span>
+                                    <span className=" text-white font-bold"> estoque: {i.estoque} </span>
+                                </div>
                                  
                             </div>
                         ))}

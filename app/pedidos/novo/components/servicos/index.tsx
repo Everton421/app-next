@@ -1,5 +1,5 @@
 'use client'
-import { api } from "@/app/services/api"
+import { configApi } from "@/app/services/api"
 import { useEffect, useState } from "react"
 
 export default function ListaServicos( { selecionarServico}:any){
@@ -9,6 +9,7 @@ export default function ListaServicos( { selecionarServico}:any){
         const [loading, setLoading] = useState(false);
         const [ selecionado , setSelecionado ] = useState({});
         const  [  valueInput, setValueInput  ] = useState('');
+        const api = configApi()
 
         function seleciona( i:any ){
             setSelecionado(i);
@@ -28,13 +29,11 @@ export default function ListaServicos( { selecionarServico}:any){
                 if( pesquisa !== ''){
                     setLoading(true);
                 try{
-                    const response = await api.get(`/servicos/${pesquisa}`)
-
+                    const response = await api.get(`/next/servicos/${pesquisa}` )
                         if(response.status === 200 ){
                             setDados(response.data)
                         }
                     }catch(e){ console.log(e) 
-
                     }finally{
                         setLoading(false)
                       }
@@ -70,7 +69,13 @@ export default function ListaServicos( { selecionarServico}:any){
                     <div className="absolute z-10    ">
                         {dados.slice(0, 2).map((i: any) => (
                             <div key={i.codigo} onClick={() => seleciona(i)} className="sm:ml-14 m-1   bg-gray-500 shadow-lg border-current cursor-pointer  rounded-md   p-1">
-                                <span className=" text-white font-bold">Cód: {i.codigo}  {i.aplicacao} </span>
+                                    <span className=" text-white font-bold">
+                                     Cód: {i.codigo}  {i.aplicacao} 
+                                    </span>
+                                        <br/> 
+                                    <span className=" text-white font-bold">
+                                        R$: {i.valor}
+                                    </span>
                                  
                             </div>
                         ))}

@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {   Edit} from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { configApi } from "../services/api";
 
  
@@ -31,60 +31,23 @@ export default function Clientes(){
         bairro: string;
         estado: string;
     }
-    const [ clientesFic    ] = useState([
-        {
-            "codigo": 256,
-            "id": "256",
-            "celular": "",
-            "nome": "PRISCILA RODRIGUES SALOMAO",
-            "cep": "87050-130",
-            "endereco": "AV PAISANDU",
-            "ie": "455491641",
-            "numero": "117",
-            "cnpj": "362.135.338-00",
-            "ativo": "S",
-            "cidade": "MARINGA",
-            "data_cadastro": "0000-00-00",
-            "data_recadastro": "2020-10-07 10:32:58",
-            "vendedor": 0,
-            "bairro": "VILA OPERARIA",
-            "estado": "PR"
-        },
-        {
-            "codigo": 512,
-            "id": "512",
-            "celular": "",
-            "nome": "PREFEITURA MINICIPAL DE SAO JORGE DO IVA",
-            "cep": "11111-111",
-            "endereco": "1",
-            "ie": "",
-            "numero": "",
-            "cnpj": "",
-            "ativo": "S",
-            "cidade": "SAO JORGE DO IVAI",
-            "data_cadastro": "0000-00-00",
-            "data_recadastro": "2020-10-07 10:32:58",
-            "vendedor": 0,
-            "bairro": "CENTRO",
-            "estado": "PR"
-        },
-    ]);
-  
+ const [clientes, setClientes] = useState([])
+  const api = configApi()
       //  const [ clientes, setClientes] = useState();
-     //const [ pesquisa , setPesquisa ] = useState();
+      const [ pesquisa , setPesquisa ] = useState();
    
    ///const api = configApi();
 
-//        useEffect( ()=>{
-//
-//        async function busca(){
-//            try{
-//            const aux = await api.get(`/next/clientes/${pesquisa}`);
-//            setClientes(aux.data)
-//        }catch(e){ console.log(e)}
-//        }
-//    busca()
-//    } , [ pesquisa  ])
+         useEffect( ()=>{
+ 
+         async function busca(){
+             try{
+             const aux = await api.get(`/next/clientes/${pesquisa}`);
+             setClientes(aux.data)
+         }catch(e){ console.log(e)}
+         }
+     busca()
+     } , [ pesquisa  ])
 
  const router = useRouter();
 
@@ -103,7 +66,7 @@ function handleClick( item:client ){
          </div>
                  <div className="flex w-full max-w-sm items-center space-x-2">
                     <Input
-                   // onChange={(e)=> setPesquisa(e.target.value) }
+                    onChange={(e)=> setPesquisa(e.target.value) }
                     placeholder="pesquisar"
                     className="shadow-md"
                     />
@@ -128,8 +91,8 @@ function handleClick( item:client ){
             <TableBody>
 
                 {
-                    clientesFic.length > 0 &&
-                    clientesFic.map((i)=>(
+                    clientes.length > 0 &&
+                    clientes.map((i)=>(
                         <TableRow  
                         className="h-14 justify-center items-center"
                         key={i.codigo}

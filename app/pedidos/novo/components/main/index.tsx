@@ -11,10 +11,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ListaServicos from "../servicos"; 
 import Parcelas from "../parcelas";  
 import {   configApi } from "@/app/services/api";
-import { stringify } from "querystring";
-import { AlertDemo } from "../alert/alert";
+ 
 import Detalhes from "../detalhes";
 import { useRouter } from 'next/navigation'
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function MainPedido( { codigo_pedido}  ){
 
@@ -32,8 +32,9 @@ export default function MainPedido( { codigo_pedido}  ){
     const  [ observacoes, setObservacoes ] = useState<string>()
     const  [ visibleAlertQtdProdutos ,setVisibleAlertQtdProdutos ] = useState<boolean>( false );
     const [visibleAlertPrice, setVisibleAlertPrice] = useState(false);
-
+    const [ codigoNovoPedido, setCodigoNovoPedido ] = useState();
         const router = useRouter();
+
  const api = configApi();
 
     type cliente =
@@ -56,7 +57,7 @@ export default function MainPedido( { codigo_pedido}  ){
         {
             codigo: number,
             desconto:number,
-            descricao: String,
+            descricao: string,
             pedido?:number,
             preco :number,
             quantidade :number,
@@ -101,8 +102,7 @@ function dataAtual() {
 }
 
 
-      const selecionarItens =  useCallback(
-        ( i:Produto_pedido )=>{
+      const selecionarItens =   ( i:Produto_pedido )=>{
                 if(i){
                     i.quantidade = 1 
                     if(!i.preco) i.preco = 0.00;
@@ -116,11 +116,9 @@ function dataAtual() {
                     console.log(produtosSelecionados)
                 }
         
-        },[ produtosSelecionados  ]
-      ) 
+            }
 
-      const selecionarServicos =  useCallback(
-        (i:Servico_pedido)=>{
+      const selecionarServicos =    (i:Servico_pedido)=>{
                 if(i){
                     i.quantidade = 1 
                     if(!i.valor) i.valor = 0.00;
@@ -133,10 +131,9 @@ function dataAtual() {
                     setServicosSelecionados( (prev:Servico_pedido[]) => [...prev, i])
                     console.log(servicosSelecionados)
                 }
+            }
         
-        },[ servicosSelecionados ]
-      ) 
- 
+       
       const handleIncrement = (item:Produto_pedido, quantidade:number ) => {
         if(   isNaN(quantidade) ){
             console.log("é necessario informar uma quantidade valida")
@@ -183,7 +180,7 @@ function dataAtual() {
 
             return prevSelectedItems.map((i) => {
                 if (i.codigo === item.codigo) {
-                  return { ...i, preco:   price.toFixed(2)   };
+                  return { ...i, preco:   price    };
                 }
             return i;
           });
@@ -235,7 +232,15 @@ function dataAtual() {
        }
        
       async function gravar (){
-            console.log(dadosOrcamento)
+      
+        if( dadosOrcamento.parcelas.length === 0 ){
+            const aux = [{ pedido: dadosOrcamento.codigo ,parcela: 1, valor: total, vencimento: dataAtual() }];
+            dadosOrcamento.parcelas = aux;
+            setParcelas(aux);
+        }
+        console.log(dadosOrcamento)
+
+        /** 
             if( !dadosOrcamento.cliente.codigo){
                 console.log("é necessario informar o cliente")
                 return
@@ -252,7 +257,7 @@ function dataAtual() {
             }catch(e){
                 console.log(` Erro ao enviar o orcamento `+ e )
             }
-       
+       */
 
        }
 
@@ -272,7 +277,7 @@ useEffect(()=>{
                 ) 
                 if(response.status === 200 && response.data ){
                     setDadosOrcamento(response.data[0])
-                  //  console.log( response.data[0] )
+                console.log( response.data[0] )
                 }
               }catch(e){console.log(e)}
         }
@@ -313,12 +318,11 @@ useEffect(() => {
 
 useEffect(
     ()=>{
-        function init(){
-        } 
+        
 
         if( codigo_pedido === null){
             let aux = gerarCodigo(110);
-
+            setCodigoNovoPedido(aux)
             let data_cadastro = dataAtual();
 
             let data_recadastro = dataHoraAtual();
@@ -346,9 +350,7 @@ useEffect(
             )
         }
 
-        if( codigo_pedido !== null  ){
-            init();
-        }
+       
 
     },[]
 )
@@ -403,17 +405,17 @@ return(
                     </span>       
                    <ListaClientes selecionarCliente={setClienteSelecionado}/>
                 
-                            <div className=" mt-1    rounded-xl shadow-md flex bg-white  ">
-                                    <Table  className=" ">
-                                        <TableBody>
-                                            <TableRow key={ clienteSelecionado?.codigo }  className=" gap-2"> 
-                                            
-                                                    <TableCell className="font-medium text-center font-bold text-gray-600">  Codigo:  { clienteSelecionado?.codigo }   </TableCell>
-                                                    <TableCell className=" w-120 font-medium  font-bold text-gray-600 "> nome: { clienteSelecionado?.nome }</TableCell>
-                                                        <TableCell className=" w-120 font-medium  font-bold text-gray-600 "> cnpj/cpf : { clienteSelecionado?.cnpj }</TableCell>
-                                                    </TableRow>
-                                            </TableBody>
-                                    </Table>
+                            <div className=" mt-1    rounded-md shadow-md   bg-white  ">
+                                 <div >
+                                   <div className="flex items-center justify-between p-5" >
+                                    <span className="font-bold text-gray-600"> Codigo:  { clienteSelecionado?.codigo }</span>
+                                    <span className="font-bold text-gray-600"> nome: { clienteSelecionado?.nome } </span>
+                                    <span className="font-bold text-gray-600"> cnpj/cpf : { clienteSelecionado?.cnpj}</span>
+                                    <span className="font-bold text-gray-600"> cidade : { clienteSelecionado?.cidade }</span>
+                                    <span className="font-bold text-gray-600"> celular : { clienteSelecionado?.celular  }</span>
+
+                                   </div>
+                                 </div>
                             </div>
                     </div>
             </div>
@@ -440,7 +442,9 @@ return(
                                     <ListaProdutos selecionarProduto={selecionarItens} itens={produtosSelecionados} />
                                 </div>
                             </div>
-                            <div className="w-full items-center justify-center flex   ">
+
+                            <ScrollArea className="h-96 w-full rounded-md border" >
+                             <div className="w-full items-center justify-center flex   ">
                                 <div className="  shadow-lg" >
                                         <Table  className=" bg-white rounded-md  ">
                                             <TableBody>
@@ -448,9 +452,9 @@ return(
                                                 produtosSelecionados.map((i:Produto_pedido)=>(
                                                     
                                                     <TableRow key={ i.codigo }  className=" gap-4   " > 
-                                                        <TableCell className="font-medium text-center font-bold text-gray-600">    {i.codigo}          </TableCell>
-                                                        <TableCell className=" w-120 font-medium  font-bold text-gray-600 ">{i.descricao}</TableCell>
-                                                        <TableCell className=" w-80 font-medium text-center font-bold text-gray-600" >
+                                                        <TableCell className=" text-center font-bold text-gray-600">    {i.codigo}          </TableCell>
+                                                        <TableCell className=" w-120 font-bold text-gray-600 "> {i.descricao}</TableCell>
+                                                        <TableCell className=" w-80 text-center font-bold text-gray-600" >
                                                                 <input className=" border-gray-400 border-2 rounded-md w-40 text-center "
                                                                     placeholder="Quantidade:"     
                                                                     onChange={ (e:any)=>  handleIncrement(i, e.target.value ) }
@@ -466,13 +470,17 @@ return(
                                                                     className="border-gray-400 border-2 rounded-md w-20 text-center"
                                                                     placeholder="Preço:"
                                                                     onChange={(e) => handlePrice(i, e.target.value)}
-                                                                    defaultValue={i?.preco}
+                                                                    defaultValue={i?.preco.toFixed(2)}
                                                                 />
-                                                                <span>  { isNaN(i.preco) ? "valor invalido" : 'R$' + i.preco} </span>
+                                                                <span>  {  isNaN(i.preco) ? "valor invalido" : 'R$' + i.preco.toFixed(2)  } </span>
                                                             </TableCell>
 
-                                                            <TableCell className="  w-40  font-medium text-center font-bold text-gray-600 ">
-                                                                    <span> total R$ { i.quantidade * i.preco  }</span>
+                                                            <TableCell className="  w-40    text-center font-bold text-gray-600 ">
+                                                                    <span> desconto R$ { i.desconto ? i.desconto : 0  }</span>
+                                                            </TableCell>
+                                                            
+                                                            <TableCell className="  w-40    text-center font-bold text-gray-600 ">
+                                                                    <span> total R$ { (i.quantidade * i.preco).toFixed(2)   }</span>
                                                             </TableCell>
 
                                                         <TableCell className=" w-40     text-center font-bold text-gray-600 ">
@@ -486,15 +494,20 @@ return(
                                             </TableBody>
                                         </Table>
                                     </div>
-                            </div>
+                             </div>
+                             </ScrollArea>
+
+
                     </TabsContent>
+                    
                     <TabsContent value="Servicos">
+                           
                             <div className="w-full   flex justify-start items-center   ">
                                 <div className="w-6/12  ml-12" >
                                     <ListaServicos selecionarServico={selecionarServicos} />
                                 </div>
                             </div>
-                        
+                        <ScrollArea className="h-96 w-full rounded-md border" >
                             <div className="w-full items-center justify-center flex relative ">
                                 <div className="w-8/12 shadow-lg" >
                                         <Table  className=" bg-white rounded-md  ">
@@ -520,10 +533,10 @@ return(
                                                                 placeholder="Preco:"  onChange={ (e)=>  handlePriceServices(i, e.target.value ) }
                                                                 defaultValue={i.valor }
                                                                 />
-                                                        <span>  valor R$ {i.valor  } </span>
+                                                        <span>  valor R$ {i.valor.toFixed(2)  } </span>
                                                             </TableCell>
                                                         <TableCell className="  w-40  font-medium text-center font-bold text-gray-600 ">
-                                                                    <span> total R$ { i.quantidade * i.valor}</span>
+                                                                    <span> total R$ {  (i.quantidade * i.valor).toFixed(2)}</span>
                                                         </TableCell>
 
                                                         <TableCell className=" w-20 font-medium text-center font-bold text-gray-600 ">
@@ -538,9 +551,11 @@ return(
                                         </Table>
                                     </div>
                             </div>
+                       </ScrollArea>
+
                     </TabsContent>
                     <TabsContent value="Parcelas">
-                        <Parcelas  total={total}  parcelarGeradas={setParcelas}    />
+                        <Parcelas  total={total}  setParcelas={setParcelas} parcelas={parcelas}  codigoNovoPedido={codigoNovoPedido} codigoPedido={codigo_pedido}/>
                     </TabsContent>
                     <TabsContent value="Detalhes">
                                                 
@@ -550,8 +565,8 @@ return(
                 </Tabs>       
             </div>                                
         
-
-            <div className="bg-white p-8  sm:ml-14  fixed bottom-0 left-0 right-0 rounded-xl shadow-md  ">
+ 
+            <div className="bg-white p-7  sm:ml-14  fixed bottom-0 left-0 right-0 rounded-xl shadow-md  ">
                 <Table className="w-full">
                     <TableBody>
                         <TableRow>
@@ -566,8 +581,8 @@ return(
                             </TableCell>
                             <TableCell >
                                 <Button onClick={()=>{
-                                    //  console.log(dadosOrcamento)
-                                     gravar()
+                                      // console.log(dadosOrcamento)
+                                      gravar()
                                 } 
                                 }>
                                             GRAVAR
@@ -579,6 +594,7 @@ return(
                     </TableBody>
                 </Table>
             </div>
+ 
        </div>
     )
 } 

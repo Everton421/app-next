@@ -17,9 +17,7 @@ export default function Produtos(){
   const router = useRouter();
   const api = configApi();
 
-    const [produtos, setProdutos] =  useState ([ 
-     
-    ]);
+    const [produtos, setProdutos] =  useState ([]);
 
 
 
@@ -29,6 +27,7 @@ export default function Produtos(){
         try{
         const aux = await api.get(`/next/produtos/${pesquisa}`);
           setProdutos(aux.data)
+
       }catch(e){ console.log(e)}
       }
 busca()
@@ -60,6 +59,7 @@ busca()
                     <Input
                     placeholder="pesquisar"
                     className="shadow-md"
+                    onChange={(e)=> setPesquisa(e.target.value)}
                     />
                     <Button type="submit" 
                     className="shadow-md"  
