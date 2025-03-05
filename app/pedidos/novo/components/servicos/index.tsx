@@ -25,7 +25,7 @@ export default function ListaServicos( { selecionarServico}:any){
 
     useEffect(
         ()=>{
-            async function buscaProdutos() {
+            async function buscaServicos() {
                 if( pesquisa !== ''){
                     setLoading(true);
                 try{
@@ -43,7 +43,7 @@ export default function ListaServicos( { selecionarServico}:any){
                     } 
             }
 
-                buscaProdutos();
+            buscaServicos();
 
         },[pesquisa ]
     )

@@ -3,6 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { useEffect, useState } from "react"
 
+
 export default function Parcelas ( { total, setParcelas, parcelas, codigoNovoPedido, codigoPedido} ){
   
     const [ dados , setDados ] = useState([])
@@ -99,15 +100,16 @@ export default function Parcelas ( { total, setParcelas, parcelas, codigoNovoPed
                                 <>
                                     {
                                         parcelas.map((i)=>(
-                                            <TableRow key={ i?.parcela } 
+                                            <TableRow key={ i?.parcela } className="shadow-lg rounded-xl"
                                             >
                                                     <TableCell className=" m-1 " >
                                                         <span className=" text-gray-500 font-bold text-xl "  key={i.sequencia} >
-                                                             total R$ { i?.valor.toFixed(2) } 
-                                                             </span> 
+                                                           parcela: {i.sequencia}
+                                                         </span> 
                                                         <br/>
                                                         <span className=" text-gray-500 font-bold text-xl "  key={i.sequencia} >
-                                                        pedido:{codigoNovoPedido}
+                                                        total R$ { i?.valor.toFixed(2) } 
+
                                                         </span> 
 
 

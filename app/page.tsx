@@ -3,8 +3,17 @@
 import { ChartOverView } from "@/components/chart";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {   DollarSign } from "lucide-react";
+import { getServerSession } from "next-auth";
+import { getServerActionDispatcher } from "next/dist/client/components/app-router";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default   function Home() {
+
+  //const session = await getServerSession();
+//
+  //  if(!session){
+  //    redirect('/login')
+  //  }
 
   return (
 
@@ -12,7 +21,9 @@ export default function Home() {
 
  
 
+     
 
+       
       <section className="grid grid-cols-2 gap-4">
            <Card>
               <CardHeader>
@@ -83,7 +94,8 @@ export default function Home() {
           </Card>
 
       </section>
-  
+         
+         
         <div className="w-full items-center justify-center flex mt-10">
           <ChartOverView/>
         </div>

@@ -15,13 +15,15 @@ import {   configApi } from "@/app/services/api";
 import Detalhes from "../detalhes";
 import { useRouter } from 'next/navigation'
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Terminal } from "lucide-react";
 
-export default function MainPedido( { codigo_pedido}  ){
+export default function MainPedido( { codigo_pedido}:any ){
 
  
     const  [ produtosSelecionados, setProdutosSelecionados  ] = useState<any>([]);
-    const  [ servicosSelecionados, setServicosSelecionados  ] = useState<any>([]);
-    const  [ clienteSelecionado, setClienteSelecionado ] = useState<cliente>({});
+    const  [ servicosSelecionados, setServicosSelecionados  ] = useState ([]);
+    const  [ clienteSelecionado, setClienteSelecionado ] = useState<any>({});
     const  [ total , setTotal ] = useState(0);
     const  [ totalProdutos , setTotalProdutos ] = useState(0);
     const  [ totalServicos , setTotalServicos ] = useState(0);
@@ -123,7 +125,7 @@ function dataAtual() {
                     i.quantidade = 1 
                     if(!i.valor) i.valor = 0.00;
 
-                    let v = servicosSelecionados.some((p)=> p.codigo === i.codigo )
+                    let v = servicosSelecionados.some((p:Servico_pedido)=> p.codigo === i.codigo )
                     if(v){
                         console.log(`servicos ${i.codigo} ja foi adicionado`)
                         return 
@@ -214,7 +216,7 @@ function dataAtual() {
        }
 
        const deleteServico = (item:Servico_pedido ) => {
-        servicosSelecionados((prevSelectedItems:Servico_pedido[]) => {
+        setServicosSelecionados((prevSelectedItems:Servico_pedido[]) => {
             const index = prevSelectedItems.findIndex(i => i.codigo === item.codigo);
             if (index !== -1) {
               return prevSelectedItems.filter(i => i.codigo !== item.codigo);
@@ -238,9 +240,10 @@ function dataAtual() {
             dadosOrcamento.parcelas = aux;
             setParcelas(aux);
         }
-        console.log(dadosOrcamento)
+        dadosOrcamento.data_recadastro = dataHoraAtual();
+        console.log([dadosOrcamento])
 
-        /** 
+          
             if( !dadosOrcamento.cliente.codigo){
                 console.log("é necessario informar o cliente")
                 return
@@ -257,7 +260,7 @@ function dataAtual() {
             }catch(e){
                 console.log(` Erro ao enviar o orcamento `+ e )
             }
-       */
+       
 
        }
 
@@ -380,6 +383,8 @@ useEffect(
                          ...prev, 
                          cliente:clienteSelecionado,
                          codigo_cliente: clienteSelecionado?.codigo,
+                         total_produtos:totalProdutos,
+                         total_servicos:totalServicos,
                          produtos: produtosSelecionados,
                          servicos:servicosSelecionados,
                          parcelas:parcelas,
@@ -404,21 +409,35 @@ return(
                         Cliente
                     </span>       
                    <ListaClientes selecionarCliente={setClienteSelecionado}/>
-                
-                            <div className=" mt-1    rounded-md shadow-md   bg-white  ">
-                                 <div >
-                                   <div className="flex items-center justify-between p-5" >
-                                    <span className="font-bold text-gray-600"> Codigo:  { clienteSelecionado?.codigo }</span>
-                                    <span className="font-bold text-gray-600"> nome: { clienteSelecionado?.nome } </span>
-                                    <span className="font-bold text-gray-600"> cnpj/cpf : { clienteSelecionado?.cnpj}</span>
-                                    <span className="font-bold text-gray-600"> cidade : { clienteSelecionado?.cidade }</span>
-                                    <span className="font-bold text-gray-600"> celular : { clienteSelecionado?.celular  }</span>
-
-                                   </div>
-                                 </div>
-                            </div>
-                    </div>
+                   </div>
             </div>
+ 
+
+            <div className=" w-3/4 shadow-md  rounded-xl">
+               <Table className=" ">
+                   <TableBody>
+                       <TableRow className="bg-white rounded-3 shadow- ">
+                           <TableCell   >
+                               <span className="font-bold text-gray-600"> Codigo:  { clienteSelecionado?.codigo }</span>
+                           </TableCell>
+                           <TableCell >
+                               <span className="font-bold text-gray-600"> nome: { clienteSelecionado?.nome } </span>
+                           </TableCell>
+                           <TableCell >
+                           <span className="font-bold text-gray-600"> cnpj/cpf : { clienteSelecionado?.cnpj}</span>
+                           </TableCell>
+                           <TableCell >
+                           <span className="font-bold text-gray-600"> cidade : { clienteSelecionado?.cidade }</span>
+                           </TableCell>
+                           <TableCell >
+                                  <span className="font-bold text-gray-600"> celular : { clienteSelecionado?.celular  }</span>
+                           </TableCell>
+                       </TableRow>
+                   </TableBody>
+               </Table>
+               </div>
+
+
  
             <div className="w-full mt-4 flex justify-center items-center">
                 <div className="w-11/12">
@@ -509,7 +528,7 @@ return(
                             </div>
                         <ScrollArea className="h-96 w-full rounded-md border" >
                             <div className="w-full items-center justify-center flex relative ">
-                                <div className="w-8/12 shadow-lg" >
+                                <div className=" shadow-lg" >
                                         <Table  className=" bg-white rounded-md  ">
                                             <TableBody>
                                             { servicosSelecionados.length > 0 &&

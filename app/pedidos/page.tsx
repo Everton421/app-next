@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button";
+import { Check, CheckCheck, ClipboardCheck, ClipboardPenLine, X } from "lucide-react";
 
 
 export default function Pedidos(){
@@ -80,8 +81,9 @@ export default function Pedidos(){
                   <Table  className="w-full bg-white rounded-xl ">
                   <TableHeader>
                     <TableRow>
-                      <TableHead className=" text-lg" >Codigo</TableHead>
-                      <TableHead  className="text-lg"> Cliente</TableHead>
+                    <TableHead className=" text-lg text-center " > </TableHead>
+                      <TableHead className=" text-lg text-center " >Codigo</TableHead>
+                      <TableHead  className="text-lg text-center "> Cliente</TableHead>
                       <TableHead className="text-lg text-center "  > Contato</TableHead>
                       <TableHead className="text-lg text-center "  > Vendedor</TableHead>
                       <TableHead className="text-center text-lg">Total</TableHead>
@@ -92,12 +94,22 @@ export default function Pedidos(){
                  { dados.length > 0 &&
                     dados.map((i:any)=>(
 
-                          <TableRow key={ i.codigo } onClick={ ( )=>handleOrder(i.codigo) }> 
-                            <TableCell className="font-medium text-center font-bold text-gray-600">    {i.codigo}          </TableCell>
-                            <TableCell className=" w-100 font-medium  font-bold text-gray-600 ">{i.cliente.nome}</TableCell>
-                            <TableCell className=" w-80 font-medium text-center font-bold text-gray-600" >{ i.contato } </TableCell>
-                            <TableCell className=" w-80 font-medium text-center font-bold text-gray-600" >{ i.vendedor } </TableCell>
-                            <TableCell className=" w-40 font-medium text-center font-bold text-gray-600 ">  R$  {i?.total_geral.toFixed(2)}</TableCell>
+                          <TableRow key={ i.codigo } onClick={ ( )=>handleOrder(i.codigo) }   className="cursor-pointer" > 
+                            
+                            <TableCell className="   text-center font-bold text-gray-600">
+                                  {i.situacao  === 'RE' &&  <div className="bg-red-600    p-1  w-7 rounded-sm"> <X size={20} color="#FFF"/>  </div>}
+                                  {i.situacao  === 'EA' &&  <div className="bg-green-700  p-1  w-7 rounded-sm">   <Check size={20} color="#FFF" /> </div>}
+                                  {i.situacao  === 'AI' &&  <div className="bg-blue-400   p-1  w-7 rounded-sm"> <CheckCheck size={20} color="#FFF" /> </div>}
+                                  {i.situacao  === 'FI' &&  <div className="bg-orange-500 p-1  w-7 rounded-sm"> <ClipboardCheck size={20} color="#FFF" /> </div>}
+                                  {i.situacao  === 'FP' &&  <div className="bg-blue-700   p-1  w-7 rounded-sm">    <ClipboardPenLine size={20} color="#FFF" /></div>}
+                                 
+                                </TableCell>
+
+                            <TableCell className="   text-center font-bold text-gray-600">    {i.codigo}  </TableCell>
+                            <TableCell className=" w-100    font-bold text-gray-600 ">{i.cliente.nome}</TableCell>
+                            <TableCell className=" w-80    text-center font-bold text-gray-600" >{ i.contato } </TableCell>
+                            <TableCell className=" w-80    text-center font-bold text-gray-600" >{ i.vendedor } </TableCell>
+                            <TableCell className=" w-40    text-center font-bold text-gray-600 ">  R$  {i?.total_geral.toFixed(2)}</TableCell>
                           </TableRow>
 
                       ) )
@@ -109,6 +121,57 @@ export default function Pedidos(){
               )
           }
       
+      <div className="bg-white p-7  sm:ml-14  fixed bottom-0 left-0 right-0 rounded-xl shadow-md  ">
+          <div className="">
+          <TableRow   > 
+
+                                 <TableCell className=" w-40    text-center font-bold text-gray-600 ">
+                                   { 
+                                     <div className="items-center justify-center flex gap-1" >
+                                       <div className="bg-green-700   p-1 rounded-sm">
+                                       <Check size={20} color="#FFF" /> 
+                                      </div>
+                                      <span className="text-center  ">orçamento</span>
+                                     </div>
+                                      
+                                     }
+                                    </TableCell>
+                                 <TableCell className=" w-40    text-center font-bold text-gray-600 "> 
+                                      <  div className="items-center justify-center flex gap-1" >
+                                          <div className="bg-red-600     p-1   rounded-sm" >  
+                                          <X size={20} color="#FFF"/>  </div>
+                                        <span className="text-center  ">reprovado</span>
+                                        </div> 
+                                   </TableCell>
+
+                                   <TableCell className=" w-40    text-center font-bold text-gray-600 "> 
+                                   <  div className="items-center justify-center flex gap-1" >
+                                    {  <div className="bg-blue-400    p-1  rounded-sm" > <CheckCheck size={20} color="#FFF" /> </div>  }
+                                    <span className="text-center  ">pedido</span>
+                                          </div> 
+                                   </TableCell>
+
+                                   <TableCell className=" w-40    text-center font-bold text-gray-600 "> 
+                                   < div className="items-center justify-center flex gap-1" >
+                                      <div className="bg-orange-500  p-1   rounded-sm" >
+                                       <ClipboardCheck size={20} color="#FFF" /> </div>  
+                                       <span className="text-center  ">faturado</span>
+                                   </div> 
+                                   </TableCell>
+                                 
+                                   <TableCell className="     text-center font-bold text-gray-600 "> 
+                                   < div className="items-center justify-center flex gap-1" >
+                                     <div className="bg-blue-700    p-1  rounded-sm">
+                                        <ClipboardPenLine size={20} color="#FFF" />
+                                     </div>    
+                                      <span className="text-center  ">faturado parcialmente</span>
+                                    </div> 
+                                   </TableCell>
+                                 
+          </TableRow>
+
+          </div>
+      </div>
           
           </div>
         </div>
