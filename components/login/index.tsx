@@ -13,28 +13,25 @@ export default function LoginForm() {
 
         const router = useRouter()
 
-         async function login (e:React.FormEvent<HTMLFormElement>){
-            e.preventDefault()
-            let formData = new FormData(e.currentTarget)
-            console.log(formData.get('email'))
-            console.log(formData.get('password'))
-
-            const data = 
-             {
-                 email: formData.get('email'),
-                 password: formData.get('password')   
-                }
-                if(data.email !== '' && data.password !== ''){
-                    router.push('/produtos')
-                }
+    const [ email, setEmail] = useState<string>();
+    const [senha, setSenha ] = useState<string>();
+    
 
 
-              //  signIn("credentials",{
-              //      ...data, 
-              //      callbackUrl:'/'
-              //  })
+    async function login (e){
+        e.preventDefault()
+        const data = { 
+            email: email, senha: senha
+        }
+        
+               signIn("credentials",{
+                ...data,
+                callbackUrl:"/home"
+            })
+    }
 
-            }
+        
+       
 
     return (
         <div className="flex items-center w-full justify-center min-h-screen bg-gray-100">
@@ -59,9 +56,7 @@ export default function LoginForm() {
                         </label>
                         <input
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            id="email"
-                            type="email"
-                            name="email"
+                            onChange={(e)=>{ setEmail(e.target.value)}}
                             placeholder="Email"
                         />
                     </div>
@@ -71,9 +66,7 @@ export default function LoginForm() {
                         </label>
                         <input
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-                            id="password"
-                            type="password"
-                            name="password"
+                            onChange={(e)=>{ setSenha(e.target.value)}}
                             placeholder="Senha"
                         />
                         {/* <p className="text-red-500 text-xs italic">Please choose a password.</p> */}

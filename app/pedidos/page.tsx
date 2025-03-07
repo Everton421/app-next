@@ -3,13 +3,14 @@
 
 'use client'
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { configApi } from "../services/api";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button";
-import { Check, CheckCheck, ClipboardCheck, ClipboardPenLine, X } from "lucide-react";
+import { Check, CheckCheck, ClipboardCheck, ClipboardPenLine, Printer, X } from "lucide-react";
+import AuthContex from "@/contexts/AuthContext";
 
 
 export default function Pedidos(){
@@ -19,6 +20,8 @@ export default function Pedidos(){
  
    const router = useRouter() 
    const api = configApi();
+   const { nomeVendedor, setNomeVendedor, setCodigoVendedor, codigoVendedor } = useContext(AuthContex);
+
 
     useEffect( ()=>{
         async function busca(){
@@ -26,7 +29,7 @@ export default function Pedidos(){
           let aux = await api.get(`/next/pedidoSimples`,{
             params:{
                 data: '2025-01-01 00:00:00',
-                vendedor:'2'
+                vendedor:codigoVendedor
             }
           });
         //  console.log(aux.data)
@@ -84,9 +87,11 @@ export default function Pedidos(){
                     <TableHead className=" text-lg text-center " > </TableHead>
                       <TableHead className=" text-lg text-center " >Codigo</TableHead>
                       <TableHead  className="text-lg text-center "> Cliente</TableHead>
-                      <TableHead className="text-lg text-center "  > Contato</TableHead>
                       <TableHead className="text-lg text-center "  > Vendedor</TableHead>
                       <TableHead className="text-center text-lg">Total</TableHead>
+                          <TableHead className="text-center text-lg">
+                             <Printer size={20} color="#000" /> 
+                         </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -106,10 +111,18 @@ export default function Pedidos(){
                                 </TableCell>
 
                             <TableCell className="   text-center font-bold text-gray-600">    {i.codigo}  </TableCell>
-                            <TableCell className=" w-100    font-bold text-gray-600 ">{i.cliente.nome}</TableCell>
-                            <TableCell className=" w-80    text-center font-bold text-gray-600" >{ i.contato } </TableCell>
+                            <TableCell className=" w-100    text-center font-bold text-gray-600 ">{i.nome}</TableCell>
                             <TableCell className=" w-80    text-center font-bold text-gray-600" >{ i.vendedor } </TableCell>
                             <TableCell className=" w-40    text-center font-bold text-gray-600 ">  R$  {i?.total_geral.toFixed(2)}</TableCell>
+                             
+                            <TableCell className="      text-center font-bold text-gray-600 "
+                            // onClick={()=>{console.log('print')}}
+                              >  
+                              <div className="bg-black  p-1  w-7 rounded-sm">
+                                <Printer size={20} color="#FFF" />
+                              </div>
+                            </TableCell>
+
                           </TableRow>
 
                       ) )
@@ -121,7 +134,7 @@ export default function Pedidos(){
               )
           }
       
-      <div className="bg-white p-7  sm:ml-14  fixed bottom-0 left-0 right-0 rounded-xl shadow-md  ">
+      <div className="bg-gray-100 p-2  sm:ml-14  fixed bottom-0 left-0 right-0 rounded-xl shadow-md  ">
           <div className="">
           <TableRow   > 
 

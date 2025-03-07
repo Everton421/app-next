@@ -22,10 +22,11 @@ export default function RootLayout({
 }>) {
 
     const pathname = usePathname();
-    const isLoginPage = pathname === '/login';
+    const isLoginPage = pathname === '/';
 
 
   return (
+    <AuthProvider>
     <html lang="en">
       <body
         className={ cn("min-h-screen bg-background font-sans antialiased"  )}
@@ -43,5 +44,6 @@ export default function RootLayout({
 
       </body>
     </html>
+    </AuthProvider>
   );
 }

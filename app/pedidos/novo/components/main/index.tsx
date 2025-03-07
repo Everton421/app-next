@@ -30,7 +30,8 @@ export default function MainPedido( { codigo_pedido}:any ){
     const  [ orcamento , setOrcamento ] = useState({});
     const  [ dadosOrcamento, setDadosOrcamento ] = useState();
     const  [ parcelas, setParcelas ] = useState([]);
-    
+    const  [ situacao, setSituacao  ] = useState();
+
     const  [ observacoes, setObservacoes ] = useState<string>()
     const  [ visibleAlertQtdProdutos ,setVisibleAlertQtdProdutos ] = useState<boolean>( false );
     const [visibleAlertPrice, setVisibleAlertPrice] = useState(false);
@@ -310,6 +311,9 @@ useEffect(() => {
         if( dadosOrcamento.observacoes ){
             setObservacoes( dadosOrcamento.observacoes )
         }
+        if( dadosOrcamento.situacao ){
+            setSituacao(dadosOrcamento.situacao);
+        }
         if( dadosOrcamento.codigo_site ){
             dadosOrcamento.codigo = dadosOrcamento.codigo_site
         }
@@ -352,11 +356,9 @@ useEffect(
                 })
             )
         }
+ 
 
-       
-
-    },[]
-)
+    },[])
  ////////////////////////
  useEffect(
      ()=>{
@@ -390,13 +392,13 @@ useEffect(
                          parcelas:parcelas,
                          total_geral: totalGeral,
                          quantidade_parcelas: parcelas?.length,
-                         observacoes:observacoes
+                         observacoes:observacoes,
+                         situacao: situacao
                      })
                  )
          }
      ajusteTotais()
-     },[parcelas,  produtosSelecionados , servicosSelecionados, clienteSelecionado , observacoes]
- )
+     },[parcelas,  produtosSelecionados , servicosSelecionados, clienteSelecionado , observacoes, situacao])
  ////////////////////////
 
 
@@ -578,7 +580,7 @@ return(
                     </TabsContent>
                     <TabsContent value="Detalhes">
                                                 
-                         <Detalhes obsPedido={observacoes} setObsPedido={setObservacoes} />
+                         <Detalhes setSituacao={setSituacao} situacao={situacao} obsPedido={observacoes} setObsPedido={setObservacoes} />
     
                     </TabsContent>
                 </Tabs>       

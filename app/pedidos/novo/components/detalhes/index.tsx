@@ -6,11 +6,10 @@ import { TableCell, TableRow } from "@/components/ui/table";
 
  
 
-export default function Detalhes ({ obsPedido, setObsPedido}){
+export default function Detalhes ({ obsPedido, setObsPedido, situacao, setSituacao}){
 
 
     const [ observacoes, setObservacoes ] = useState<string>()
-    const [ situacao, setSituacao ] = useState('EA')
 
     useEffect(
         ()=>{
@@ -28,10 +27,18 @@ export default function Detalhes ({ obsPedido, setObsPedido}){
             setObservacoes(v)
         }
 
+        function styleStatus( status:string ){
+
+            if( status === 'EA'){
+                return "bg-green-700   p-1 rounded-sm"
+            } 
+        }
+
+
     return(
         <div className=" w-full  ">
 
-                <div className="w-3/4 bg-white rounded-sm">
+                <div className="w-3/4 bg-white rounded-sm p-5 shadow-md">
                    <h3 className="text-gray-500 font-bold text-3xl">
                       Situação
                    </h3>
@@ -39,42 +46,61 @@ export default function Detalhes ({ obsPedido, setObsPedido}){
 
                             <TableRow   > 
 
-                                 <TableCell className=" w-40    text-center font-bold text-gray-600 ">
+                                 <TableCell className=" w-40    text-center font-bold text-gray-600 cursor-pointer"
+                                    onClick={()=> setSituacao('EA')}
+                                 >
                                    { 
                                      <div className="items-center justify-center flex gap-1" >
-                                       <div className="bg-green-700   p-1 rounded-sm">
+                                       <div 
+                                       className={ situacao == 'EA' ? "bg-green-700  p-1 rounded-sm text-gray-600"  :  "bg-gray-300  p-1 rounded-sm "  }
+                                       >
+                                       
                                        <Check size={20} color="#FFF" /> 
                                       </div>
-                                      <span className="text-center  ">orçamento</span>
+                                      <span className= {    situacao == 'EA' ? "text-center " : "text-center text-gray-300"   } > orçamento</span>
                                      </div>
                                       
                                      }
-                                    </TableCell>
-                                 <TableCell className=" w-40    text-center font-bold text-gray-600 "> 
-                                      <  div className="items-center justify-center flex gap-1" >
-                                          <div className="bg-red-600     p-1   rounded-sm" >  
-                                          <X size={20} color="#FFF"/>  </div>
-                                        <span className="text-center  ">reprovado</span>
-                                        </div> 
-                                   </TableCell>
+                                 </TableCell>
 
-                                   <TableCell className=" w-40    text-center font-bold text-gray-600 "> 
+                                 <TableCell className=" w-40    text-center font-bold text-gray-600 cursor-pointer"
+                                    onClick={()=> setSituacao('RE')}
+                                 > 
+                                      <  div className="items-center justify-center flex gap-1" >
+                                          <div  
+                                       className={ situacao == 'RE' ? "bg-red-600  p-1 rounded-sm text-gray-600"  :  "bg-gray-300  p-1 rounded-sm "  }
+                                          >  
+                                          <X size={20} color="#FFF"/>  </div>
+                                          <span className= {    situacao == 'RE' ? "text-center " : "text-center text-gray-300"   } > reprovado</span>
+                                        </div> 
+                                 </TableCell>
+
+                                   <TableCell className=" w-40    text-center font-bold text-gray-600 cursor-pointer"
+                                    onClick={()=> setSituacao('AI')}
+                                   > 
                                    <  div className="items-center justify-center flex gap-1" >
-                                    {  <div className="bg-blue-400    p-1  rounded-sm" > 
+                                    {  <div
+                                     className={ situacao == 'AI' ? "bg-blue-400  p-1 rounded-sm text-gray-600"  :  "bg-gray-300  p-1 rounded-sm "  }
+                                     > 
                                         
                                         <CheckCheck size={20} 
-                                        color="#FFF"
-                                         />
+                                           color="#FFF"
+                                           />
                                           </div>  }
-                                    <span className="text-center  ">pedido</span>
+                                             <span className= {    situacao == 'AI' ? "text-center " : "text-center text-gray-300"   } > pedido</span>
                                           </div> 
                                    </TableCell>
 
-                                   <TableCell className=" w-40    text-center font-bold text-gray-600 "> 
+                                   <TableCell className=" w-40    text-center font-bold text-gray-600 cursor-pointer"
+                                    onClick={()=> setSituacao('FI')}
+                                   > 
                                    < div className="items-center justify-center flex gap-1" >
-                                      <div className="bg-orange-500  p-1   rounded-sm" >
+                                      <div
+                                     className={ situacao == 'FI' ? "bg-blue-400  p-1 rounded-sm text-gray-600"  :  "bg-gray-300  p-1 rounded-sm "  }
+                                        >
                                        <ClipboardCheck size={20} color="#FFF" /> </div>  
-                                       <span className="text-center  ">faturado</span>
+                                       <span className= {    situacao == 'FI' ? "text-center " : "text-center text-gray-300"   } > faturado</span>
+
                                    </div> 
                                    </TableCell>
                                  
@@ -83,7 +109,7 @@ export default function Detalhes ({ obsPedido, setObsPedido}){
           </TableRow>
                 </div>
                 
-            <div className=" w-3/4">
+            <div className=" w-3/4  shadow-md">
                 <h2 className="text-gray-500 font-bold text-3xl">
                     observações
                 </h2>

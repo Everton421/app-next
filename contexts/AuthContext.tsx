@@ -1,12 +1,18 @@
-import { createContext, useState } from "react";
+import React, { createContext, useState } from "react";
 
 
   const AuthContex = createContext(
     { 
-        vendedor: 0,
+        nomeVendedor: 0,
         logado: false,
         setLogado: ()=>{},
-        setVendedor: ()=>{}
+        setNomeVendedor: ()=>{},
+        codigoVendedor:0,
+        setCodigoVendedor:()=>{},
+        nomeEmpresa:'',
+        setNomeEmpresa:()=>{},
+        cnpj:'',
+        setCnpj:()=>{}
     }
 );
 
@@ -14,14 +20,24 @@ import { createContext, useState } from "react";
 export function AuthProvider   ({children})   {
 
     const [ logado, setLogado ] = useState<boolean>(false)
-    const [ vendedor, setVendedor ] = useState();
+    const [ nomeVendedor, setNomeVendedor ] = useState();
+    const [ codigoVendedor, setCodigoVendedor ] = useState();
+    const [ nomeEmpresa, setNomeEmpresa ] = useState();
+    const [ cnpj, setCnpj ] = useState();
     
     const value = {
         logado,
-        vendedor,
+        nomeVendedor,
+        setNomeVendedor,
         setLogado,
-        setVendedor
+        codigoVendedor,
+        setCodigoVendedor,
+        nomeEmpresa,
+        setNomeEmpresa,
+        cnpj,
+        setCnpj
     }
+
     return(
         <AuthContex.Provider value={ value} >
             {children}
