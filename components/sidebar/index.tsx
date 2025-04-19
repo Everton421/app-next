@@ -1,33 +1,42 @@
 import Link from "next/link";
 import { Button } from "../ui/button"
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
-import { Home, Package, PanelBottom, Settings, ShoppingBag, User } from "lucide-react";
+import { Car, Home, Package, PanelBottom, Settings, ShoppingBag, ShoppingCart, SlidersVertical, User, Wrench } from "lucide-react";
 import { Tooltip, TooltipProvider } from  "../ui/tooltip"
 import { TooltipContent, TooltipTrigger } from "@radix-ui/react-tooltip";
 
 export function Sidebar(){
     return (
-        <div className="flex w-full flex-col bg-muted/40">
+        <div className="flex w-full flex-col bg-muted/40 print:hidden"> 
 
-            <aside className="fixed inset-y-0 z-10 hidden w-14 border-r bg-background sm:flex  "  >
+            <aside className="fixed inset-y-0 z-10 hidden w-1 border-r bg-background sm:flex  "  >
                 <nav className="flex flex-col items-center gap-4  px-2 py-5">
                     
                     <TooltipProvider>
                          
-                      <Tooltip>
+                    <Tooltip>
                             <TooltipTrigger asChild>
-                                    <Link href="/" 
+                                    <Link href="/home" 
                                         className="flex h-9 w-9 shrink-0 items-center justify-center
                                         rounded-lg text-muted-foreground transition-colors hover:text-foreground
-                                    ">
-                                <Home className="h-4 w-5"/>
-                                    <span className="sr-only " > Inicio</span>
+                                        cursor-default ">
+                                </Link>
+                            </TooltipTrigger>
+                    </Tooltip>
+
+                      <Tooltip>
+                            <TooltipTrigger asChild>
+                                    <Link href="/home" 
+                                        className="flex h-9 w-9 shrink-0 items-center justify-center
+                                        rounded-lg text-muted-foreground transition-colors hover:text-foreground  ">
+                                     <Home className="h-4 w-5"/>
+                                      <span className="sr-only " > Inicio</span>
+
                                 </Link>
                             </TooltipTrigger>
                             <TooltipContent side="right" className="m-5 bg-black text-white rounded-2xl p-1 " >Inicio </TooltipContent>
                             
                         </Tooltip>
-
                         
                       <Tooltip>
                             <TooltipTrigger asChild>
@@ -35,7 +44,7 @@ export function Sidebar(){
                                         className="flex h-9 w-9 shrink-0 items-center justify-center
                                         rounded-lg text-muted-foreground transition-colors hover:text-foreground
                                     ">
-                                <ShoppingBag className="h-4 w-5"/>
+                                <ShoppingCart className="h-4 w-5"/>
                                     <span className="sr-only " > Pedidos</span>
                                 </Link>
                             </TooltipTrigger>
@@ -69,6 +78,38 @@ export function Sidebar(){
                             <TooltipContent side="right" className="m-5 bg-black text-white rounded-2xl p-1 " >clientes </TooltipContent>
 
                         </Tooltip>
+
+                        
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                    <Link href="/servicos" 
+                                        className="flex h-9 w-9 shrink-0 items-center justify-center
+                                        rounded-lg text-muted-foreground transition-colors hover:text-foreground
+                                    ">
+                                           <Wrench className="h-5 w-5 transition-all" />
+                                    <span className="sr-only " > serviços</span>
+                                </Link>
+                            </TooltipTrigger>
+                            <TooltipContent side="right" className="m-5 bg-black text-white rounded-2xl p-1 " >serviços </TooltipContent>
+                        </Tooltip>
+
+
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                    <Link href="/veiculos" 
+                                        className="flex h-9 w-9 shrink-0 items-center justify-center
+                                        rounded-lg text-muted-foreground transition-colors hover:text-foreground
+                                    ">
+                                           <Car className="h-5 w-5 transition-all"/>
+                                    <span className="sr-only " > veículos</span>
+                                </Link>
+                            </TooltipTrigger>
+                            <TooltipContent side="right" className="m-5 bg-black text-white rounded-2xl p-1 " >veículos </TooltipContent>
+                        </Tooltip>
+
+                        
+                      
+
 
                     </TooltipProvider>
 
@@ -154,8 +195,27 @@ export function Sidebar(){
                                     <User className="h-5 w-5 transition-all" />
                                      Clientes
                                 </Link>
+                                <Link 
+                                    href="#"
+                                    className="flex items-center gap-4 px-2.5 text-foreground hover:text-foreground"
+                                    prefetch={false}
+                                    >
+                                <Wrench className="h-5 w-5 transition-all" />
+                                     serviços
+                                </Link>
 
-<Link 
+                                <Link 
+                                    href="#"
+                                    className="flex items-center gap-4 px-2.5 text-foreground hover:text-foreground"
+                                    prefetch={false}
+                                    >
+                                <Car className="h-5 w-5 transition-all"/>
+
+                                     veículos
+                                </Link>
+
+
+                                <Link 
                                     href="#"
                                     className="flex items-center gap-4 px-2.5 text-foreground hover:text-foreground"
                                     prefetch={false}
@@ -163,6 +223,7 @@ export function Sidebar(){
                                     <Settings className="h-5 w-5 transition-all" />
                                      Configurações
                                 </Link>
+
                                 
 
                             </nav>

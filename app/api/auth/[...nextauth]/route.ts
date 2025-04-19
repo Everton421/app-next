@@ -1,6 +1,7 @@
 import { configApi } from '@/app/services/api';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import { cookies } from 'next/headers';
 
 const api = configApi();
 
@@ -11,10 +12,8 @@ const handler = NextAuth({
   providers: [
     CredentialsProvider({
       name: 'Credentials',
-      credentials: {
-        email: { label: "Username", type: "text" },
-        senha: { label: "Password", type: "password" }
-      },
+ 
+
       async authorize(credentials, req) {
         if (credentials?.email && credentials.senha) {
           try {
@@ -23,13 +22,13 @@ const handler = NextAuth({
 
             if (result.data.ok === true) {
               const user = {
-                email: result.data.email,
-                // ***IMPORTANTE***: Não inclua a senha aqui!  Por segurança.
-                // senha: result.data.senha,
-                empresa: result.data.empresa,
-                codigo: result.data.codigo,
-                nome: result.data.nome,
+                 email: result.data.email,
+                 empresa: result.data.empresa,
+                 codigo: result.data.codigo,
+                 nome: result.data.nome,
+                 // Adicione outros campos relevantes do usuário aqui.
               };
+
 
               // Retorne o objeto user *completo*.  Isso é *essencial* para
               // que os callbacks `jwt` e `session` recebam esses dados.
@@ -49,32 +48,40 @@ const handler = NextAuth({
     })
   ],
   callbacks: {
-    async jwt({ token, user, account, profile }) {
-      // `user` é preenchido apenas na primeira vez que o JWT é criado
-      // (após o login).  Nas chamadas subsequentes, `user` é undefined.
-
+    async jwt({ token, user }) {
+      console.log('')
+      console.log("JWT Callback - Token:", token, "User:", user);
+      console.log('')
+       
       if (user) {
-        // Adicione as propriedades adicionais do usuário ao token JWT.
+        // Adicione os dados do usuário ao token.
         token.empresa = user.empresa;
         token.codigo = user.codigo;
         token.nome = user.nome;
+        token.email = user.email; // Adicione o email aqui também
       }
-      return token;
+      console.log("JWT Callback - Token (modificado):", token); // ADICIONE ESTE LOG
+
+      return token;  
     },
-    async session({ session, token, user }) {
-      // Envia as propriedades do token JWT para a sessão do cliente.
-      session.empresa = token.empresa;
-      session.codigo = token.codigo;
-      session.nome = token.nome;
-      session.email = token.email; // Garante que o email esteja na sessão.
+    async session({ session, token }) {
+      console.log('')
+      console.log("Session Callback - Session:", session, "Token:", token);
+      // Adicione os dados do token à *estrutura existente* da sessão.
+      session.user.empresa = token.empresa;
+      session.user.codigo = token.codigo;
+      session.user.nome = token.nome;
+      session.user.email = token.email;
 
       return session;
     }
   },
-  session: {
-    strategy: "jwt"  // Use JWT para sessões (recomendado).
-  },
-  secret: process.env.NEXTAUTH_SECRET, // ***IMPORTANTE***: Defina a variável de ambiente!
+
+   session: {
+     strategy: "jwt"  // Use JWT para sessões (recomendado).
+   },
+   secret: process.env.NEXTAUTH_SECRET, // ***IMPORTANTE***: Defina a variável de ambiente!
+
 });
 
 export { handler as GET, handler as POST };

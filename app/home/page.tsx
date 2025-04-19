@@ -1,27 +1,48 @@
 
+'use client'
 import { ChartOverView } from "@/components/chart";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAuth } from "@/contexts/AuthContext";
 import {   DollarSign } from "lucide-react";
-import { getServerSession } from "next-auth";
-import { getServerActionDispatcher } from "next/dist/client/components/app-router";
-import { redirect } from "next/navigation";
-import { useEffect } from "react";
+ import { useEffect } from "react";
 
-export default  async function Home() {
+ import { redirect, useRouter } from "next/navigation"
 
-  const session = await getServerSession();
-    if(!session){
-       redirect('/')
 
-     }else{
-      console.log('session ',session)
-     }
+// REMOVA O 'async' DAQUI
+export default function Home() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
 
- 
+  useEffect(() => {
+    if (!loading) {
+      if (!user) {
+        router.push('/'); // Redireciona para a página de login (ajuste se for outra)
+      }
+    }
+  }, [user, loading, router]);
+
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+         <p>Verificando autenticação...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+       <div className="flex justify-center items-center h-screen">
+          <p>Redirecionando para login...</p>
+       </div>
+    );
+  }
+
 
   return (
 
-     <main className="sm:ml-14 p-4 bg-gray-100  ">
+     <main className="sm:ml-14 p-4  bg-slate-100  ">
   
       <section className="grid grid-cols-2 gap-4">
            <Card    >

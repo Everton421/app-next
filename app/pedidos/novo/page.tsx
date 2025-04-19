@@ -1,6 +1,6 @@
 'use client'
  
-import MainPedido from "./components/main";
+import MainPedido from "../components/main";
 export default  function  Novo(  ){
 
 return(

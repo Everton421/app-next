@@ -7,10 +7,10 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Sidebar } from "@/components/sidebar";
 import Navbar from "@/components/navbar";
-import Login from "./login/page";
 import { useContext } from "react";
-import AuthContex, { AuthProvider } from "@/contexts/AuthContext";
-import { usePathname } from "next/navigation";
+
+ import { usePathname } from "next/navigation";
+import { AuthProvider } from "@/contexts/AuthContext";
  
 
  
@@ -23,16 +23,16 @@ export default function RootLayout({
 
     const pathname = usePathname();
     const isLoginPage = pathname === '/';
-
+    const novaConta = pathname === '/novaConta';
 
   return (
     <AuthProvider>
-    <html lang="en">
+    <html lang="pt-br">
       <body
-        className={ cn("min-h-screen bg-background font-sans antialiased"  )}
+        className={ cn("min-h-screen bg-background font-sans antialiased overflow-hidden "  )}
       >
          {
-         !isLoginPage &&
+         !isLoginPage && !novaConta &&
          (
         <>   
            <Sidebar/>
@@ -40,6 +40,7 @@ export default function RootLayout({
             </>
              )
           }
+          
             {children}
 
       </body>
