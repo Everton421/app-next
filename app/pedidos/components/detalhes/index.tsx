@@ -1,5 +1,5 @@
 import { Textarea } from "@/components/ui/textarea";
-import { FunctionComponentElement, FunctionComponentFactory, useEffect, useState } from "react";
+import { Dispatch, FunctionComponentElement, FunctionComponentFactory, SetStateAction, useEffect, useState } from "react";
 import { Check, CheckCheck, ClipboardCheck, ClipboardPenLine, X } from "lucide-react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { configApi } from "@/app/services/api";
@@ -7,9 +7,9 @@ import { configApi } from "@/app/services/api";
 type props = 
 {
     obsPedido:string ,
-    setObsPedido:( value:any )=>{} ,
+    setObsPedido: Dispatch<SetStateAction<string>>,
     situacao:string ,
-    setSituacao: ( value:any )=>{}, 
+    setSituacao: Dispatch<SetStateAction<string>>,
 }
  
 

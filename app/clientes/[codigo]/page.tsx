@@ -13,6 +13,7 @@ import { SelectVendedor } from "../selectVendedor"
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext"
 import { Button } from "@/components/ui/button"
+import { ThreeDot } from "react-loading-indicators"
 
 
 export default function Cliente({ params }) {
@@ -45,9 +46,15 @@ export default function Cliente({ params }) {
     const [data_cadastro, setData_cadastro] = useState();
     const [maskCelular, setMaskCelular] = useState();
     const [numero, setNumero] = useState();
+    const [isLoading, setIsLoading] = useState(false);  
 
     const { user, loading }: any = useAuth();
     const router = useRouter();
+
+    function delay(ms) {
+        return new Promise((resolve)=>{ setTimeout( resolve,ms )})
+       }
+      
 
     useEffect(() => {
         if (!loading) {
@@ -80,10 +87,12 @@ export default function Cliente({ params }) {
     useEffect(() => {
         if (!params.codigo) redirect('/clientes');
         async function busca() {
+            setIsLoading(true);
+
             try {
                 let dados = await api.get(`/clientes`,
                     {
-                        headers: { cnpj: Number(user.cnpj) },
+                        headers: { cnpj:  user.cnpj  },
                         params:{codigo:params.codigo, limit:1}
                     }
                 );
@@ -106,6 +115,8 @@ export default function Cliente({ params }) {
                 }
             } catch (e) {
                 console.error(e);
+            }finally{
+                setIsLoading(false)
             }
         }
         busca();
@@ -166,6 +177,8 @@ export default function Cliente({ params }) {
     /////////////
 
     const gravar = async () => {
+        
+            setIsLoading(true)
 
         if (!data) return;
 
@@ -188,7 +201,7 @@ export default function Cliente({ params }) {
         try {
             let result = await api.put('/cliente', dataParaGravar,
                  {
-                    headers: { cnpj: Number(user.cnpj) },
+                    headers: { cnpj:  user.cnpj  },
 
                  }
                 );
@@ -199,6 +212,8 @@ export default function Cliente({ params }) {
             }
         } catch (e) {
             console.error(e);
+        }finally{
+            setIsLoading(false);
         }
 
         console.log(dataParaGravar)
@@ -218,11 +233,9 @@ export default function Cliente({ params }) {
 
 
 
-    if (!data) {
-        return <div className=" min-h-screen flex flex-col sm:ml-14 p-4 bg-slate-100"  >
-            < span className=" text-gray-500 font-bold text-2xl">
-                Carregando...
-            </span>
+    if (isLoading) {
+        return <div className=" min-h-screen flex items-center justify-center flex-col sm:ml-14 p-4 bg-slate-100"  >
+             <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
         </div>;  
     }
 

@@ -12,6 +12,7 @@ import { useState } from "react";
 import { configApi } from "@/app/services/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { AlertDemo } from "@/components/alert/alert";
+import { ThreeDot } from "react-loading-indicators";
 
 
 interface veiculo  
@@ -36,6 +37,7 @@ export default function veiculo(){
     const [ combustivel, setCombustivel ] = useState<string>();
     const [msgAlert, setMsgAlert] = useState<string>('');
     const [visibleAlert, setVisibleAlert] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);  
 
     const router = useRouter();
 
@@ -43,6 +45,9 @@ export default function veiculo(){
     const api = configApi();
 
     async  function gravar( ){
+
+        setIsLoading(false);
+
         let aux:any =
          {
             ano: ano ,
@@ -55,7 +60,7 @@ export default function veiculo(){
 
             try{
                 let result = await api.post('/veiculo',  aux,{
-                     headers:{ cnpj: Number(user.cnpj)}
+                     headers:{ cnpj:  user.cnpj  }
                 })
                 if(result.status === 200 ){
                     setVisibleAlert(true);
@@ -66,12 +71,21 @@ export default function veiculo(){
                 console.error("Erro ao gravar Veículo:", e);
                 setMsgAlert(`${e.reponse.data.msg}`);
                 setVisibleAlert(true);
+            }finally {
+                setIsLoading(false);
             }
     
     
     }
 
 
+    if (isLoading) {
+        return (
+             <div className="flex  my-4 items-center justify-center"> {/* Container para centralizar */}
+                 <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+               </div>
+        );
+    }
 
 
     return(
@@ -174,7 +188,7 @@ export default function veiculo(){
                                   size="lg"
                               >
                                   <Save className="mr-2 h-5 w-5" />
-                                  { /*isSaving ? 'Salvando...' : 'Salvar Alterações'*/}
+                                   Salvar  
                               </Button>
                           </div>
                       </div>

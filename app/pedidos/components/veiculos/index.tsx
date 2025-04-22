@@ -3,7 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";  
 import { useAuth } from "@/contexts/AuthContext";
 import { Car } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 interface VeiculoData {
     codigo: number | string;
@@ -12,7 +12,14 @@ interface VeiculoData {
     ano: number | string;
 }
 
-export const Veiculos = ({ cliente, setVeiculo, codigoPedido, codigoVeiculo }) => {
+type props = {
+    cliente: clientePedido | undefined,
+    setVeiculo:  Dispatch<SetStateAction<VeiculoData | null>>
+    codigoPedido: number,
+    codigoVeiculo:number | undefined
+}
+
+export const Veiculos = ({ cliente, setVeiculo, codigoPedido, codigoVeiculo }:props ) => {
 
     const [dados, setDados] = useState<VeiculoData[] | null>(null);  
     const [veiculoSelecionado, setVeiculoSelecionado] = useState<VeiculoData | null>(null);  
@@ -33,8 +40,8 @@ export const Veiculos = ({ cliente, setVeiculo, codigoPedido, codigoVeiculo }) =
 
         try {
             const resultCliente = await api.get<VeiculoData[]>(`/veiculos`, {
-                headers: { cnpj: String(user.cnpj) },
-                params: { cliente: cliente.codigo }
+                headers: { cnpj:  user.cnpj  },
+                params: { cliente:   cliente && cliente.codigo    }
             });
             veiculosCliente = resultCliente.data || [];
         } catch (e) {
@@ -45,7 +52,7 @@ export const Veiculos = ({ cliente, setVeiculo, codigoPedido, codigoVeiculo }) =
         if (codigoPedido && codigoVeiculo !== null && codigoVeiculo !== undefined) {
             try {
                 const resultPedido = await api.get<VeiculoData[]>(`/veiculos`, {
-                    headers: { cnpj: String(user.cnpj) },
+                    headers: { cnpj:  user.cnpj },
                     params: { codigo: codigoVeiculo }
                 });
                 if (resultPedido.data && resultPedido.data.length > 0) {

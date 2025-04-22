@@ -92,7 +92,7 @@ export default function ImprimirPedidoPage() {
       try {
         const response = await api.get(`/pedido`,
              {  
-            headers: { cnpj: Number(user.cnpj) },  
+            headers: { cnpj:  user.cnpj  },  
             params:{ codigo:codigo}
         }
     );

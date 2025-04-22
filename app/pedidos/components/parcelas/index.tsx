@@ -5,16 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";  
-import { useEffect, useState } from "react"
+import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { SelectFormasPagamento } from "../selectFormasPagamento";
 
 type props = 
 {
   dadosOrcamento:any 
-  setDadosOrcamento: ()=>{} 
+  setDadosOrcamento:  Dispatch<SetStateAction<pedido | undefined>> 
   total:number
 }
-export default function Parcelas ( {  dadosOrcamento, setDadosOrcamento, total  }:props ){
+export default function Parcelas ( {  dadosOrcamento   }:props ){
   
     const dateService = DateService();
  

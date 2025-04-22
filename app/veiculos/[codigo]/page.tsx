@@ -12,6 +12,7 @@ import { useCallback, useEffect, useState } from "react";
 import { configApi } from "@/app/services/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { AlertDemo } from "@/components/alert/alert";
+import { ThreeDot } from "react-loading-indicators";
 
 
 interface veiculo  
@@ -49,13 +50,21 @@ export default function veiculo({params}:any){
      const { user, loading  }: any = useAuth();
     const api = configApi();
 
+
+
+    
+ function delay(ms) {
+    return new Promise((resolve)=>{ setTimeout( resolve,ms )})
+   }
+
     async function busca(){
         try{
             setIsLoading(true);
 
+            await delay(2000)
            let result = await api.get('/veiculos', {
                  headers:{ cnpj: Number(user.cnpj)},
-                    params:{ codigo: Number(params.codigo)}
+                    params:{ codigo:  params.codigo  }
                 })
 
                 if( result.status === 200 ){
@@ -102,10 +111,10 @@ export default function veiculo({params}:any){
 
 
     async  function gravar( ){
-   
+            setIsLoading(true)
             try{
                 let result = await api.put('/veiculo',  data,{
-                     headers:{ cnpj: Number(user.cnpj)}
+                     headers:{ cnpj:  user.cnpj   }
                 })
                 if(result.status === 200 ){
                     setVisibleAlert(true);
@@ -116,6 +125,9 @@ export default function veiculo({params}:any){
                 console.error("Erro ao atualizar Veículo:", e);
                 setMsgAlert(`${e.reponse.data.msg}`);
                 setVisibleAlert(true);
+            }finally{
+                setIsLoading(false)
+
             }
     }
 
@@ -129,9 +141,9 @@ export default function veiculo({params}:any){
 
      if (isLoading) {
         return (
-            <div className="flex justify-center items-center min-h-screen">
-                <p>Carregando dados do veiculo...</p> {/* Or use a spinner component */}
-            </div>
+                  <div className=" min-h-screen flex items-center justify-center flex-col sm:ml-14 p-4 bg-slate-100"  >
+                  <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+                </div>
         );
      }
 
@@ -256,7 +268,7 @@ export default function veiculo({params}:any){
                                   size="lg"
                               >
                                   <Save className="mr-2 h-5 w-5" />
-                                  { /*isSaving ? 'Salvando...' : 'Salvar Alterações'*/}
+                                  Salvar Alterações 
                               </Button>
                           </div>
                       </div>

@@ -1,10 +1,12 @@
 'use client'
 import {   configApi } from "@/app/services/api"
 import { useAuth } from "@/contexts/AuthContext";
-import { useEffect, useState } from "react"
+import { Dispatch, SetStateAction, useEffect, useState } from "react"
 
 type props = { 
-    selecionarProduto: ( value:any ) =>{}
+    //selecionarProduto:   Dispatch<SetStateAction<Produto_pedido>> 
+     selecionarProduto:   (i:Produto_pedido)=> void  
+
 }
 
 export default function ListaProdutos( { selecionarProduto  }:props ){
@@ -55,7 +57,7 @@ export default function ListaProdutos( { selecionarProduto  }:props ){
                 try{
                     const response = await api.get(`/produtos`,{
                         headers:{
-                            cnpj: Number( user.cnpj)   
+                            cnpj:   user.cnpj    
                         }, 
                         params: params 
                              

@@ -32,7 +32,6 @@ export default function NovaConta(){
                 "email_empresa" :emailEmpresa,
                 "nome_empresa" :nomeEmpresa,
                 "telefone_empresa" : telefoneEmpresa,
-                "tipo_contrato":"T"
             } 
             let objUser = {
                 "nome": nomeUsuario,

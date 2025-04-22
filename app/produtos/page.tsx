@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Check, Edit, X, Search, Plus, AlignLeft, Tag } from 'lucide-react'; // Added Search and Plus icons
 import { ScrollArea } from '@/components/ui/scroll-area'; // Use Shadcn ScrollArea
 import { useAuth } from '@/contexts/AuthContext'; // Assuming correct path
+import { ThreeDot } from 'react-loading-indicators';
 
 // Define Product type (optional but good practice)
 interface Product {
@@ -47,21 +48,23 @@ export default function Produtos() {
   }, [user, authLoading, router]);
 
 
-
+ function delay(ms) {
+  return new Promise((resolve)=>{ setTimeout( resolve,ms )})
+ }
 
   async function busca(term: string) {
-
-console.log(user)
+    setProdutos([])
+    setIsLoading(true);
 
     if (!user?.cnpj) return;
-    const query = term.trim() === '' ? '1' : term.trim();
+    const query = term.trim() === '' ? 'a' : term.trim();
     try {
       const aux = await api.get(`/produtos`, {
         headers: {
-          cnpj: Number(user.cnpj),
+          cnpj:  user.cnpj ,
         },
         params:{
-          descricao: query,
+          descricao: term,
           ativo: filtroAtivo
         }
       });
@@ -101,11 +104,7 @@ console.log(user)
   function handleEditClick(codigo: number) {
     router.push(`/produtos/${codigo}`);
   }
-
-  function handleNewClick() {
-    console.log('Navigate to new product page');
-  }
-
+ 
   if (authLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -124,11 +123,14 @@ console.log(user)
     );
   }
 
+   
+  
+
 
     return (
 
- <div className=" min-h-screen flex flex-col sm:ml-14 p-4 w-full h-full justify-itens-center items-center   bg-slate-100"  >
-   <div className="w-5/6 p-8 mt-22 h-screen    rounded-lg bg-white shadow-md " >
+ <div className=" min-h-screen flex flex-col sm:ml-14 p-4 w-full h-full justify-itens-center items-center   bg-slate-100 overflow-auto "   >
+   <div className="w-5/6 p-8 mt-22 min-h-screen    rounded-lg bg-white shadow-md " >
      <div className="p-2 rounded-sm bg-slate-100">
 
          <div className="m-5  flex justify-between   ">
@@ -213,11 +215,7 @@ console.log(user)
                       <TableHead className="  w-[15%] text-base " > </TableHead>
                       <TableHead className="  w-[15%] text-base " > </TableHead>
                   </Table >
-  {
-    produtos.length > 0 ?
-    (
-      
-    
+   
           <ScrollArea className="w-full mt-4  h-4/6 overflow-auto  shadow-lg rounded-lg  ">
                 <Table  className="w-full bg-white rounded-xl ">
     
@@ -261,23 +259,22 @@ console.log(user)
                   </TableRow>
                 ))
               ) : (
-                <TableRow>
-                  <TableCell colSpan={5} className="h-24 text-center text-gray-500">
-                    Nenhum produto encontrado.
-                  </TableCell>
-                </TableRow>
+                isLoading ? 
+                (
+                  <div className="flex justify-center my-4"> {/* Container para centralizar */}
+                  <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+                </div>
+            ):
+            <p  className="text-xl text-gray-500   ml-7"> nenhum pedido encontrado!</p>  
+        
               ) }
                 
                 </TableBody>
                 
                 </Table>
           </ScrollArea>
-    ):(
-      <span className="text-xl text-gray-500 text-center ml-7"> nenhum produto encontrado!</span>
-
-    ) 
-  }         
-                
+    
+               
       </div>
 
       

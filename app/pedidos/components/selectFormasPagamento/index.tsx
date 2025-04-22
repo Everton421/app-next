@@ -1,19 +1,19 @@
 import { configApi } from "@/app/services/api";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/select";
 import { useAuth } from "@/contexts/AuthContext";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 
 type props = {
     codigoForma:number,
-    setCodigoForma:()=>{},
-    setFormaSelecionada: (value:any)=>{},
-    formaSelecionada:{},
+    setCodigoForma: Dispatch<SetStateAction<number>> ,
+    setFormaSelecionada: Dispatch<SetStateAction<any>> ,
+    formaSelecionada: formaPagamento | undefined,
 }
 
 export const SelectFormasPagamento = ({codigoForma, setCodigoForma, formaSelecionada, setFormaSelecionada }: props )=>{
 
-        const [ dados , setDados ] = useState([])
+        const [ dados , setDados ] = useState<formaPagamento[] | [] >([])
 
     const api = configApi();
          const { user }:any = useAuth();
@@ -21,21 +21,15 @@ export const SelectFormasPagamento = ({codigoForma, setCodigoForma, formaSelecio
     async function buscaFormas_Pagamento (){
         const response = await api.get("/offline/formas_Pagamento",
 
-            { headers:{ cnpj: Number(user.cnpj)}}
+            { headers:{ cnpj:  user.cnpj }}
         )
         if(response.status == 200 ){
-              
-                    //if(  response.data.length > 0 && forma_pagamento > 0){
-                    //    setFormaSelecionada(response.data.find((v)=> v.codigo === forma_pagamento)) 
-                    // } 
-                    // 
-
             setDados(response.data)
         }
     }
     
-     function selecFpgt ( fpgt ){
-       setFormaSelecionada(fpgt)
+     function selecFpgt ( fpgt:any ):void{
+       setFormaSelecionada( fpgt )
     }
 
 ////////
@@ -72,7 +66,7 @@ export const SelectFormasPagamento = ({codigoForma, setCodigoForma, formaSelecio
         { formaSelecionada &&    
           <div className="w-[40%] ml-[20%]  bg-white rounded-md shadow-md ">                  
                 <span className="text-gray-500 font-bold text-xl ml-3">
-              {  formaSelecionada?.descricao} 
+              {  formaSelecionada !== null ? formaSelecionada?.descricao : null} 
                 </span>
           </div>
            }

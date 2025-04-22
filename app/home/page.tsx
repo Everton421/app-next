@@ -7,12 +7,22 @@ import {   DollarSign } from "lucide-react";
  import { useEffect } from "react";
 
  import { redirect, useRouter } from "next/navigation"
+import { Button } from "@/components/ui/button";
 
 
-// REMOVA O 'async' DAQUI
+
 export default function Home() {
-  const { user, loading } = useAuth();
+  const { user, loading }:any = useAuth();
   const router = useRouter();
+
+
+  
+ function mostrarUsuario(){
+  console.log(user)
+ }
+
+
+
 
   useEffect(() => {
     if (!loading) {
@@ -114,7 +124,6 @@ export default function Home() {
           </Card>
 
       </section>
-         
          
         <div className="w-full items-center justify-center flex mt-10">
           <ChartOverView/>

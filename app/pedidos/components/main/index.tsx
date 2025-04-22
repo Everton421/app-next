@@ -22,11 +22,13 @@ import { Veiculos } from "../veiculos";
 import { useAuth } from "@/contexts/AuthContext";
 import { headers } from "next/headers";
 import { TipoPedidoSeletor } from "../tipoPedido";
+import { ThreeDot } from "react-loading-indicators";
+import { AlertDemo } from "@/components/alert/alert";
 
 export default function MainPedido( { codigo_pedido}:any ){
 
  
-   const { user, loading } = useAuth();
+   const { user, loading }:any = useAuth();
    const router = useRouter();
  
    useEffect(() => {
@@ -37,7 +39,7 @@ export default function MainPedido( { codigo_pedido}:any ){
      }
    }, [user, loading, router]);
  
- 
+   
    if (loading) {
      return (
        <div className="flex justify-center items-center h-screen">
@@ -54,7 +56,7 @@ export default function MainPedido( { codigo_pedido}:any ){
      );
    }
     const  [ produtosSelecionados, setProdutosSelecionados  ] = useState<any>([]);
-    const  [ servicosSelecionados, setServicosSelecionados  ] = useState ([]);
+    const  [ servicosSelecionados, setServicosSelecionados  ] = useState<any> ([]);
     const  [ clienteSelecionado, setClienteSelecionado ] = useState<any>({});
     const  [ total , setTotal ] = useState(0);
     const  [ totalProdutos , setTotalProdutos ] = useState(0);
@@ -69,7 +71,11 @@ export default function MainPedido( { codigo_pedido}:any ){
     const [visibleAlertPrice, setVisibleAlertPrice] = useState(false);
     const [ codigoNovoPedido, setCodigoNovoPedido ] = useState();
     const [ formaSelecionada , setFormaSelecionada] = useState();
+    const [isLoading, setIsLoading] = useState(false);  
  
+     const [ visible, setVisible ] = useState<boolean>(false);
+
+    const [ msgApi, setMsgApi ] = useState<string>();
 
     const [ codigoForma , setCodigoForma] = useState<number>(0);
 
@@ -144,7 +150,6 @@ function dataAtual() {
       const selecionarItens =   ( i:Produto_pedido )=>{
                 if(i){
                     i.quantidade = 1 
-                    if(!i.preco) i.preco = 0.00;
 
                     let v = produtosSelecionados.some((p:Produto_pedido)=> p.codigo === i.codigo )
                     if(v){
@@ -152,7 +157,6 @@ function dataAtual() {
                         return 
                     }
                     setProdutosSelecionados( ( prev:Produto_pedido[] ) => [...prev, i])
-                    //console.log(produtosSelecionados)
                 }
         
             }
@@ -161,6 +165,7 @@ function dataAtual() {
                 if(i){
                     i.quantidade = 1 
                     if(!i.valor) i.valor = 0.00;
+                    i.total = i.preco * i.quantidade
 
                     let v = servicosSelecionados.some((p:Servico_pedido)=> p.codigo === i.codigo )
                     if(v){
@@ -168,7 +173,7 @@ function dataAtual() {
                         return 
                     }
                     setServicosSelecionados( (prev:Servico_pedido[]) => [...prev, i])
-                    console.log(servicosSelecionados)
+                    //console.log(servicosSelecionados)
                 }
             }
         
@@ -179,11 +184,10 @@ function dataAtual() {
             quantidade = 1
         }
 
-
         setProdutosSelecionados((prevSelectedItems:Produto_pedido[]) => {
             return prevSelectedItems.map((i) => {
                 if (i.codigo === item.codigo) {
-                return { ...i, quantidade:  quantidade , total: ( quantidade * i.preco ) };
+                return { ...i, quantidade:  quantidade    };
                 }
                 return i;
             });
@@ -197,7 +201,7 @@ function dataAtual() {
         setServicosSelecionados((prevSelectedItems:Produto_pedido[]) => {
             return prevSelectedItems.map((i) => {
                 if (i.codigo === item.codigo) {
-                return { ...i, quantidade: quantidade,  };
+                return { ...i, quantidade: quantidade  };
                 }
                 return i;
             });
@@ -272,7 +276,6 @@ function dataAtual() {
        
        function gerarParcelaUnica( total,codigoPedido ){
         const aux = [{ pedido: codigoPedido, parcela: 1, valor: total, vencimento: dataAtual() }];
-        console.log(aux)
           return aux 
       }
 
@@ -323,6 +326,8 @@ function dataAtual() {
             }
         )
       }
+
+
       async function gravar (){
         if( dadosOrcamento.parcelas.length === 0 ){
             const aux = [{ pedido: dadosOrcamento.codigo ,parcela: 1, valor: total, vencimento: dataAtual() }];
@@ -339,42 +344,63 @@ function dataAtual() {
             }
 
                // console.log(dadosOrcamento)
+               setIsLoading(true)
               try{
                   let response = await api.post('/pedidos', [ dadosOrcamento] ,
                    { 
-                     headers: { cnpj: Number(user.cnpj) }
+                     headers: { cnpj:  user.cnpj  }
                    }
                     );
  
                      if( response.status === 200 ){
-                         console.log(response.data)
-                             router.push('/pedidos')
-                     }
+                             setMsgApi(`Pedido registrado com sucesso!`);
+                             setVisible(true)
+         
+                      }
                      
+                    
              }catch(e){
+                setMsgApi(`Erro ao tentar registrar pedido!`);
+                setVisible(true)
                  console.log(` Erro ao enviar o orcamento `+ e )
+             }finally{
+            setIsLoading(false)
+
              }
         }
+
+
+
+        
+    function delay(ms) {
+        return new Promise((resolve)=>{ setTimeout( resolve,ms )})
+       }
+
 
 {/*************************************************** */}
 
  ////////////////////////
 useEffect(()=>{
+
     async function filtro(){
-       
+
+    
         if( codigo_pedido !== null ){
+        
+            setIsLoading(true)
             try{    
                 const response = await api.get(`/pedido`,
                     {
                         params:{ codigo: codigo_pedido  },
                         headers:{
                              vendedor: user.vendedor ,
-                             cnpj: Number( user.cnpj)   
+                             cnpj:  user.cnpj    
                         }
                     }
                 ) 
-                if(response.status === 200 && response.data ){
-                    console.log(response.data)
+   
+                   if(response.status === 200 && response.data && response.data.length > 0 ){
+                //   console.log(response.data)
                     setDadosOrcamento(response.data[0])
             
                     if (response.data[0].servicos) {
@@ -405,15 +431,21 @@ useEffect(()=>{
                     
                     //console.log( response.data[0] )
                 }
-              }catch(e){console.log(e)}
+              }catch(e) {
+                console.log(e)
+              } finally{
+                setIsLoading(false)
+              }
         }
 
-        console.log(' useEffect  CARREGANDO PEDIDO', )
+        
     }
 
-    filtro()
+    if (user && !loading) {
+        filtro();
+    }
 
-},[ codigo_pedido ])
+},[ codigo_pedido  ])
  ////////////////////////
   
  ////////////////////////
@@ -428,7 +460,6 @@ useEffect(
             let data_recadastro = dataHoraAtual();
 
             let parcelaGerada = gerarParcelaUnica(0,aux);
-
             setDadosOrcamento(
                 ( prev )=>({
                     ...prev,
@@ -443,7 +474,7 @@ useEffect(
                     total_servicos: 0,
                     produtos:[],
                     formas_Pagamento:0,
-                    parcelas: gerarParcelaUnica(0,aux),
+                    parcelas: parcelaGerada,
                     veiculo: 0,
                     contato: '',
                     codigo:aux,
@@ -465,13 +496,26 @@ useEffect(
              let totalServicos = 0; 
              let totalGeral = 0; 
              
-             produtosSelecionados.forEach( (p)=>{
-                 totalProdutos += p.quantidade * p.preco 
-             })
+           
              
-             servicosSelecionados.forEach( (s)=>{
-                 totalServicos += s.quantidade * s.valor 
+             const produtos = produtosSelecionados.map( (p)=>{
+                totalProdutos= p.quantidade * p.preco
+
+                return {...p, total:( p.quantidade * p.preco)}
              })
+
+             const servicos = servicosSelecionados.map((s)=>{
+                totalServicos += s.quantidade * s.valor;
+
+                    return { ...s, total: (s.quantidade * s.valor)}
+             })
+
+           
+
+                console.log(produtos);
+                console.log(servicos);
+
+
              setTotalProdutos(totalProdutos)
              setTotalServicos(totalServicos)
          
@@ -499,8 +543,8 @@ useEffect(
                     codigo_cliente: clienteSelecionado?.codigo,
                     total_produtos:totalProdutos,
                     total_servicos:totalServicos,
-                    produtos: produtosSelecionados,
-                    servicos:servicosSelecionados,
+                    produtos: produtos,
+                    servicos: servicos,
                     total_geral: totalGeral,
                     quantidade_parcelas: novasParcelas?.length,
                     observacoes:observacoes,
@@ -545,17 +589,20 @@ useEffect(
 
    
  
- if (codigo_pedido !== null && !dadosOrcamento) {
-    return <div className=" min-h-screen flex  flex-col  sm:ml-14 p-4    bg-slate-100"  >
-          < span className=" text-gray-500 font-bold text-2xl">
-            Carregando...
-          </span>
-      </div>; // Ou algum outro indicador de carregamento
+ if (isLoading  ) {
+    return( 
+      <div className=" min-h-screen flex items-center justify-center flex-col sm:ml-14 p-4 bg-slate-100"  >
+      <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+     </div> 
+     )  
 }
 
 
 return(
         <div className="  min-h-screen sm:ml-14 p-4   w-full     bg-gray-100  ">
+
+             <AlertDemo content={msgApi}  visible={visible} setVisible={setVisible} to={'/pedidos'} />
+        
 
         <div className="flex justify-between w-4/5">
          {    codigo_pedido ? 
@@ -578,11 +625,8 @@ return(
                     <span className="text-2xl m-3  font-sans font-bold  ">
                         Cliente
                     </span>       
-                
                    <ListaClientes selecionarCliente={setClienteSelecionado}/>
-
                    <TipoPedidoSeletor setTipo={handleType}  tipo={dadosOrcamento?.tipo} />
-                   
                    </div>
             </div>
  
@@ -619,7 +663,6 @@ return(
                 </div>
             </div>
 
-       
             <div className="w-full items-center justify-center mt-5  ">
                 <Tabs defaultValue="Produtos" className="w-11/12   ">
                     <TabsList>
@@ -644,7 +687,7 @@ return(
                                 <div className="  shadow-lg" >
                                         <Table  className=" bg-white rounded-md  ">
                                             <TableBody>
-                                            { produtosSelecionados?.length > 0 &&
+                                            { produtosSelecionados && produtosSelecionados?.length > 0 &&
                                                 produtosSelecionados?.map((i:Produto_pedido)=>(
                                                     
                                                     <TableRow key={ i.codigo }  className=" gap-4   " > 
@@ -720,7 +763,7 @@ return(
                                                             <TableCell className=" w-80 font-medium text-center font-bold text-gray-600" >
                                                                 <input className=" border-gray-400 border-2 rounded-md w-40 text-center "
                                                                     placeholder="Quantidade:"     
-                                                                    onChange={ (e:any)=>  handleIncrementServices(i, e.target.value ) }
+                                                                    onChange={ (e:any)=>  handleIncrementServices(i, Number(e.target.value) ) }
                                                                 />
                                                                 {  i.quantidade &&
                                                                     <span className=" m-2">
@@ -732,7 +775,7 @@ return(
                                                                 placeholder="Preco:"  onChange={ (e)=>  handlePriceServices(i, e.target.value ) }
                                                                 defaultValue={i.valor }
                                                                 />
-                                                        <span>  valor R$ {i.valor.toFixed(2)  } </span>
+                                                        <span>  valor R$ { Number(i.valor).toFixed(2)  } </span>
                                                             </TableCell>
                                                         <TableCell className="  w-40  font-medium text-center font-bold text-gray-600 ">
                                                                     <span> total R$ {  (i.quantidade * i.valor).toFixed(2)}</span>
@@ -797,12 +840,14 @@ return(
                     </TabsContent>
 
                     <TabsContent value="Veículos">
+                    {
                     <Veiculos 
                          cliente={dadosOrcamento?.cliente}
                          setVeiculo={handleVeic}
                          codigoPedido={codigo_pedido}
                          codigoVeiculo={dadosOrcamento?.veiculo}
                            />
+                            }
                     </TabsContent>
 
                 </Tabs>       

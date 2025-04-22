@@ -6,18 +6,16 @@ import {
     SelectTrigger,
     SelectValue,
   } from "@/components/ui/select"
+import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
   
 export const SelectVendedor = ({ defaultVendedor, onChangeVendedor  }: any ) => {
 
     let api = configApi();
     const [ vendedores, setVendedores ] = useState([]);
-
+    const { user, loading }: any = useAuth();
 
     const handleSelect = async (value) => {
-
-      
-
         onChangeVendedor(value)
         console.log(value)
     };
@@ -26,7 +24,10 @@ export const SelectVendedor = ({ defaultVendedor, onChangeVendedor  }: any ) => 
     ///////
     useEffect(()=>{
         async function busca(){
-            let dadosVendedores = await api.get('/usuarios');
+            let dadosVendedores = await api.get('/usuarios',{
+              headers: { cnpj:  user.cnpj }
+            }
+            );
             if(dadosVendedores.data.length > 0 ){
                 setVendedores(dadosVendedores.data)
             }

@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead,   TableRow } from "@/components/ui/table";
 import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button";
-import {   Check, CheckCheck, ClipboardCheck, ClipboardPenLine,    Edit,    Plus,    Printer,   Terminal,   X  } from "lucide-react";
+import {   Check, CheckCheck, ClipboardCheck, ClipboardList, ClipboardPenLine,    Edit,    Plus,    Printer,   Terminal,   Wrench,   X  } from "lucide-react";
 import  { useAuth } from "@/contexts/AuthContext";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FiltroPedidos } from "./components/filtrosPedidos";
@@ -15,6 +15,7 @@ import { DateService } from "../services/dateService";
 import { TooltipProvider, TooltipTrigger, Tooltip, TooltipContent} from "@/components/ui/tooltip";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { ThreeDot } from "react-loading-indicators";
 
 
 export default function Pedidos(){
@@ -26,7 +27,8 @@ export default function Pedidos(){
       const [ filtroSituacao, setFiltroSituacao ] = useState<string>('full');
       const [ dataInicial, setDataInicial ] = useState<string>('2025-01-01')
       const [ dataFinal, setDataFinal ] = useState<string>('2025-03-27')
-      const [ carregando , setCarregando ] = useState(true)
+      const [ carregando , setCarregando ] = useState(false)
+      const  [ filtertipoPedidos, setFilterTipoPedidos ] = useState(1); // 1: pedido, 3: ordem servico 
 
      const router = useRouter() 
      const api = configApi();
@@ -43,7 +45,12 @@ export default function Pedidos(){
     }
   }, [user, loading, router]);
 
+
+  
+
   async function busca( dataInicial:string, dataFinal:string,   filter:any){
+    setDados([])
+    setCarregando(true);
     let params  
 
     let paramFilter 
@@ -54,6 +61,8 @@ export default function Pedidos(){
         dataInicial: dataInicial,
         dataFinal: dataFinal,
         vendedor:user.vendedor,
+        tipo: filtertipoPedidos,
+
         nome: filter
       }
       
@@ -64,9 +73,9 @@ export default function Pedidos(){
         dataInicial: dataInicial,
         dataFinal: dataFinal,
         vendedor:user.vendedor,
+        tipo: filtertipoPedidos,
         cliente: filter
       }
-      
     }
 
     { filter !== null ?
@@ -76,21 +85,27 @@ export default function Pedidos(){
          dataInicial: dataInicial,
          dataFinal: dataFinal,
           vendedor:user.vendedor,
+        tipo: filtertipoPedidos,
       }
     }
-    let header = { cnpj: Number(user.cnpj)}
-    console.log(params)
-  
+    let header = { cnpj:  user.cnpj }
+ 
     try{
+
+//    await delay(5000)
+
         let aux = await api.get(`/pedidos/vendas`,{
           params: params,
           headers: header
         });
+        
         setDados(aux.data)
         setDadosFiltro(aux.data)
         setCarregando(false)
       }catch(e){
          console.log(e) 
+    }finally{
+
     }
 }
 
@@ -144,6 +159,7 @@ useEffect( ()=>{
 
 }
 
+ 
 
   if (loading) {
     return (
@@ -199,7 +215,15 @@ useEffect( ()=>{
                    </Button>
 
                <div className="gap-1">  
-                  <FiltroPedidos setDataInicial={setDataInicial} setDataFinal={setDataFinal}  dataInicial={dataInicial} dataFinal={dataFinal}/>
+                  <FiltroPedidos 
+                    setDataInicial={setDataInicial} 
+                    setDataFinal={setDataFinal} 
+                    dataInicial={dataInicial}
+                    dataFinal={dataFinal}
+                   filtrTipo={filtertipoPedidos}
+                   setFiltroTipo={setFilterTipoPedidos}
+                   />
+
                 </div>
           </div>
 
@@ -227,7 +251,7 @@ useEffect( ()=>{
 
           </div>
       
-    
+   
  
           {   dados.length > 0 ?
               (
@@ -236,7 +260,7 @@ useEffect( ()=>{
                    <TableBody>
 
                { 
-                  dadosFiltro.length > 0 &&
+                  dadosFiltro.length > 0 && !carregando &&
                     dadosFiltro.map((i:any)=>(
 
                  
@@ -269,7 +293,7 @@ useEffect( ()=>{
                                              {i.data_cadastro  }
                                         </TableCell>
                                         
-                                        <TableCell className="    text-center font-bold text-gray-600 "> 
+                                        <TableCell className="  text-center font-bold text-gray-600 " rowSpan={1} > 
                                           <button 
                                           onClick={()=>{ 
                                           router.push(`/pedidos/${i.codigo}/imprimir`)}}
@@ -287,6 +311,26 @@ useEffect( ()=>{
                                            </button>
                                         </TableCell>
 
+                                        <TableCell className="      text-center font-bold text-gray-600 "> 
+                                         
+                                              { i.tipo === 1 ?  
+                                                <button className="cursor-pointer " title="Pedido de Venda" >
+                                                  <div className="bg-green-800  p-1  w-7 rounded-sm">  
+                                                      <ClipboardList  size={20} color="#FFF" strokeWidth={2} />
+                                                  </div>
+                                                </button>
+                                                 :
+                                                <button className="cursor-pointer " title="Ordem De Serviço" >
+                                                   <div className="bg-green-800  p-1  w-7 rounded-sm">  
+                                                     <Wrench  size={20} color="#FFF" strokeWidth={2} />
+                                                  </div>
+                                                </button>
+                                                 
+                                                 }
+
+
+
+                                        </TableCell>
 
                                         <TooltipContent>
                                            <p>codigo: {i?.codigo}</p>
@@ -306,7 +350,13 @@ useEffect( ()=>{
                </ScrollArea>
 
                 ) : (
-                 <p > nenhum pedido encontrado!</p>
+                    carregando  ? (
+                     <div className="flex justify-center my-4"> {/* Container para centralizar */}
+                       <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+                     </div>
+                     ) :
+              <p   className="text-xl text-gray-500   ml-7"> nenhum pedido encontrado!</p>  
+
               )
         }
 
@@ -314,7 +364,7 @@ useEffect( ()=>{
    
 
 
-      <div className=" bg-slate-100 p-2  sm:ml-14  fixed bottom-0 left-0 right-0 rounded-xl shadow-md  ">
+      <div className=" bg-slate-100 p-2  sm:ml-14  fixed bottom-0 left-0 right-0 rounded-xl shadow-md items-center flex justify-center ">
           <div className="">
             
                

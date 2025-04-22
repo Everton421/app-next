@@ -11,6 +11,7 @@ import { configApi } from "../services/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { basicServico } from "./types/servico";
+import { ThreeDot } from "react-loading-indicators";
 
 
 export default function servicos(){
@@ -21,16 +22,23 @@ const {user, loading }:any = useAuth();
  const [ dados, setDados ] = useState();
  const [ servicos, setServicos ] = useState([]);
  const [ filtroAtivo, setFiltroAtivo ] = useState('S');
+ const [isLoading, setIsLoading] = useState(false);  
 
     const api = configApi();
-
     const router = useRouter();
 
+    function delay(ms) {
+      return new Promise((resolve)=>{ setTimeout( resolve,ms )})
+     }
 
     async function busca() {
+      setServicos([])
+      setIsLoading(true)
+      try{
+
       let result = await api.get(`/servicos`, { 
           headers:{
-             cnpj: Number(user.cnpj)
+             cnpj:  user.cnpj 
           }, 
           params:{
             aplicacao: pesquisa,
@@ -43,6 +51,12 @@ const {user, loading }:any = useAuth();
           setServicos( result.data);
           console.log(result.data)
       }
+    }catch(e){
+      console.log(e.response)
+    }finally{
+      setIsLoading(false)
+    }
+    
     }
 
 
@@ -228,6 +242,12 @@ const {user, loading }:any = useAuth();
                     </Table>
               </ScrollArea>
         ):(
+          isLoading ? 
+          (
+            <div className="flex justify-center my-4"> {/* Container para centralizar */}
+            <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+          </div>
+      ):
           <span className="text-xl text-gray-500 text-center m-7 "> nenhum serviço encontrado!</span>
       
         )  

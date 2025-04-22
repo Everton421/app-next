@@ -126,7 +126,7 @@ interface FotoProduto {
  async function gravar (){
     try {
         let result = await api.post('/produto', data ,{
-            headers:{ cnpj: Number(user.cnpj)}
+            headers:{ cnpj: user.cnpj  }
         });
         if (result.status === 200 && result.data.codigo > 0) {
             console.log(result)

@@ -74,7 +74,7 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
 
     async function delay(ms:number){
         return new Promise((resolve)=>{
-           resolve( setTimeout(()=>{},ms) )
+             setTimeout(  resolve,ms  )
         })
     }
 
@@ -90,12 +90,14 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
         }
 
         async function busca() {
-            setIsLoading(true);
+
+            await delay(2000)
+
             try {
                 const [dadosRes, fotosRes] = await Promise.all([
                     api.get(`/produtos`, {
                         headers: {
-                             cnpj: Number(user.cnpj) 
+                             cnpj:  user.cnpj 
                             },
                             params:{
                                 codigo:params.codigo,

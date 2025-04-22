@@ -2,15 +2,18 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/popover"
 import { Button } from "@/components/ui/button";
 import { ListFilter } from "lucide-react";
 import { useState } from "react";
+import { TipoPedidoSeletor } from "../tipoPedido";
 
 type props ={
   setDataInicial:(value:any )=>{}
     setDataFinal: (value:any )=>{}
     dataInicial: string
     dataFinal: string
+    filtrTipo:number,
+     setFiltroTipo:(value:number)=>{}
 }
 
-export const FiltroPedidos  = ({ setDataInicial, setDataFinal , dataInicial, dataFinal }:props)=>{
+export const FiltroPedidos  = ({ setDataInicial, setDataFinal , dataInicial, dataFinal, filtrTipo, setFiltroTipo }:props)=>{
   const [date, setDate] =  useState<Date | undefined>(new Date())
  
   
@@ -23,7 +26,7 @@ export const FiltroPedidos  = ({ setDataInicial, setDataFinal , dataInicial, dat
               </Button> 
        </PopoverTrigger>
 
-        <PopoverContent className="bg-white w-full ">
+         <PopoverContent className="bg-white w-full ">
                 <div className="w-full  flex">
                   < label className="m-5 font-bold "> inicio</label>
 
@@ -41,9 +44,13 @@ export const FiltroPedidos  = ({ setDataInicial, setDataFinal , dataInicial, dat
                         onChange={(v)=> setDataFinal(v.target.value)} 
                         defaultValue={dataFinal} 
                         />
-
-                </div>                     
+                 </div>                     
+             
+               <div className=" m-2">
+                <TipoPedidoSeletor  setTipo={setFiltroTipo} tipo={filtrTipo}  />
+              </div>
              </PopoverContent>
+
       </Popover>
     )
 }

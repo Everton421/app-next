@@ -11,6 +11,7 @@ import { useEffect, useState } from "react"
 import { configApi } from "../services/api";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/contexts/AuthContext";
+import { ThreeDot } from "react-loading-indicators";
 
 
 
@@ -38,22 +39,43 @@ export default function Clientes() {
   const api = configApi()
   const [pesquisa, setPesquisa] = useState('');
   const [ filtroAtivo, setFiltroAtivo ] = useState('S');
+  const [isLoading, setIsLoading] = useState(false);  
+  
   const { user, loading }:any = useAuth();
   const router = useRouter();
 
+
+
+
+  function delay(ms) {
+    return new Promise((resolve)=>{ setTimeout( resolve,ms )})
+   }
+  
+
   useEffect(() => {
+
     async function busca() {
+      setClientes([])
+
+      setIsLoading(true)
+    //  await delay(2000)
       try {
         const aux = await api.get(`/clientes`, {
-          headers: { cnpj: Number(user.cnpj) },
+          headers: { cnpj:  user.cnpj  },
           params:{
              nome:pesquisa,
             ativo: filtroAtivo
           }
         });
         setClientes(aux.data)
-      } catch (e) { console.log(e) }
+      } catch (e) { console.log(e) 
+
+      }finally{
+      setIsLoading(false)
+
+      }
     }
+    
     busca()
   }, [pesquisa, filtroAtivo])
 
@@ -228,7 +250,6 @@ export default function Clientes() {
                                                         </div>
                                             </div>
                             </TableCell>
-
                           </TableRow>
 
                         ))
@@ -238,6 +259,12 @@ export default function Clientes() {
                   </Table>
                 </ScrollArea>
               ) : (
+                   isLoading ? 
+                                (
+                                  <div className="flex justify-center my-4"> {/* Container para centralizar */}
+                                  <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+                                </div>
+                            ):
                 <span className="text-xl text-gray-500 text-center ml-7"> nenhum cliente encontrado!</span>
               )
           }

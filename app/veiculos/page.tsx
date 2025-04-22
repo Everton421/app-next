@@ -12,25 +12,27 @@ import { Table, TableBody, TableCell, TableHead, TableRow } from "@/components/u
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FiltroVeiculos } from "./components/filtroVeiculos";
 import { Checkbox } from "@radix-ui/react-checkbox";
+import { ThreeDot } from "react-loading-indicators";
 
 export default function Veiculos(){
       
       const [pesquisa, setPesquisa] = useState<any>();
       const router = useRouter();
       const [isLoading, setIsLoading] = useState(false);  
-      const [ veiculos, setVeiculos ] = useState();
+      const [ veiculos, setVeiculos ] = useState([]);
       const [ filtroAtivo, setFiltroAtivo ] = useState<'S'| 'N' >('S');
 
   const { user, loading: authLoading }: any = useAuth();
   const api = configApi();
 
 
+   
       async function busca( ) {
-   //     if (!user?.cnpj) return;
-   //     setIsLoading(true);
-   //     const query = term.trim() === '' ? '1' : term.trim();
-        
-        let param;
+        setVeiculos([]);
+
+      setIsLoading(true);
+   
+      let param;
 
             if( isNaN(pesquisa)){
                 param =
@@ -52,7 +54,7 @@ export default function Veiculos(){
          try {
           const aux = await api.get(`/veiculos`, {
             headers: {
-              cnpj: Number(user.cnpj),
+              cnpj:  user.cnpj ,
             },
             params: param
           
@@ -65,7 +67,6 @@ export default function Veiculos(){
         } catch (e) {
           console.error('Erro ao buscar veiculos:', e);
           
-          setVeiculos([]);
         } finally {
           setIsLoading(false);
         }
@@ -165,8 +166,6 @@ export default function Veiculos(){
           { 
            veiculos && veiculos.length > 0 ?
             (
-
-
             <ScrollArea className="w-full mt-4  h-4/6 overflow-auto  shadow-lg rounded-lg  ">
             <Table  className="w-full bg-white rounded-xl ">
 
@@ -232,6 +231,12 @@ export default function Veiculos(){
             </Table>
             </ScrollArea>
             ):(
+                isLoading ? 
+                (
+                  <div className="flex justify-center my-4"> {/* Container para centralizar */}
+                  <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+                </div>
+            ):
             <span className="text-xl text-gray-500 text-center m-7 "> nenhum veículo encontrado!</span>
 
             )  

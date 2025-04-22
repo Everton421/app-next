@@ -46,7 +46,7 @@ export default function ListaServicos( { selecionarServico}:any){
                     const response = await api.get(`/servicos`,
                         { 
                             headers:{
-                                 cnpj: Number(user.cnpj)
+                                 cnpj:  user.cnpj 
                                  },
                             params: params     
                             

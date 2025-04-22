@@ -20,6 +20,7 @@ import { Save, ArrowLeft } from "lucide-react"; // Add ArrowLeft if you want a b
 import { useRouter } from "next/navigation"; // Use router for navigation
 import { useCallback, useEffect, useState } from "react";
 import { basicServico } from "../types/servico";  
+import { ThreeDot } from "react-loading-indicators";
 
 
 export default function ServicoEdit({ params }: { params: { codigo: string } }) {  
@@ -44,13 +45,19 @@ export default function ServicoEdit({ params }: { params: { codigo: string } }) 
              setIsLoading(false);  
             return;
         }
+        function delay(ms) {
+            return new Promise((resolve)=>{ setTimeout( resolve,ms )})
+           }
 
         async function busca() {
             setIsLoading(true);
+
+            await delay(2000);
+
             try {
                 const result = await api.get(`/servicos`, {
                     params: { codigo: Number(params.codigo) , limit:1 },
-                    headers: { cnpj: Number(user.cnpj) },
+                    headers: { cnpj:  user.cnpj  },
                 });
 
                 if (result.status === 200 && result.data?.length > 0) {
@@ -95,7 +102,7 @@ export default function ServicoEdit({ params }: { params: { codigo: string } }) 
  
         try {
             const result = await api.put('/servico', dadosParaGravar, {
-                headers: { cnpj: Number(user.cnpj) },
+                headers: { cnpj:  user.cnpj  },
             });
             console.log(result);
             if (result.status === 200 && result.data?.codigo > 0) {  
@@ -129,9 +136,9 @@ export default function ServicoEdit({ params }: { params: { codigo: string } }) 
 
     if (isLoading) {
         return (
-            <div className="flex justify-center items-center min-h-screen">
-                <p>Carregando dados do serviço...</p> {/* Or use a spinner */}
-            </div>
+             <div className="flex  my-4 items-center justify-center"> {/* Container para centralizar */}
+                 <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+               </div>
         );
     }
 
