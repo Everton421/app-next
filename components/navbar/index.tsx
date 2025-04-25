@@ -7,7 +7,7 @@ export default   function Navbar  () {
   //const { nomeEmpresa} = useContext(AuthContex);
 
   return (
-    <nav className=" w-full bg-black sm:ml-14 p-2 flex justify-between print:hidden ">
+    <nav className=" w-full bg-black sm:ml-14 p-2 flex justify-between  print:hidden  ">
          <Image 
           className="rounded-sm ml-1"
             src="/images/design.png"

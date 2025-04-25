@@ -1,8 +1,3 @@
-
-
-
- 
-
 'use client'
  
 import { useCallback, useEffect, useState } from "react";
@@ -28,7 +23,7 @@ import { ThreeDot } from "react-loading-indicators";
 import { AlertDemo } from "@/components/alert/alert";
 import { DateService } from "@/app/services/dateService";
 
-export default function MainPedido(){
+export default function EditPedido(){
 
     const  [ produtosSelecionados, setProdutosSelecionados  ] = useState<Produto_pedido[] | []  >([]);
     const  [ servicosSelecionados, setServicosSelecionados  ] = useState<Servico_pedido[] | [] > ([]);
@@ -52,43 +47,18 @@ export default function MainPedido(){
 
    const params = useParams();  
  
-   const { user, loading }:any = useAuth();
+   const { user, loading:loadingAuth }:any = useAuth();
    const router = useRouter();
    const  codigo_pedido:number   = Number(params.codigo); 
- 
+   const api = configApi();
+   const dateService = DateService();
+
+
    useEffect(() => {
-     if (!loading) {
-       if (!user) {
-         router.push('/'); // Redireciona para a página de login (ajuste se for outra)
-       }
-     }
-   }, [user, loading, router]);
- 
-   
-   if (loading) {
-     return (
-       <div className="flex justify-center items-center h-screen">
-          <p>Verificando autenticação...</p>
-       </div>
-     );
-   }
- 
-   if (!user) {
-     return (
-        <div className="flex justify-center items-center h-screen">
-           <p>Redirecionando para login...</p>
-        </div>
-     );
-   }
   
-    
- const api = configApi();
- const dateService = DateService();
-  ////////////////////////
-useEffect(()=>{
-    async function filtro(){
-        if( codigo_pedido !== null ){
-            setIsLoading(true)
+     async function filtro(){
+
+        setIsLoading(true)
             try{    
                 const response = await api.get(`/pedido`,
                     {
@@ -101,83 +71,170 @@ useEffect(()=>{
                 ) 
    
                    if(response.status === 200 && response.data && response.data.length > 0 ){
-                //   console.log(response.data)
                     setDadosOrcamento(response.data[0])
-            
-                    if (response.data[0].servicos) {
-                        setServicosSelecionados(response.data[0].servicos);
-                    }
-                    if (response.data[0].produtos) {
-                        setProdutosSelecionados(response.data[0].produtos);
-                    }
-                    if (response.data[0].cliente) {
-                        setClienteSelecionado(response.data[0].cliente);
-                    }
-                    if (response.data[0].parcelas) {
-                        setParcelas(response.data[0].parcelas);
-                    }
-            
-                    if( response.data[0].observacoes ){
-                        setObservacoes( response.data[0].observacoes )
-                    }
-                    if( response.data[0].situacao ){
-                        setSituacao(response.data[0].situacao);
-                    }
-                   // if( response.data[0].codigo_site ){
-                   //     dadosOrcamento && dadosOrcamento.codigo = response.data[0].codigo_site
-                   // }
-                    //if( response.data[0].forma_pagamento){
-                    //    setCodigoForma(response.data[0].forma_pagamento)
-                    //}
+                    setTotal(response.data[0].total);
+                    setTotalProdutos(response.data[0].total_produtos)
+                    setTotalServicos(response.data[0].total_servicos);
+                    setClienteSelecionado(response.data[0].cliente)
+                    setSituacao(response.data[0].situacao)
+                    setObservacoes(response.data[0].observacoes)
+                    
                 }
               }catch(e) {
                 console.log(e)
               } finally{
                 setIsLoading(false)
               }
-        }
-        
+         
     }
-
-    if (user && !loading) {
+    if (codigo_pedido && user && !loadingAuth) {
         filtro();
+    }else{
+        setIsLoading(true)
     }
 
-},[ codigo_pedido  ])
- ////////////////////////
+}, [codigo_pedido, user, loadingAuth ]);  
 
-    // funções dos produtos/servicos
-{/*************************************************** */}
+   useEffect(
+    ()=>{
+        function ajusteTotais(){
+            let totalProdutos = 0;
+            let totalServicos = 0; 
+            let totalGeral = 0; 
+            
+               if( dadosOrcamento && dadosOrcamento.servicos.length > 0  ){
+                   dadosOrcamento.servicos.map((i)=>{
+                       totalServicos += i.quantidade * i.valor;
+                   })
+               }
+               if( dadosOrcamento && dadosOrcamento.produtos.length > 0  ){
+                   dadosOrcamento.produtos.map((i)=>{
+                       totalProdutos += i.quantidade * i.preco;
+                   })
+               }
+
+            setTotalProdutos(totalProdutos)
+            setTotalServicos(totalServicos)
+        
+            totalGeral = totalProdutos + totalServicos
+            setTotal(totalGeral)
+
+
+            let qtdParcelas:number = 0;
+            if(parcelas && parcelas.length > 0 ) qtdParcelas = parcelas.length  
+
+
+           setDadosOrcamento(
+               (prev:any)=>({
+                   ...prev, 
+                   cliente:clienteSelecionado,
+                   codigo_cliente: clienteSelecionado?.codigo,
+                   total_produtos:totalProdutos,
+                   total_servicos:totalServicos,
+                   total_geral: totalGeral,
+                   quantidade_parcelas: qtdParcelas,
+                   observacoes:observacoes,
+                   situacao: situacao,
+               }) 
+           )
+        }
+    ajusteTotais();
+    },  [  produtosSelecionados , servicosSelecionados, clienteSelecionado , observacoes, situacao])
+
+    useEffect(()=>{
+        let parcela = gerarParcelaUnica( total, codigo_pedido)
+
+        setDadosOrcamento(
+            (prev:any)=>({
+                ...prev, 
+                 parcelas: parcela
+            }) 
+        )
+
+    },  [   total])
+     
+
+
+    ////////////////////////
+    useEffect(()=>{
+        if( codigo_pedido !== null ){
+        let aux =  gerarParcelas(formaSelecionada, total,codigo_pedido )
+          setDadosOrcamento(
+              (prev:any)=>({
+                  ...prev,
+                     quantidade_parcelas: aux.length,
+                     parcelas:aux
+                    })
+                )
+        } 
+
+    },[ formaSelecionada ])
+    
+
+  ////////////////////////
+
 
 
       const selecionarItens =   ( i:Produto_pedido )=>{
                 if(i && produtosSelecionados ){
                     i.quantidade = 1 
 
-                    let v = produtosSelecionados.some((p:Produto_pedido)=> p.codigo === i.codigo )
+                    //let v = produtosSelecionados.some((p:Produto_pedido)=> p.codigo === i.codigo )
+                    //if(v){
+                    //    console.log(`produto ${i.codigo} ja foi adicionado`)
+                    //    return 
+                    //}
+                    setProdutosSelecionados( ( prev:any) => [...prev, i])
+                }
+
+            if(dadosOrcamento && dadosOrcamento.produtos ){
+                    let auxProd = dadosOrcamento.produtos
+                let prod;
+                    let v = auxProd.some((p:Produto_pedido)=> p.codigo === i.codigo )
                     if(v){
                         console.log(`produto ${i.codigo} ja foi adicionado`)
                         return 
                     }
-                    setProdutosSelecionados( ( prev:any) => [...prev, i])
-                }
-        
+
+                    i.total = i.quantidade * i.preco;
+                    auxProd.push(i);
+
+                    setDadosOrcamento((prev:any)=>({
+                        ...prev,
+                        produtos: auxProd
+                    }))
+                 }
+
             }
 
       const selecionarServicos =    (i:Servico_pedido)=>{
                 if(i && servicosSelecionados){
-                    i.quantidade = 1 
-                    if(!i.valor) i.valor = 0.00;
-                    i.total = i.valor * i.quantidade
-
-                    let v = servicosSelecionados.some((p:Servico_pedido)=> p.codigo === i.codigo )
-                    if(v){
-                        console.log(`servicos ${i.codigo} ja foi adicionado`)
-                        return 
-                    }
+                //    i.quantidade = 1 
+                //    if(!i.valor) i.valor = 0.00;
+                //    i.total = i.valor * i.quantidade
+//
+                //    let v = servicosSelecionados.some((p:Servico_pedido)=> p.codigo === i.codigo )
+                //    if(v){
+                //        console.log(`servicos ${i.codigo} ja foi adicionado`)
+                //        return 
+                //    }
                     setServicosSelecionados( (prev:any ) => [...prev, i])
-                    //console.log(servicosSelecionados)
                 }
+
+                        let auxServ = dadosOrcamento?.servicos ||  [];
+
+                        if( auxServ.length > 0 ){
+                            let v = auxServ.some((s )=> s.codigo === i.codigo);
+                                if(v) {
+                                    console.log(`servicos ${i.codigo} ja foi adicionado`)
+                                    return;
+                                }
+                            }
+
+                              i.total = i.quantidade * i.valor;
+                            auxServ.push(i);
+                            setDadosOrcamento((prev:any)=>({...prev, servicos:auxServ }))      
+
             }
         
        
@@ -186,8 +243,8 @@ useEffect(()=>{
             console.log("é necessario informar uma quantidade valida")
             quantidade = 1
         }
-
-        if(produtosSelecionados !== undefined){ 
+        
+         if(produtosSelecionados !== undefined){ 
 
          setProdutosSelecionados((prevSelectedItems:any) => {
              return prevSelectedItems.map((i:Produto_pedido) => {
@@ -197,15 +254,29 @@ useEffect(()=>{
                  return i;
              });
              });
-        }
+        } 
+        
+        if( dadosOrcamento && dadosOrcamento.produtos.length > 0 ){
+                let auxprod = dadosOrcamento.produtos;
+                
+                let prod = auxprod.map((i:Produto_pedido)=>{
+                    if (i.codigo === item.codigo) {
+                        return { ...i, quantidade:  quantidade , total: (quantidade * i.preco )};
+                        }
+                        return i;
+                })
+                setDadosOrcamento((prev:any)=>({...prev, produtos: prod}))
+          }
+
       };
 
-      const handleIncrementServices = (item:Produto_pedido, quantidade:number ) => {
+      const handleIncrementServices = (item:Servico_pedido, quantidade:number ) => {
         if( !quantidade  || isNaN(quantidade )){
-            quantidade = 0
+            //quantidade = 1
+            Number(quantidade)
         }
-        if(servicosSelecionados !== undefined){ 
 
+        if(servicosSelecionados !== undefined){ 
         setServicosSelecionados((prevSelectedItems:any ) => {
             return prevSelectedItems.map((i:Servico_pedido) => {
                  if (i.codigo === item.codigo) {
@@ -215,35 +286,61 @@ useEffect(()=>{
                     });
                 });
             }
+
+            if( dadosOrcamento && dadosOrcamento.servicos){
+                let auxServ = dadosOrcamento?.servicos || [];
+
+                let serv;
+                        item.total = item.quantidade *  item.valor;
+                        serv = auxServ.map((s)=>{
+                        if(s.codigo === item.codigo){
+                            return { ...s, quantidade:quantidade, total: ( quantidade * item.valor)  }
+                        }
+                        return s;
+                    })
+                    setDadosOrcamento((prev:any)=>({...prev, servicos:serv  }))      
+                }
+
         };
 
         const handlePrice = (item:Produto_pedido, preco:any) => {
 
             const price = parseFloat(preco);
-          setProdutosSelecionados((prevSelectedItems:Produto_pedido[]) => {
-              
-              if (isNaN(price) || price < 0) {
-                  setVisibleAlertPrice(true);
-              } else {
-                  setVisibleAlertPrice(false);
-                  item.preco = price; // ou a lógica que você usa para atualizar o preço
-              }
-  
-  
+            if (isNaN(price) || price < 0) {
+                setVisibleAlertPrice(true);
+            } else {
+                setVisibleAlertPrice(false);
+                item.preco = price; // ou a lógica que você usa para atualizar o preço
+            }
+    
+            setProdutosSelecionados((prevSelectedItems:Produto_pedido[]) => {
               return prevSelectedItems.map((i) => {
                   if (i.codigo === item.codigo) {
                     return { ...i, preco:   price    };
                   }
-              return i;
+                     return i;
+                });
             });
-          });
+
+             if( dadosOrcamento && dadosOrcamento.produtos.length > 0 ){
+                let auxprod = dadosOrcamento.produtos;
+                
+                let prod = auxprod.map((i:Produto_pedido)=>{
+                    if (i.codigo === item.codigo) {
+                        return { ...i, preco: preco , total: (i.quantidade * preco )};
+                        }
+                        return i;
+                })
+                setDadosOrcamento((prev:any)=>({...prev, produtos: prod}))
+          }
+
+
         };
 
       const handlePriceServices = (item:Servico_pedido, valor:number) => {
-        setServicosSelecionados((prevSelectedItems:Servico_pedido[]) => {
-            
-            let auxPreco =     isNaN(valor) ?  0 : valor  
+        let auxPreco =     isNaN(valor) ?  0 : valor  
 
+        setServicosSelecionados((prevSelectedItems:Servico_pedido[]) => {
             return prevSelectedItems.map((i) => {
                 if (i.codigo === item.codigo) {
                   return { ...i, valor:   auxPreco    };
@@ -251,6 +348,20 @@ useEffect(()=>{
             return i;
           });
         });
+
+        if( dadosOrcamento && dadosOrcamento.servicos){
+            let auxServ = dadosOrcamento?.servicos || [];
+            let serv;
+                    item.total = item.quantidade *  item.valor;
+                    serv = auxServ.map((s)=>{
+                    if(s.codigo === item.codigo){
+                        return { ...s, valor:valor, total: ( s.quantidade * valor)  }
+                    }
+                    return s;
+                })
+
+                setDadosOrcamento((prev:any)=>({...prev, servicos:serv  }))      
+            }
       };
 
       const deleteItem = (item:Produto_pedido ) => {
@@ -263,6 +374,20 @@ useEffect(()=>{
             }
                  }
              )
+
+             if( dadosOrcamento && dadosOrcamento.produtos ){
+                    let prods;
+                    let auxProd = dadosOrcamento.produtos;
+                    const index = auxProd.findIndex( i => i.codigo === item.codigo );
+                    if( index !== -1){
+                        prods = auxProd.filter( i=> i.codigo !== item.codigo);
+                    }else{
+                        prods=auxProd;
+                    }
+                    setDadosOrcamento((prev:any)=>({...prev , produtos:prods}))
+             }
+        
+             
        }
 
        const deleteServico = (item:Servico_pedido ) => {
@@ -275,6 +400,19 @@ useEffect(()=>{
             }
                  }
              )
+
+             if( dadosOrcamento && dadosOrcamento.servicos){
+                let services;
+                let auxServ = dadosOrcamento.servicos;
+                const index = auxServ.findIndex((i)=> i.codigo === item.codigo);
+                if( index !== -1){
+                    services = auxServ.filter((i)=> i.codigo !== item.codigo);
+                }else{
+                    services = auxServ
+                }
+                setDadosOrcamento((prev:any)=>({...prev, servicos: services}))
+             }
+
        } 
 
        
@@ -346,8 +484,9 @@ useEffect(()=>{
 
             dadosOrcamento.data_recadastro = dateService.obterDataHoraAtual();
 
-               // console.log(dadosOrcamento)
-               setIsLoading(true)
+             
+                 //console.log(dadosOrcamento)
+                setIsLoading(true)
               try{
                   let response = await api.post('/pedidos', [ dadosOrcamento] ,
                    { 
@@ -368,82 +507,26 @@ useEffect(()=>{
                  console.log(` Erro ao enviar o orcamento `+ e )
              }finally{
             setIsLoading(false)
-
              }
+              
         }
 
- 
-  
- ////////////////////////
- useEffect(
-     ()=>{
-         function ajusteTotais(){
-             let totalProdutos = 0;
-             let totalServicos = 0; 
-             let totalGeral = 0; 
-             
-             const produtos = produtosSelecionados.map( (p)=>{
-                totalProdutos= p.quantidade * p.preco
-
-                return {...p, total:( p.quantidade * p.preco)}
-             })
-
-             const servicos = servicosSelecionados.map((s)=>{
-                totalServicos += s.quantidade * s.valor;
-
-                    return { ...s, total: (s.quantidade * s.valor)}
-             })
-
-             setTotalProdutos(totalProdutos)
-             setTotalServicos(totalServicos)
-         
-             totalGeral = totalProdutos + totalServicos
-             setTotal(totalGeral)
+   
+        if (loadingAuth) {
+            return (
+              <div className="flex justify-center items-center h-screen">
+                 <p>Verificando autenticação...</p>
+              </div>
+            );
+          }
         
-             
-
-             let qtdParcelas:number = 0;
-             if(parcelas && parcelas.length > 0 ) qtdParcelas = parcelas.length  
-
-            setDadosOrcamento(
-                (prev:any)=>({
-                    ...prev, 
-                    cliente:clienteSelecionado,
-                    codigo_cliente: clienteSelecionado?.codigo,
-                    total_produtos:totalProdutos,
-                    total_servicos:totalServicos,
-                    produtos: produtos,
-                    servicos: servicos,
-                    total_geral: totalGeral,
-                    quantidade_parcelas: qtdParcelas,
-                    observacoes:observacoes,
-                    situacao: situacao,
-                    parcelas: parcelas
-                }) 
-            )
-         }
-     ajusteTotais();
-     
-     },  [  produtosSelecionados , servicosSelecionados, clienteSelecionado , observacoes, situacao])
- 
-    ////////////////////////
-    useEffect(()=>{
-
-        //  console.log(' forma selecionada :: ',formaSelecionada)
-        if( codigo_pedido !== null ){
-        let aux =  gerarParcelas(formaSelecionada, total,codigo_pedido )
-          setDadosOrcamento(
-              (prev:any)=>({
-                  ...prev,
-                     quantidade_parcelas: aux.length,
-                     parcelas:aux
-                    })
-                )
-        } 
-
-    },[ formaSelecionada ])
-    ////////////////////////
-
+          if (!user) {
+            return (
+               <div className="flex justify-center items-center h-screen">
+                  <p>Redirecionando para login...</p>
+               </div>
+            );
+          }
    
  
  if (isLoading  ) {
@@ -490,19 +573,19 @@ return(
                    <TableBody>
                        <TableRow className="bg-white rounded-3 shadow- ">
                            <TableCell   >
-                               <span className="font-bold text-gray-600"> Codigo:  { clienteSelecionado?.codigo }</span>
+                               <span className="font-bold text-gray-600"> Codigo:  { dadosOrcamento?.cliente.codigo }</span>
                            </TableCell>
                            <TableCell >
-                               <span className="font-bold text-gray-600"> nome: { clienteSelecionado?.nome } </span>
+                               <span className="font-bold text-gray-600"> nome: { dadosOrcamento?.cliente.nome } </span>
                            </TableCell>
                            <TableCell >
-                           <span className="font-bold text-gray-600"> cnpj/cpf : { clienteSelecionado?.cnpj}</span>
+                           <span className="font-bold text-gray-600"> cnpj/cpf : { dadosOrcamento?.cliente.cnpj}</span>
                            </TableCell>
                            <TableCell >
-                           <span className="font-bold text-gray-600"> cidade : { clienteSelecionado?.cidade }</span>
+                           <span className="font-bold text-gray-600"> cidade : { dadosOrcamento?.cliente.cidade }</span>
                            </TableCell>
                            <TableCell >
-                                  <span className="font-bold text-gray-600"> celular : { clienteSelecionado?.celular  }</span>
+                                  <span className="font-bold text-gray-600"> celular : { dadosOrcamento?.cliente.celular  }</span>
                            </TableCell>
                        </TableRow>
                    </TableBody>
@@ -541,8 +624,9 @@ return(
                                 <div className="  shadow-lg" >
                                         <Table  className=" bg-white rounded-md  ">
                                             <TableBody>
-                                            { produtosSelecionados && produtosSelecionados?.length > 0 &&
-                                                produtosSelecionados?.map((i:Produto_pedido)=>(
+                                            {  
+                                            dadosOrcamento && dadosOrcamento.produtos?.length > 0 &&
+                                            dadosOrcamento.produtos?.map((i:Produto_pedido)=>(
                                                     
                                                     <TableRow key={ i.codigo }  className=" gap-4   " > 
                                                         <TableCell className=" text-center font-bold text-gray-600">    {i.codigo}          </TableCell>
@@ -553,7 +637,6 @@ return(
                                                                     onChange={ (e:any)=>  handleIncrement(i, e.target.value ) }
                                                                     value={   i.quantidade  }
                                                                 />
-                                                                { /*i.quantidade &&  <span className=" m-2">   {i.quantidade}  </span>*/  }
 
                                                         </TableCell>
                                                         
@@ -563,9 +646,9 @@ return(
                                                                     className="border-gray-400 border-2 rounded-md w-20 text-center"
                                                                     placeholder="Preço:"
                                                                     onChange={(e) => handlePrice(i, e.target.value)}
-                                                                    defaultValue={i?.preco.toFixed(2)}
+                                                                    defaultValue={Number(i?.preco).toFixed(2)}
                                                                 />
-                                                                <span>  {  isNaN(i.preco) ? "valor invalido" : 'R$' + i.preco.toFixed(2)  } </span>
+                                                                <span>  {  isNaN(i.preco) ? "valor invalido" : 'R$' + Number(i.preco).toFixed(2)  } </span>
                                                             </TableCell>
 
                                                             <TableCell className="  w-40    text-center font-bold text-gray-600 ">
@@ -573,7 +656,7 @@ return(
                                                             </TableCell>
                                                             
                                                             <TableCell className="  w-40    text-center font-bold text-gray-600 ">
-                                                                    <span> total R$ { (i.quantidade * i.preco).toFixed(2)   }</span>
+                                                                    <span> total R$ { Number(i.quantidade * i.preco).toFixed(2)   }</span>
                                                             </TableCell>
 
                                                         <TableCell className=" w-40     text-center font-bold text-gray-600 ">
@@ -608,8 +691,8 @@ return(
                                 <div className=" shadow-lg" >
                                         <Table  className=" bg-white rounded-md  ">
                                             <TableBody>
-                                            { servicosSelecionados?.length > 0 &&
-                                                servicosSelecionados?.map((i:any)=>(
+                                            { dadosOrcamento && dadosOrcamento.servicos.length > 0 &&
+                                                dadosOrcamento.servicos?.map((i:any)=>(
                                                     
                                                     <TableRow key={ i.codigo }  className=" gap-4"> 
                                                         <TableCell className="font-medium text-center font-bold text-gray-600">    {i.codigo}          </TableCell>
@@ -740,23 +823,4 @@ return(
     )
 } 
 
-
-
-/*
-'use client'
-
  
-import MainPedido from "../components/main";
-
-export default function Pedido({params}){
- 
-return(
-       <>
-       {
-        params !== null &&
-        <MainPedido codigo_pedido={params.codigo}/>
-       }
-       </>
-    )
-}
-    */

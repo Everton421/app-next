@@ -128,32 +128,23 @@ export default function Clientes() {
         </div>
 
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6  ">
-          <div className="flex md:w-auto md:max-w-md md:min-w-[60%] items-center gap-2 mt-3" >
+          <div className="  md:w-auto md:max-w-md md:min-w-[60%] items-center gap-2 mt-3" >
             <Input
               placeholder="Pesquisar por código ou descrição..."
               className="shadow-sm flex-grow bg-white" // Takes available space
               value={pesquisa}
               onChange={(e) => setPesquisa(e.target.value)}
             />
-          </div>
-
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4 mt-4 md:mt-0">
-            <Button type="button" className="shadow-sm w-full sm:w-auto"
-              onClick={()=> router.push('/clientes/novo')}
-            >
-              <Plus className="h-4 w-4 mr-2" /> Novo
-            </Button>
-
-            <div className="flex items-center justify-center sm:justify-start gap-4">
+                <div className="flex items-center justify-center sm:justify-start gap-4 m-3">
               <div className="flex items-center gap-1" title="Ativo">
 
             { filtroAtivo === 'S' ?
                 ( <Button onClick={()=> setFiltroAtivo('S')}
-                 className="bg-green-600 p-1 w-6 h-6 rounded-sm flex items-center justify-center">
+                 className="bg-green-600 p-1 w-5 h-5 rounded-full flex items-center justify-center">
                   <Check size={16} color="#FFF" strokeWidth={3} />
                 </Button> ) :(
                   <Button onClick={()=> setFiltroAtivo('S')}
-                     className="bg-gray-400 p-1 w-6 h-6 rounded-sm flex items-center justify-center">
+                     className="bg-gray-400 p-1 w-5 h-5 rounded-full flex items-center justify-center">
                    <Check size={16} color="#FFF" strokeWidth={3} />
                  </Button>    
                 )
@@ -163,12 +154,12 @@ export default function Clientes() {
               <div className="flex items-center gap-1" title="Inativo">
               { filtroAtivo === 'N' ? (
                  <Button  onClick={()=> setFiltroAtivo('N')}
-                 className="bg-red-600 p-1 w-6 h-6 rounded-sm flex items-center justify-center">
+                 className="bg-red-600 p-1 w-5 h-5 rounded-full flex items-center justify-center">
                   <X size={16} color="#FFF" strokeWidth={3} />
                 </Button>
                 ) : (
                   <Button onClick={()=> setFiltroAtivo('N')}
-                   className="bg-gray-400 p-1 w-6 h-6 rounded-sm flex items-center justify-center">
+                   className="bg-gray-400 p-1 w-5 h-5 rounded-full flex items-center justify-center">
                   <X size={16} color="#FFF" strokeWidth={3} />
                 </Button>
                 )
@@ -176,6 +167,16 @@ export default function Clientes() {
               
               </div>
             </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 mt-4 md:mt-0">
+            <Button type="button" className="shadow-sm w-full sm:w-auto"
+              onClick={()=> router.push('/clientes/novo')}
+            >
+              <Plus className="h-4 w-4 mr-2" /> Novo
+            </Button>
+
+        
           </div>
 
           </div>
@@ -199,17 +200,7 @@ export default function Clientes() {
                 <ScrollArea className="w-full mt-4  h-4/6 overflow-auto  shadow-lg rounded-lg  ">
 
                   <Table className="w-full bg-white rounded-xl ">
-                    {/*    <TableHeader>
-                        <TableRow>
-                        <TableHead className="w-[100px] text-lg text-center"><Checkbox/> </TableHead>
-                        <TableHead className="  text-lg">Codigo</TableHead>
-                        <TableHead className=" text-lg " >Nome</TableHead>
-                        <TableHead className=" text-lg " > cnpj</TableHead>
-                        <TableHead className=" text-lg " > </TableHead>
-
-                        </TableRow>
-            </TableHeader>
-            */}
+             
                     <TableBody>
                       {
                         clientes.length > 0 &&
@@ -237,7 +228,7 @@ export default function Clientes() {
                                                           <Edit className="h-4 w-4" />
                                                         </Button>
                                                         <div
-                                                          className={`p-1 w-6 h-6 rounded-sm flex items-center justify-center ${
+                                                          className={`p-1 w-5 h-5 rounded-full flex items-center justify-center ${
                                                             i?.ativo === 'S' ? 'bg-green-600' : 'bg-red-600'
                                                           }`}
                                                           title={i?.ativo === 'S' ? 'Ativo' : 'Inativo'}

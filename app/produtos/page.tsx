@@ -48,9 +48,6 @@ export default function Produtos() {
   }, [user, authLoading, router]);
 
 
- function delay(ms) {
-  return new Promise((resolve)=>{ setTimeout( resolve,ms )})
- }
 
   async function busca(term: string) {
     setProdutos([])
@@ -129,9 +126,9 @@ export default function Produtos() {
 
     return (
 
- <div className=" min-h-screen flex flex-col sm:ml-14 p-4 w-full h-full justify-itens-center items-center   bg-slate-100 overflow-auto "   >
+ <div className=" min-h-screen flex flex-col sm:ml-14 p-4 w-full h-full justify-itens-center items-center   bg-slate-100 "  >
    <div className="w-5/6 p-8 mt-22 min-h-screen    rounded-lg bg-white shadow-md " >
-     <div className="p-2 rounded-sm bg-slate-100">
+       <div className="p-2 rounded-sm bg-slate-100">
 
          <div className="m-5  flex justify-between   ">
         <h1 className="text-3xl md:text-4xl font-bold font-sans text-gray-800">
@@ -147,6 +144,37 @@ export default function Produtos() {
             value={pesquisa}
             onChange={(e) => setPesquisa(e.target.value)}
           />
+          <div className="flex items-center justify-center sm:justify-start gap-4">
+            <div className="flex items-center gap-1" title="Ativo">
+             { filtroAtivo === 'S' ?
+                 ( <Button onClick={()=> setFiltroAtivo('S')}
+                  className="bg-green-600 p-1 w-5 h-5 rounded-full flex items-center justify-center">
+                  <Check size={16} color="#FFF" strokeWidth={3} />
+                </Button> ) :(
+                  <Button onClick={()=> setFiltroAtivo('S')}
+                     className="bg-gray-400 p-1 w-5 h-5 rounded-full flex items-center justify-center">
+                   <Check size={16} color="#FFF" strokeWidth={3} />
+                 </Button>    
+                )
+              } 
+            </div>
+
+            <div className="flex items-center gap-1" title="Inativo">
+            { filtroAtivo === 'N' ? (
+                 <Button  onClick={()=> setFiltroAtivo('N')}
+                 className="bg-red-600 p-1 w-5 h-5 rounded-full flex items-center justify-center">
+                  <X size={16} color="#FFF" strokeWidth={3} />
+                </Button>
+                ) : (
+                  <Button onClick={()=> setFiltroAtivo('N')}
+                   className="bg-gray-400 p-1 w-5 h-5 rounded-full flex items-center justify-center">
+                  <X size={16} color="#FFF" strokeWidth={3} />
+                </Button>
+                )
+              }
+              
+            </div>
+          </div>
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 mt-4 md:mt-0">
@@ -170,43 +198,13 @@ export default function Produtos() {
               Marcas
           </Button>
 
-          <div className="flex items-center justify-center sm:justify-start gap-4">
-            <div className="flex items-center gap-1" title="Ativo">
-             { filtroAtivo === 'S' ?
-                 ( <Button onClick={()=> setFiltroAtivo('S')}
-                  className="bg-green-600 p-1 w-6 h-6 rounded-sm flex items-center justify-center">
-                  <Check size={16} color="#FFF" strokeWidth={3} />
-                </Button> ) :(
-                  <Button onClick={()=> setFiltroAtivo('S')}
-                     className="bg-gray-400 p-1 w-6 h-6 rounded-sm flex items-center justify-center">
-                   <Check size={16} color="#FFF" strokeWidth={3} />
-                 </Button>    
-                )
-              } 
-            </div>
-
-            <div className="flex items-center gap-1" title="Inativo">
-            { filtroAtivo === 'N' ? (
-                 <Button  onClick={()=> setFiltroAtivo('N')}
-                 className="bg-red-600 p-1 w-6 h-6 rounded-sm flex items-center justify-center">
-                  <X size={16} color="#FFF" strokeWidth={3} />
-                </Button>
-                ) : (
-                  <Button onClick={()=> setFiltroAtivo('N')}
-                   className="bg-gray-400 p-1 w-6 h-6 rounded-sm flex items-center justify-center">
-                  <X size={16} color="#FFF" strokeWidth={3} />
-                </Button>
-                )
-              }
-              
-            </div>
-          </div>
+   
         </div>
 
       </div>  
-      </div>  
+       </div>  
 
-        <div className="w-full mt-4  h-screen shadow-lg ">
+       <div className="w-full mt-4  h-screen shadow-lg ">
                 <Table  className="w-full  bg-gray-100 rounded-sm ">
                       <TableHead className= " w-[7%]   text-base">Codigo</TableHead>
                       <TableHead className= " w-[50%]  text-base   " >Descricao</TableHead>
@@ -216,7 +214,7 @@ export default function Produtos() {
                       <TableHead className="  w-[15%] text-base " > </TableHead>
                   </Table >
    
-          <ScrollArea className="w-full mt-4  h-4/6 overflow-auto  shadow-lg rounded-lg  ">
+          <ScrollArea className="w-full mt-4  h-[80%] overflow-auto  shadow-lg rounded-lg  ">
                 <Table  className="w-full bg-white rounded-xl ">
     
                 <TableBody>
@@ -243,15 +241,15 @@ export default function Produtos() {
                           <Edit className="h-4 w-4" />
                         </Button>
                         <div
-                          className={`p-1 w-6 h-6 rounded-sm flex items-center justify-center ${
-                            produto.ativo === 'S' ? 'bg-green-600' : 'bg-red-600'
-                          }`}
+                        className={`p-1 w-5 h-5 rounded-full flex items-center justify-center ${
+                                                      produto.ativo === 'S' ? 'bg-green-500' : 'bg-red-500'
+                                                  }`}
                           title={produto.ativo === 'S' ? 'Ativo' : 'Inativo'}
                         >
                           {produto.ativo === 'S' ? (
                             <Check size={16} color="#FFF" strokeWidth={3} />
                           ) : (
-                            <X size={16} color="#FFF" strokeWidth={3} />
+                            <X size={16} color="#FFF" strokeWidth={3}  />
                           )}
                         </div>
                       </div>
@@ -278,7 +276,8 @@ export default function Produtos() {
       </div>
 
       
-      </div>
+   </div>
+  
   </div>
     
 )

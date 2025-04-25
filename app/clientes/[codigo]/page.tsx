@@ -15,11 +15,12 @@ import { useAuth } from "@/contexts/AuthContext"
 import { Button } from "@/components/ui/button"
 import { ThreeDot } from "react-loading-indicators"
 
+type prop = { params:{ codigo:number}}
 
-export default function Cliente({ params }) {
+export default function Cliente({ params }:prop) {
 
     const api = configApi()
-    const [data, setData] = useState(null); // Inicializar como null
+    const [data, setData] = useState<ICliente | null>(null); // Inicializar como null
     const [visibleAlert, setVisibleAlert] = useState(false);
     const [msgAlert, setMsgAlert] = useState < string > ('');
     const useDateService = UseDateFunction()
@@ -42,47 +43,14 @@ export default function Cliente({ params }) {
     const [observacoes, setObservacoes] = useState < string > ();
     const [ativo, setAtivo] = useState < string > ('S');
     const [codigoVendedor, setCodigoVendedor] = useState < number > ();
-    const [codigo, setCodigo] = useState();
-    const [data_cadastro, setData_cadastro] = useState();
-    const [maskCelular, setMaskCelular] = useState();
-    const [numero, setNumero] = useState();
+    const [codigo, setCodigo] = useState<number>();
+    const [data_cadastro, setData_cadastro] = useState<string>();
+    const [maskCelular, setMaskCelular] = useState<string>();
+    const [numero, setNumero] = useState<string>();
     const [isLoading, setIsLoading] = useState(false);  
 
     const { user, loading }: any = useAuth();
     const router = useRouter();
-
-    function delay(ms) {
-        return new Promise((resolve)=>{ setTimeout( resolve,ms )})
-       }
-      
-
-    useEffect(() => {
-        if (!loading) {
-            if (!user) {
-                router.push('/'); // Redireciona para a página de login (ajuste se for outra)
-            }
-        }
-    }, [user, loading, router]);
-
-
-
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                <p>Verificando autenticação...</p>
-            </div>
-        );
-    }
-
-    if (!user) {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                <p>Redirecionando para login...</p>
-            </div>
-        );
-    }
-
-
 
     useEffect(() => {
         if (!params.codigo) redirect('/clientes');
@@ -120,7 +88,19 @@ export default function Cliente({ params }) {
             }
         }
         busca();
-    }, []); // Adicionar dependências ao useEffect
+    }, [ user, loading, router ]); // Adicionar dependências ao useEffect
+
+     useEffect(() => {
+         if (!loading) {
+             if (!user) {
+                 router.push('/'); // Redireciona para a página de login (ajuste se for outra)
+             }
+         }
+     }, [user, loading, router]);
+
+
+
+
 
     useEffect(() => {
         if (data?.nome !== undefined) setNome(data.nome)
@@ -128,7 +108,7 @@ export default function Cliente({ params }) {
         if (data?.ie !== undefined) setIe(data.ie);
 
         if (data?.celular !== undefined) {
-            let count = data.celular.replace(/\D/g, "")
+            let count = Number(data.celular.replace(/\D/g, ""));
             if (count > 10) setMaskCelular("(99) 99999-9999")
             if (count <= 10) setMaskCelular("(99) 9999-9999")
 
@@ -160,7 +140,7 @@ export default function Cliente({ params }) {
         setPessoa(value);
     };
 
-    const handleVendedorChange = (value) => {
+    const handleVendedorChange = (value:number) => {
         setCodigoVendedor(Number(value));
     };
     /////////
@@ -231,6 +211,24 @@ export default function Cliente({ params }) {
         });
     }, []);
 
+//
+
+
+if (loading) {
+    return (
+        <div className="flex justify-center items-center h-screen">
+            <p>Verificando autenticação...</p>
+        </div>
+    );
+}
+
+if (!user) {
+    return (
+        <div className="flex justify-center items-center h-screen">
+            <p>Redirecionando para login...</p>
+        </div>
+    );
+}
 
 
     if (isLoading) {
@@ -303,7 +301,7 @@ export default function Cliente({ params }) {
                             value={cnpj}
                             mask={maskCnpj}
                             placeholder={placeholderPessoa}
-                            onChange={(e) => setCnpj(e.target.value)}
+                            onChange={(e) => setCnpj( String(e.target.value))}
                             // w-full para ocupar espaço no flex-grow, p-2 etc.
                             className="p-2 text-lg w-full text-gray-600 font-bold font-sans shadow-md rounded-md"
                         />
@@ -339,7 +337,7 @@ export default function Cliente({ params }) {
                         value={celular}
                         mask={maskCelular}
                         placeholder="(99) 99999-9999"
-                        onChange={(v) => setCelular(v.target.value)}
+                        onChange={(v) => setCelular( String(v.target.value))}
                         className="p-2 w-full text-lg text-gray-600 font-bold font-sans shadow-md rounded-md" // w-full
                     />
                 </div>
@@ -374,7 +372,7 @@ export default function Cliente({ params }) {
                             mask="99999-999" // Adicione a máscara apropriada
                             className="p-2 w-full text-lg text-gray-600 font-bold font-sans shadow-md rounded-md"
                             placeholder="00000-000"
-                            onChange={(v) => setCep(v.target.value)}
+                            onChange={(v) => setCep(String(v.target.value))}
                             value={cep}
                         />
                     </div>
@@ -457,8 +455,6 @@ export default function Cliente({ params }) {
 
             <Active active={data?.ativo} handleActive={handleActive} />
 
-            {/* --- Barra Inferior Fixa --- */}
-            {/* Mantida como estava, geralmente funciona bem */}
             <div className="bg-white p-3 sm:ml-14 fixed bottom-0 left-0 right-0 rounded-t-xl shadow-lg border-t border-gray-200"> {/* Ajuste no padding, rounded-t, shadow, border */}
                 {/* Centraliza o botão */}
                 <div className="w-full flex justify-center sm:justify-end"> {/* Centraliza mobile, alinha direita sm+ */}
@@ -469,6 +465,5 @@ export default function Cliente({ params }) {
                 </div>
             </div>
         </div>
-        // --- FIM DAS ALTERAÇÕES DE ESTILO ---
     );
 }

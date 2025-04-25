@@ -9,7 +9,7 @@ import { useState } from "react";
   
 export const SelectPessoa = ({ defaultTipoPessoa, onchange }: any) => {
 
-    const handleSelect = (value) => {
+    const handleSelect = (value:any) => {
         onchange(value)
     };
 

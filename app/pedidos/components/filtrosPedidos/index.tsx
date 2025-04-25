@@ -1,16 +1,16 @@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/popover"
 import { Button } from "@/components/ui/button";
 import { ListFilter } from "lucide-react";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { TipoPedidoSeletor } from "../tipoPedido";
 
 type props ={
-  setDataInicial:(value:any )=>{}
-    setDataFinal: (value:any )=>{}
+  setDataInicial:Dispatch<SetStateAction<string>>
+    setDataFinal: Dispatch<SetStateAction<string>>
     dataInicial: string
     dataFinal: string
     filtrTipo:number,
-     setFiltroTipo:(value:number)=>{}
+     setFiltroTipo:Dispatch<SetStateAction<number>>
 }
 
 export const FiltroPedidos  = ({ setDataInicial, setDataFinal , dataInicial, dataFinal, filtrTipo, setFiltroTipo }:props)=>{

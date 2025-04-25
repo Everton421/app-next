@@ -29,7 +29,7 @@ export default function RootLayout({
     <AuthProvider>
     <html lang="pt-br">
       <body
-        className={ cn("min-h-screen bg-background font-sans antialiased overflow-hidden "  )}
+        className={ cn("  bg-background font-sans antialiased  overflow-x-hidden "  )}
       >
          {
          !isLoginPage && !novaConta &&

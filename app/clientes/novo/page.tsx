@@ -206,7 +206,6 @@ const handlePessoaChange = (value: string) => {
                     <input
                              className=" p-2 w-3/4 text-lg font-bold  shadow-md rounded-md"
                              placeholder=" "
-                             defaultValue={data?.nome}
                              onChange={(v)=> setNome(v.target.value)}
                     />
 
@@ -223,7 +222,6 @@ const handlePessoaChange = (value: string) => {
                         CNPJ/CPF:
                     </span>
                        <InputMask
-                        defaultValue={data?.cnpj}
                         mask={maskCnpj}  
                         placeholder={placeholderPessoa}
                         onChange={(v:any)=> setCnpj(v.target.value)} 
@@ -239,7 +237,6 @@ const handlePessoaChange = (value: string) => {
                     </span>
                     <input
                         className="  p-2 text-lg text-gray-600 font-bold font-sans shadow-md rounded-md"
-                        defaultValue={data?.ie}
                         onChange={(v)=> setIe(v.target.value)}
                     />
                      
@@ -251,10 +248,10 @@ const handlePessoaChange = (value: string) => {
                     </span>
               
                       <InputMask
-                        defaultValue={data?.celular}
+                      ///  defaultValue={data?.celular}
                         mask="(99) 99999-9999"  
                         placeholder="() 00000-0000"
-                        onChange={(v)=> setCelular(v.target.value)} 
+                        onChange={(v)=> setCelular(String(v.target.value))} 
                         className=" p-2 text-lg text-gray-600 font-bold font-sans shadow-md rounded-md"
 
                         />
@@ -300,7 +297,6 @@ const handlePessoaChange = (value: string) => {
                             <input
                                 className=" p-2 text-lg text-gray-600 font-bold font-sans shadow-md rounded-md"
                                 placeholder="Ex.: PR"
-                                defaultValue={data?.estado}
                                 onChange={(v:any)=> setEstado(v.target.value)}
                             
                             />
@@ -311,7 +307,6 @@ const handlePessoaChange = (value: string) => {
                             <input
                                 className=" p-2 text-lg text-gray-600 font-bold font-sans shadow-md rounded-md"
                                 placeholder="Ex.: Maringa"
-                                defaultValue={data?.cidade}
                                 onChange={(v)=> setCidade(v.target.value)}
 
                             />
@@ -324,7 +319,6 @@ const handlePessoaChange = (value: string) => {
                             <input
                                 className=" p-2 text-lg text-gray-600 font-bold font-sans shadow-md rounded-md w-3/5"
                                 placeholder=""
-                                defaultValue={data?.endereco}
                                 onChange={(v)=> setEndereco(v.target.value)}
 
                             />
@@ -334,7 +328,6 @@ const handlePessoaChange = (value: string) => {
                             <input
                                 className=" p-2 text-lg text-gray-600 font-bold font-sans shadow-md rounded-md w-1/3"
                                 placeholder=" "
-                                defaultValue={data?.bairro}
                                 onChange={(v)=> setBairro(v.target.value)}
                             
                             />
@@ -344,7 +337,6 @@ const handlePessoaChange = (value: string) => {
                             <input
                                 className=" p-2 text-lg text-gray-600 font-bold font-sans shadow-md rounded-md w-1/3"
                                 onChange={(v)=> setNumero(v.target.value)}
-                                defaultValue={data?.numero}
                             />
                         </div>
                     </div>

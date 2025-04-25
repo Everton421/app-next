@@ -1,7 +1,7 @@
 
 'use client'
 
-import { useContext, useEffect, useState } from "react";
+import {   useEffect, useState } from "react";
 import { configApi } from "../services/api";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead,   TableRow } from "@/components/ui/table";
@@ -13,15 +13,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { FiltroPedidos } from "./components/filtrosPedidos";
 import { DateService } from "../services/dateService";
 import { TooltipProvider, TooltipTrigger, Tooltip, TooltipContent} from "@/components/ui/tooltip";
-
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { ThreeDot } from "react-loading-indicators";
 
 
 export default function Pedidos(){
   
-      const [dados, setDados] = useState([]);
-      const [dadosFiltro, setDadosFiltro] = useState([]);
+      const [dados, setDados] = useState<pedido[]>([]);
+      const [dadosFiltro, setDadosFiltro] = useState<any>([]);
       const [ pesquisa , setPesquisa ] = useState<string | null > ('');
       const [ codigoPedido, setCodigoPedido ] = useState();
       const [ filtroSituacao, setFiltroSituacao ] = useState<string>('full');
@@ -40,12 +38,23 @@ export default function Pedidos(){
   useEffect(() => {
     if (!loading) {
       if (!user) {
-        router.push('/'); // Redireciona para a página de login (ajuste se for outra)
+        router.push('/');
       }
     }
   }, [user, loading, router]);
 
 
+  useEffect( ()=>{
+    if (   user && !loading) {
+       let dataAtual = dateService.obterDataAtual();
+       let  dataAtualPrimeiroDia = dateService.obterDataAtualPrimeiroDiaDoMes();
+       setDataFinal(dataAtual);
+       setDataInicial(dataAtualPrimeiroDia);
+       busca( dataAtualPrimeiroDia,  dataAtual ,   null)
+   }
+  
+    } , [ user, loading ])
+  
   
 
   async function busca( dataInicial:string, dataFinal:string,   filter:any){
@@ -110,14 +119,6 @@ export default function Pedidos(){
 }
 
 
-useEffect( ()=>{
-  let dataAtual = dateService.obterDataAtual();
-  let  dataAtualPrimeiroDia = dateService.obterDataAtualPrimeiroDiaDoMes();
-  setDataFinal(dataAtual);
-  setDataInicial(dataAtualPrimeiroDia);
- busca( dataAtualPrimeiroDia,  dataAtual ,   null)
-
-  } , [])
 
 
   useEffect(()=>{
@@ -206,7 +207,7 @@ useEffect( ()=>{
             <Input
               placeholder="Pesquisar por código do cliente ou nome..."
               className="shadow-sm flex-grow bg-white" // Takes available space
-              value={pesquisa}
+              value={String(pesquisa)}
               onChange={(e) => setPesquisa(e.target.value)}
             />
 
@@ -240,7 +241,7 @@ useEffect( ()=>{
             </div>
 
           <div className="  flex  w-full">
-                <TableHead className="text-lg" > situaçao</TableHead>
+                <TableHead className="text-lg  " > situaçao</TableHead>
                 <TableHead  className=" w-[60%]">
                     <span className=" text-lg ml-8 "> Cliente </span>
                 </TableHead>
@@ -269,18 +270,18 @@ useEffect( ()=>{
                             <TooltipProvider>
                                 <Tooltip >
                                     <TooltipTrigger >   
-                                        <TableCell className="  text-center font-bold text-gray-600   ">
+                                        <TableCell className="  text-center font-bold text-gray-600 items-center justify-center flex   ">
                                               {i.situacao  === 'RE' &&  <div className="bg-red-600     rounded-sm"> <X size={20} color="#FFF"/>  </div>}
                                               {i.situacao  === 'EA' &&  <div className="bg-green-700   rounded-sm">   <Check size={20} color="#FFF" /> </div>}
-                                              {i.situacao  === 'AI' &&  <div className="bg-blue-400     rounded-sm"> <CheckCheck size={20} color="#FFF" /> </div>}
+                                              {i.situacao  === 'AI' &&  <div className="bg-blue-400    rounded-sm"> <CheckCheck size={20} color="#FFF" /> </div>}
                                               {i.situacao  === 'FI' &&  <div className="bg-orange-500  rounded-sm"> <ClipboardCheck size={20} color="#FFF" /> </div>}
                                               {i.situacao  === 'FP' &&  <div className="bg-blue-700    rounded-sm">    <ClipboardPenLine size={20} color="#FFF" /></div>}
                                             
                                             </TableCell>
                                       </TooltipTrigger>
-                                           <TableCell className=" w-[60%]  font-bold text-gray-600 "
+                                           <TableCell className=" w-[60%]  font-bold text-gray-600"
                                                > 
-                                               <button onClick={ ( )=>handleOrder(i.codigo) } >
+                                               <button onClick={ ( )=>handleOrder(i.codigo) } className="ml-[5%]">
                                                    {i.nome}
                                                </button> 
                                           </TableCell>
