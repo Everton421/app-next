@@ -90,24 +90,26 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
         }
 
         async function busca() {
+            console.log(params)
 
-            await delay(2000)
+            //await delay(2000)
 
+            let cod = Number(params.codigo);
             try {
                 const [dadosRes, fotosRes] = await Promise.all([
-                    api.get(`/produtos`, {
+                    api.get(`/produto/${cod}`, {
                         headers: {
                              cnpj:  user.cnpj 
                             },
-                            params:{
-                                codigo:params.codigo,
-                                limit:1
-                            }
+                            
                        
                     }),
-                    api.get(`/next/fotos/${params.codigo}`,
+                    api.get(`/next/fotos`,
                          {
-                           headers: { cnpj: Number(user.cnpj) }
+                           headers: { cnpj: Number(user.cnpj) },
+                           params:{
+                            codigo: cod
+                           }
                         }
                     )
                 ]);

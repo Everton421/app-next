@@ -137,14 +137,16 @@ export default function Produtos() {
         </div>
       
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6  ">
-        <div className="flex md:w-auto md:max-w-md md:min-w-[60%] items-center gap-2 mt-3" >
+        <div className="  md:w-auto md:max-w-md md:min-w-[60%] items-center gap-2 mt-3" >
+
           <Input
             placeholder="Pesquisar por código ou descrição..."
             className="shadow-md flex-grow bg-white" // Takes available space
             value={pesquisa}
             onChange={(e) => setPesquisa(e.target.value)}
           />
-          <div className="flex items-center justify-center sm:justify-start gap-4">
+          <div className="flex items-center justify-center sm:justify-start gap-4 m-3">
+
             <div className="flex items-center gap-1" title="Ativo">
              { filtroAtivo === 'S' ?
                  ( <Button onClick={()=> setFiltroAtivo('S')}

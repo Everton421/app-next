@@ -16,13 +16,9 @@ export default function Home() {
   const { user, loading }:any = useAuth();
   const router = useRouter();
 
-
-  
  function mostrarUsuario(){
   console.log(user)
  }
-
-
 
 
   useEffect(() => {
@@ -59,7 +55,7 @@ export default function Home() {
 
     {/* Mensagem de Boas-vindas */}
     <h1 className="text-xl sm:text-2xl font-semibold mb-4 text-gray-700">
-        Olá, {user?.nome || 'Usuário'}! {/* Exibir nome do usuário */}
+        Olá, {user.nome || 'Usuário'}! {/* Exibir nome do usuário */}
     </h1>
 
     {/* Seção de Ações Rápidas */}
@@ -76,23 +72,19 @@ export default function Home() {
          <Button variant="outline" onClick={() => router.push('/pedidos')}>
              <ClipboardList className="mr-2 h-4 w-4" /> Meus Pedidos
         </Button>
+        <Button variant="outline" onClick={() =>  console.log(user)}>
+             <ClipboardList className="mr-2 h-4 w-4" /> ver usuario
+        </Button>
     </section>
 
-    {/* Seção de KPIs (Cards) */}
-    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"> {/* Layout responsivo */}
-        {/* Seus 4 Cards com KPIs diferentes aqui */}
-        {/* Exemplo Card 1 */}
-        <Card>
+    {/* Seção de KPIs (Cards)  
+    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"> 
+    <Card>
           
-            {/* ... conteúdo do card 1 ... */}
         </Card>
-        {/* Exemplo Card 2 */}
         <Card className="cursor-pointer hover:bg-sky-50" onClick={() => router.push('/pedidos?status=pendente')}>
-             {/* ... conteúdo do card 2 com link ... */}
         </Card>
-         {/* ... Card 3 ... */}
-         {/* ... Card 4 ... */}
-    </section>
+    </section>*/}
 
     {/* Seção do Gráfico */}
     <section className="w-full bg-white p-4 rounded-lg shadow"> {/* Envolver gráfico em card/seção */}

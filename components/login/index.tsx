@@ -1,7 +1,7 @@
 'use client'
 
 import Image from "next/image";
-import { useState } from "react";
+import { ServerContextJSONValue, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { configApi } from "@/app/services/api";
@@ -10,7 +10,7 @@ import { ThreeDot }  from 'react-loading-indicators';
 export default function LoginForm() {
 
     const router = useRouter();
-    const { setUser } = useAuth();  
+    const { setUser }:any = useAuth();  
 
     const [ email, setEmail] = useState<string>('');  
     const [ senha, setSenha ] = useState<string>('');  
@@ -42,6 +42,7 @@ export default function LoginForm() {
                 const userData = { 
                     cnpj: response.data.data.empresa,
                     vendedor:response.data.data.codigo,
+                    nome: response.data.data.nome
                 };
                 setUser(userData); 
                 localStorage.setItem('authUser', JSON.stringify(userData));  
@@ -99,7 +100,7 @@ export default function LoginForm() {
                 <div className="w-full items-center flex justify-center mb-4"> {/* Adicionado mb-4 */}
                     <Image
                         className="rounded-3xl" // Removido ml-1 se não necessário
-                        src="/images/vercel.png" // Verifique se este caminho está correto na pasta public
+                        src="/images/design.png" // Verifique se este caminho está correto na pasta public
                         alt="Logo da Empresa" // Alt text mais descritivo
                         width={150}
                         height={150}
