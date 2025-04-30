@@ -46,7 +46,7 @@ export default function Marca({ params }:any ) {
         try{
         let dados = await api.get(`/next/marcas`,{
             headers: {
-                 cnpj:  user.cnpj 
+                 token:  user.token 
             },
             params:{ codigo: params.codigo}
 
@@ -73,7 +73,7 @@ useEffect(()=>{
 
                try {
                 let result = await api.put('/next/marcas', data,{
-                    headers:{ cnpj:  user.cnpj }
+                    headers:{ token:  user.token }
     
                 });
                 if (result.status === 200 && result.data.codigo > 0) {

@@ -63,7 +63,7 @@ export default function veiculo({params}:any){
 
             await delay(2000)
            let result = await api.get('/veiculos', {
-                 headers:{ cnpj: Number(user.cnpj)},
+                 headers:{ token: user.token },
                     params:{ codigo:  params.codigo  }
                 })
 
@@ -114,7 +114,7 @@ export default function veiculo({params}:any){
             setIsLoading(true)
             try{
                 let result = await api.put('/veiculo',  data,{
-                     headers:{ cnpj:  user.cnpj   }
+                     headers:{ token:  user.token   }
                 })
                 if(result.status === 200 ){
                     setVisibleAlert(true);

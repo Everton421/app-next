@@ -34,16 +34,21 @@ export default function LoginForm() {
 
         try{
             const response = await api.post(`/login`, data );
-
+console.log(response.data)
             if( response.status === 200  ){
                 setErro(false);  
                 setMsgErro(undefined);
 
-                const userData = { 
-                    cnpj: response.data.data.empresa,
-                    vendedor:response.data.data.codigo,
-                    nome: response.data.data.nome
-                };
+               // const userData = { 
+               //     cnpj: response.data.data.empresa,
+               //     vendedor:response.data.data.codigo,
+               //     nome: response.data.data.nome
+               // };
+
+                 const userData = { 
+                    token: response.data.token
+                }
+
                 setUser(userData); 
                 localStorage.setItem('authUser', JSON.stringify(userData));  
                 router.push('/home');  

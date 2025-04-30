@@ -30,8 +30,8 @@ export default function Marcas (){
         try{
         let dados = await api.get(`/next/marcas`,{
             headers: {
-                 cnpj:  user.cnpj 
-            },
+                token:  user.token 
+           },
             params:{ descricao: pesquisa}
 
         })

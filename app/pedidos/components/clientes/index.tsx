@@ -35,7 +35,7 @@ useEffect(
                     setLoading(true)
                     const result = await api.get(`/clientes`,{
                         headers:{
-                             cnpj:  user.cnpj 
+                             token:  user.token 
                             },
                             params:params
                     })

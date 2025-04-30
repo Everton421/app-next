@@ -54,7 +54,7 @@ export default function Veiculos(){
          try {
           const aux = await api.get(`/veiculos`, {
             headers: {
-              cnpj:  user.cnpj ,
+              token:  user.token ,
             },
             params: param
           

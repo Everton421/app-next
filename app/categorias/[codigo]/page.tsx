@@ -46,7 +46,7 @@ export default function Categoria({ params }:any ) {
 
         try{
         let dados = await api.get(`/next/categorias`,{
-            headers:{ cnpj: user.cnpj  },
+            headers:{ token: user.token  },
             params:{ codigo: params.codigo}
 
         })
@@ -72,7 +72,7 @@ useEffect(()=>{
   
                  try {
                   let result = await api.put('/next/categorias', data,{
-                      headers:{ cnpj: user.cnpj }
+                      headers:{ token: user.token }
       
                   });
                   if (result.status === 200 && result.data.codigo > 0) {

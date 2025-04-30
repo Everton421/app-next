@@ -40,7 +40,7 @@ export const Veiculos = ({ cliente, setVeiculo, codigoPedido, codigoVeiculo }:pr
 
         try {
             const resultCliente = await api.get<VeiculoData[]>(`/veiculos`, {
-                headers: { cnpj:  user.cnpj  },
+                headers: { token:  user.token  },
                 params: { cliente:   cliente && cliente.codigo    }
             });
             veiculosCliente = resultCliente.data || [];
@@ -52,7 +52,7 @@ export const Veiculos = ({ cliente, setVeiculo, codigoPedido, codigoVeiculo }:pr
         if (codigoPedido && codigoVeiculo !== null && codigoVeiculo !== undefined) {
             try {
                 const resultPedido = await api.get<VeiculoData[]>(`/veiculos`, {
-                    headers: { cnpj:  user.cnpj },
+                    headers: { token:  user.token },
                     params: { codigo: codigoVeiculo }
                 });
                 if (resultPedido.data && resultPedido.data.length > 0) {

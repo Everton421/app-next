@@ -58,7 +58,7 @@ export default function Produtos() {
     try {
       const aux = await api.get(`/produtos`, {
         headers: {
-          cnpj:  user.cnpj ,
+          token:  user.token ,
         },
         params:{
           descricao: term,

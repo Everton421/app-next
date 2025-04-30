@@ -99,14 +99,14 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
                 const [dadosRes, fotosRes] = await Promise.all([
                     api.get(`/produto/${cod}`, {
                         headers: {
-                             cnpj:  user.cnpj 
+                             token:  user.token 
                             },
                             
                        
                     }),
                     api.get(`/next/fotos`,
                          {
-                           headers: { cnpj: Number(user.cnpj) },
+                           headers: { token:  user.token  },
                            params:{
                             codigo: cod
                            }
@@ -178,7 +178,7 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
     
           try {
             let result = await api.put('/produto', dataParaGravar,{
-                headers:{ cnpj: Number(user.cnpj)}
+                headers:{ token:  user.token }
 
             });
             if (result.status === 200 && result.data.codigo > 0) {

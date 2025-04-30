@@ -65,7 +65,7 @@ export default function EditPedido(){
                         params:{ codigo: Number(codigo_pedido)  },
                         headers:{
                              vendedor: user.vendedor ,
-                             cnpj:  user.cnpj    
+                             token:  user.token    
                         }
                     }
                 ) 
@@ -490,7 +490,7 @@ export default function EditPedido(){
               try{
                   let response = await api.post('/pedidos', [ dadosOrcamento] ,
                    { 
-                     headers: { cnpj:  user.cnpj  }
+                     headers: { token:  user.token  }
                    }
                     );
  

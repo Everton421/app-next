@@ -30,7 +30,7 @@ export default function Categorias (){
         try{
         let dados = await api.get(`/next/categorias`,{
             headers: {
-                 cnpj:  user.cnpj 
+                 token:  user.token 
             },
             params:{ descricao: pesquisa}
 

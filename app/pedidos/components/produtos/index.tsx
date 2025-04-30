@@ -57,7 +57,7 @@ export default function ListaProdutos( { selecionarProduto  }:props ){
                 try{
                     const response = await api.get(`/produtos`,{
                         headers:{
-                            cnpj:   user.cnpj    
+                            token:   user.token    
                         }, 
                         params: params 
                              

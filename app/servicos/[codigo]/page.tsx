@@ -57,7 +57,7 @@ export default function ServicoEdit({ params }: { params: { codigo: string } }) 
             try {
                 const result = await api.get(`/servicos`, {
                     params: { codigo: Number(params.codigo) , limit:1 },
-                    headers: { cnpj:  user.cnpj  },
+                    headers: { token:  user.token  },
                 });
 
                 if (result.status === 200 && result.data?.length > 0) {
@@ -102,7 +102,7 @@ export default function ServicoEdit({ params }: { params: { codigo: string } }) 
  
         try {
             const result = await api.put('/servico', dadosParaGravar, {
-                headers: { cnpj:  user.cnpj  },
+                headers: { token:  user.token  },
             });
             console.log(result);
             if (result.status === 200 && result.data?.codigo > 0) {  

@@ -55,7 +55,7 @@ export default function NovoServico() {
 
         try {
             const result = await api.post('/servico', dadosParaGravar, {
-                headers: { cnpj:  user.cnpj  },
+                headers: { token:  user.token  },
             });
             console.log(result);
             if (result.status === 200 && result.data?.codigo > 0) {  

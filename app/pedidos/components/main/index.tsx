@@ -348,7 +348,7 @@ function dataAtual() {
               try{
                   let response = await api.post('/pedidos', [ dadosOrcamento] ,
                    { 
-                     headers: { cnpj:  user.cnpj  }
+                     headers: { token:  user.token  }
                    }
                     );
  
@@ -394,7 +394,7 @@ useEffect(()=>{
                         params:{ codigo: codigo_pedido  },
                         headers:{
                              vendedor: user.vendedor ,
-                             cnpj:  user.cnpj    
+                             token:  user.token    
                         }
                     }
                 ) 

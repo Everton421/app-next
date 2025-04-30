@@ -21,7 +21,7 @@ export const SelectFormasPagamento = ({codigoForma, setCodigoForma, formaSelecio
     async function buscaFormas_Pagamento (){
         const response = await api.get("/offline/formas_Pagamento",
 
-            { headers:{ cnpj:  user.cnpj }}
+            { headers:{ token:  user.token }}
         )
         if(response.status == 200 ){
             setDados(response.data)

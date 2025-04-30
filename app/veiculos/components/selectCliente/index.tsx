@@ -44,7 +44,7 @@ export const SelectCliente = ({ codigoCliente , selectCliente}: props)=>{
                 }  }
 
         const result = await api.get('/clientes',{
-          headers: { cnpj: Number(user.cnpj)  },
+          headers: { token:   user.token  },
           params:params
         })
 
@@ -64,7 +64,7 @@ async function busca2(){
 
     if(codigoCliente && codigoCliente > 0 ){
         const result = await api.get('/clientes',{
-            headers: { cnpj: Number(user.cnpj)  },
+            headers: { token:  user.token },
             params:{
                codigo:codigoCliente,
                limit:1

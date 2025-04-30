@@ -60,7 +60,7 @@ export default function veiculo(){
 
             try{
                 let result = await api.post('/veiculo',  aux,{
-                     headers:{ cnpj:  user.cnpj  }
+                     headers:{ token:  user.token  }
                 })
                 if(result.status === 200 ){
                     setVisibleAlert(true);

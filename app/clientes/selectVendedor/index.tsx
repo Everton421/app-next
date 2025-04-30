@@ -25,7 +25,7 @@ export const SelectVendedor = ({ defaultVendedor, onChangeVendedor  }: any ) => 
     useEffect(()=>{
         async function busca(){
             let dadosVendedores = await api.get('/usuarios',{
-              headers: { cnpj:  user.cnpj }
+              headers: { token:  user.token }
             }
             );
             if(dadosVendedores.data.length > 0 ){

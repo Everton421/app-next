@@ -60,7 +60,7 @@ export default function Cliente({ params }:prop) {
             try {
                 let dados = await api.get(`/clientes`,
                     {
-                        headers: { cnpj:  user.cnpj  },
+                        headers: { token:  user.token  },
                         params:{codigo:params.codigo, limit:1}
                     }
                 );
@@ -181,7 +181,7 @@ export default function Cliente({ params }:prop) {
         try {
             let result = await api.put('/cliente', dataParaGravar,
                  {
-                    headers: { cnpj:  user.cnpj  },
+                    headers: { token:  user.token  },
 
                  }
                 );

@@ -55,7 +55,7 @@ export default function Home() {
 
     {/* Mensagem de Boas-vindas */}
     <h1 className="text-xl sm:text-2xl font-semibold mb-4 text-gray-700">
-        Olá, {user.nome || 'Usuário'}! {/* Exibir nome do usuário */}
+        Olá, {user.nome || 'Usuário'}! 
     </h1>
 
     {/* Seção de Ações Rápidas */}
@@ -72,9 +72,7 @@ export default function Home() {
          <Button variant="outline" onClick={() => router.push('/pedidos')}>
              <ClipboardList className="mr-2 h-4 w-4" /> Meus Pedidos
         </Button>
-        <Button variant="outline" onClick={() =>  console.log(user)}>
-             <ClipboardList className="mr-2 h-4 w-4" /> ver usuario
-        </Button>
+       
     </section>
 
     {/* Seção de KPIs (Cards)  

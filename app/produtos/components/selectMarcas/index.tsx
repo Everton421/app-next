@@ -32,7 +32,7 @@ useEffect(
                     setLoading(true)
                     const result = await api.get(`/marcas`,{
                         headers:{ 
-                            cnpj: Number(user.cnpj)
+                            token:  user.token
                         },
                         params:{
                             codigo:pesquisa

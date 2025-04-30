@@ -61,7 +61,7 @@ export default function Clientes() {
     //  await delay(2000)
       try {
         const aux = await api.get(`/clientes`, {
-          headers: { cnpj:  user.cnpj  },
+          headers: { token:  user.token  },
           params:{
              nome:pesquisa,
             ativo: filtroAtivo

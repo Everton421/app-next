@@ -90,15 +90,18 @@ export default function ImprimirPedidoPage() {
       setLoading(true);
       setError(null);
       try {
-        const response = await api.get(`/pedido`,
-             {  
-            headers: { cnpj:  user.cnpj  },  
-            params:{ codigo:codigo}
-        }
-    );
+
+    const response = await api.get(`/pedido`,
+      {
+          params:{ codigo: Number(codigo)  },
+          headers:{
+               vendedor: user.vendedor ,
+               token:  user.token    
+          }
+      }
+  ) 
 
         if (response.data) {
-          console.log(response.data[0])
           setPedido(response.data[0]);
         } else {
           setError("Pedido não encontrado.");

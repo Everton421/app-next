@@ -118,7 +118,7 @@ export default function NovoCliente() {
           try{
  
               let  result =   await api.post('/cliente', dados ,{
-              headers: { cnpj:  user.cnpj }
+              headers: { token:  user.token }
             }
 
               )

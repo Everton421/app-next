@@ -68,7 +68,7 @@ export default function NovaCategoria() {
 
         try {
             let result = await api.post('/offline/categorias', dados ,{
-                headers:{ cnpj:  user.cnpj }
+                headers:{ token:  user.token }
             });
             if (result.status === 200 && result.data.codigo > 0) {
                 console.log(result)

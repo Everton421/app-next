@@ -63,7 +63,9 @@ export default function NovaMarca() {
 
         try {
             let result = await api.post('/offline/marcas', dados ,{
-                headers:{ cnpj:  user.cnpj }
+                headers: {
+                    token:  user.token 
+               }
             });
             if (result.status === 200 && result.data.codigo > 0) {
                 console.log(result)

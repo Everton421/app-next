@@ -312,7 +312,7 @@ export default function NovoPedido( ){
               try{
                   let response = await api.post('/pedidos', [ dadosOrcamento] ,
                    { 
-                     headers: { cnpj:  user.cnpj  }
+                     headers: { token:  user.token  }
                    }
                     );
                      if( response.status === 200 ){

@@ -97,7 +97,7 @@ export default function Pedidos(){
         tipo: filtertipoPedidos,
       }
     }
-    let header = { cnpj:  user.cnpj }
+    let header = { token:  user.token }
  
     try{
 

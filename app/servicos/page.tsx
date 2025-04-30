@@ -38,7 +38,7 @@ const {user, loading }:any = useAuth();
 
       let result = await api.get(`/servicos`, { 
           headers:{
-             cnpj:  user.cnpj 
+             token:  user.token 
           }, 
           params:{
             aplicacao: pesquisa,
