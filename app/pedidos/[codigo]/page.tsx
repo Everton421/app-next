@@ -153,6 +153,7 @@ export default function EditPedido(){
 
     },  [   total])
      
+ 
 
 
     ////////////////////////
@@ -512,10 +513,19 @@ export default function EditPedido(){
         }
 
    
-        if (loadingAuth) {
+        useEffect(() => {
+            if (!loadingAuth) {
+              if (!user) {
+                router.push('/login'); // Redireciona para a página de login (ajuste se for outra)
+              }
+            }
+          }, [user, loadingAuth, router]);
+        
+        
+          if (loadingAuth) {
             return (
               <div className="flex justify-center items-center h-screen">
-                 <p>Verificando autenticação...</p>
+                  <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
               </div>
             );
           }
@@ -523,10 +533,11 @@ export default function EditPedido(){
           if (!user) {
             return (
                <div className="flex justify-center items-center h-screen">
-                  <p>Redirecionando para login...</p>
+                 <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
                </div>
             );
           }
+        
    
  
  if (isLoading  ) {

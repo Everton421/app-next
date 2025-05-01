@@ -36,24 +36,41 @@ export default function ServicoEdit({ params }: { params: { codigo: string } }) 
 
     const api = configApi();
     const useDateService = UseDateFunction();
-    const { user }: any = useAuth();  
+    const { user,loading }: any = useAuth();  
     const router = useRouter();  
 
+
+
+  useEffect(() => {
+    if (!loading) {
+      if (!user) {
+        router.push('/login'); // Redireciona para a página de login (ajuste se for outra)
+      }
+    }
+  }, [user, loading, router]);
+
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+         <p>Verificando autenticação...</p>
+      </div>
+    );
+  }
+
     useEffect(() => {
-        if (!user?.cnpj || !params.codigo) {
+        if (  !params.codigo) {
             console.warn("User or Codigo missing");
              setIsLoading(false);  
             return;
         }
-        function delay(ms) {
+        function delay(ms:number) {
             return new Promise((resolve)=>{ setTimeout( resolve,ms )})
            }
 
         async function busca() {
             setIsLoading(true);
-
-            await delay(2000);
-
+ 
             try {
                 const result = await api.get(`/servicos`, {
                     params: { codigo: Number(params.codigo) , limit:1 },
@@ -82,7 +99,7 @@ export default function ServicoEdit({ params }: { params: { codigo: string } }) 
             }
         }
         busca();
-    }, [params.codigo, user?.cnpj]);  
+    }, [params.codigo ]);  
 
     async function gravar() {
         if (!data || isSaving) return;  
@@ -136,7 +153,8 @@ export default function ServicoEdit({ params }: { params: { codigo: string } }) 
 
     if (isLoading) {
         return (
-             <div className="flex  my-4 items-center justify-center"> {/* Container para centralizar */}
+                <div className="flex justify-center items-center h-screen">
+
                  <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
                </div>
         );

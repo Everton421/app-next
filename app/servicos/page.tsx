@@ -27,10 +27,7 @@ const {user, loading }:any = useAuth();
     const api = configApi();
     const router = useRouter();
 
-    function delay(ms) {
-      return new Promise((resolve)=>{ setTimeout( resolve,ms )})
-     }
-
+   
     async function busca() {
       setServicos([])
       setIsLoading(true)
@@ -51,7 +48,7 @@ const {user, loading }:any = useAuth();
           setServicos( result.data);
           console.log(result.data)
       }
-    }catch(e){
+    }catch(e:any){
       console.log(e.response)
     }finally{
       setIsLoading(false)
@@ -86,7 +83,7 @@ const {user, loading }:any = useAuth();
     if (!user) {
       return (
          <div className="flex justify-center items-center h-screen">
-            <p>Redirecionando para login...</p>
+           <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
          </div>
       );
     }

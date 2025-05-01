@@ -20,6 +20,7 @@ import { Save, ArrowLeft } from "lucide-react"; // Add ArrowLeft if you want a b
 import { useRouter } from "next/navigation"; // Use router for navigation
 import { useCallback, useEffect, useState } from "react";
 import { basicServico } from "../types/servico";  
+import { ThreeDot } from "react-loading-indicators";
 
 
 export default function NovoServico() {  
@@ -35,10 +36,34 @@ export default function NovoServico() {
 
     const api = configApi();
     const useDateService = UseDateFunction();
-    const { user }: any = useAuth();  
+    const { user,loading }: any = useAuth();  
     const router = useRouter();  
     
- 
+    useEffect(() => {
+        if (!loading) {
+          if (!user) {
+            router.push('/login'); // Redireciona para a página de login (ajuste se for outra)
+          }
+        }
+      }, [user, loading, router]);
+    
+    
+      if (loading) {
+        return (
+          <div className="flex justify-center items-center h-screen">
+             <p>Verificando autenticação...</p>
+          </div>
+        );
+      }
+    
+      if (!user) {
+        return (
+           <div className="flex justify-center items-center h-screen">
+             <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+           </div>
+        );
+      }
+    
     async function gravar() {
      //   if (!data || isSaving) return;  
 
@@ -96,7 +121,7 @@ export default function NovoServico() {
                     {/* Header */}
                     <div className="flex justify-between items-center mb-4">
                         <h1 className="text-2xl font-bold text-gray-800">
-                            Editar Serviço
+                            Novo Serviço
                         </h1>
                         <Button variant="outline" onClick={() => router.push('/servicos')}>
                             <ArrowLeft className="mr-2 h-4 w-4" /> Voltar

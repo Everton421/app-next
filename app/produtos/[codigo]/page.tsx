@@ -80,7 +80,7 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
 
     useEffect(() => {
         if (!user) {
-            router.push('/');
+            router.push('/login');
             return;
         }
 

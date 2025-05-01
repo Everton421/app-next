@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { SelectCliente } from "../components/selectCliente";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { configApi } from "@/app/services/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { AlertDemo } from "@/components/alert/alert";
@@ -77,7 +77,23 @@ export default function veiculo(){
     
     
     }
+    
+useEffect(() => {
+    if (!loading) {
+      if (!user) {
+        router.push('/login'); // Redireciona para a página de login (ajuste se for outra)
+      }
+    }
+  }, [user, loading, router]);
 
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+         <p>Verificando autenticação...</p>
+      </div>
+    );
+  }
 
     if (isLoading) {
         return (

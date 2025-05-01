@@ -1,13 +1,14 @@
-//import AuthContex from "@/contexts/AuthContext";
+ import { useAuth } from "@/contexts/AuthContext";
 import Image from "next/image"
 import { useContext } from "react";
+import { Button } from "../ui/button";
 
 export default   function Navbar  () {
 
-  //const { nomeEmpresa} = useContext(AuthContex);
+  const { logout }:any = useAuth();
 
   return (
-    <nav className=" w-full bg-black sm:ml-14 p-2 flex justify-between  print:hidden  ">
+    <nav className=" w-auto bg-black sm:ml-14 p-2 flex justify-between  print:hidden  ">
          <Image 
           className="rounded-sm ml-1"
             src="/images/design.png"
@@ -20,6 +21,9 @@ export default   function Navbar  () {
         { nomeEmpresa } 
       </span>
   */}
+      <Button onClick={()=> logout()}>
+        Logout
+      </Button>
     </nav>
     )
 }

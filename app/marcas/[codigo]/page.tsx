@@ -106,7 +106,7 @@ useEffect(()=>{
     if (!user) {
         return (
             <div className="flex justify-center items-center h-screen">
-                <p>Redirecionando para login...</p>
+               <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
             </div>
         );
     }

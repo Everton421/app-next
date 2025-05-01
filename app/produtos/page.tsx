@@ -114,7 +114,7 @@ export default function Produtos() {
     // Optional: You can show a message or just rely on the redirect
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <p>Redirecionando para login...</p>
+       <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
         {/* Or return null; the redirect will happen */}
       </div>
     );

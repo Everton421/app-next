@@ -9,22 +9,19 @@ import {   ClipboardList, DollarSign, Package, PlusCircle, Users } from "lucide-
  import { redirect, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { ThreeDot } from "react-loading-indicators";
 
 
 
 export default function Home() {
   const { user, loading }:any = useAuth();
   const router = useRouter();
-
- function mostrarUsuario(){
-  console.log(user)
- }
-
+ 
 
   useEffect(() => {
     if (!loading) {
       if (!user) {
-        router.push('/'); // Redireciona para a página de login (ajuste se for outra)
+        router.push('/login'); // Redireciona para a página de login (ajuste se for outra)
       }
     }
   }, [user, loading, router]);
@@ -41,7 +38,7 @@ export default function Home() {
   if (!user) {
     return (
        <div className="flex justify-center items-center h-screen">
-          <p>Redirecionando para login...</p>
+         <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
        </div>
     );
   }

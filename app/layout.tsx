@@ -22,8 +22,10 @@ export default function RootLayout({
 }>) {
 
     const pathname = usePathname();
-    const isLoginPage = pathname === '/';
+    const isLoginPage = pathname === '/login';
     const novaConta = pathname === '/novaConta';
+    const init = pathname === '/';
+
 
   return (
     <AuthProvider>
@@ -32,7 +34,7 @@ export default function RootLayout({
         className={ cn("  bg-background font-sans antialiased  overflow-x-hidden "  )}
       >
          {
-         !isLoginPage && !novaConta &&
+         !isLoginPage && !novaConta && !init &&
          (
         <>   
            <Sidebar/>

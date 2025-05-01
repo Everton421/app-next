@@ -22,16 +22,15 @@ export default function Veiculos(){
       const [ veiculos, setVeiculos ] = useState([]);
       const [ filtroAtivo, setFiltroAtivo ] = useState<'S'| 'N' >('S');
 
-  const { user, loading: authLoading }: any = useAuth();
+      const { user, loading }:any = useAuth();
   const api = configApi();
+ 
 
 
    
       async function busca( ) {
         setVeiculos([]);
-
       setIsLoading(true);
-   
       let param;
 
             if( isNaN(pesquisa)){
@@ -41,7 +40,6 @@ export default function Veiculos(){
                     ativo: filtroAtivo,
                    }
             }
-            
             if( !isNaN(pesquisa)){
                 param =
                  {
@@ -49,15 +47,12 @@ export default function Veiculos(){
                     ativo: filtroAtivo,
                    }
             }
-
-        
          try {
           const aux = await api.get(`/veiculos`, {
             headers: {
               token:  user.token ,
             },
             params: param
-          
           });
     
           if(aux.status === 200 ){
@@ -77,6 +72,32 @@ export default function Veiculos(){
         busca()
         },[ pesquisa, filtroAtivo ])
 
+         
+
+  useEffect(() => {
+    if (!loading) {
+      if (!user) {
+        router.push('/login'); // Redireciona para a página de login (ajuste se for outra)
+      }
+    }
+  }, [user, loading, router]);
+
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+         <p>Verificando autenticação...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+       <div className="flex justify-center items-center h-screen">
+         <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+       </div>
+    );
+  }
 
     return (
 

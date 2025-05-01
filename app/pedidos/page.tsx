@@ -38,7 +38,7 @@ export default function Pedidos(){
   useEffect(() => {
     if (!loading) {
       if (!user) {
-        router.push('/');
+        router.push('/login');
       }
     }
   }, [user, loading, router]);
@@ -165,7 +165,8 @@ export default function Pedidos(){
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-         <p>Verificando autenticação...</p>
+                <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+
       </div>
     );
   }
@@ -173,7 +174,7 @@ export default function Pedidos(){
   if (!user) {
     return (
        <div className="flex justify-center items-center h-screen">
-          <p>Redirecionando para login...</p>
+         <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
        </div>
     );
   }

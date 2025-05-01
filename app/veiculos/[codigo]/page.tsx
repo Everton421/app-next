@@ -51,9 +51,25 @@ export default function veiculo({params}:any){
     const api = configApi();
 
 
+    useEffect(() => {
+        if (!loading) {
+          if (!user) {
+            router.push('/login'); // Redireciona para a página de login (ajuste se for outra)
+          }
+        }
+      }, [user, loading, router]);
+    
+    
+      if (loading) {
+        return (
+          <div className="flex justify-center items-center h-screen">
+             <p>Verificando autenticação...</p>
+          </div>
+        );
+      }
 
     
- function delay(ms) {
+ function delay(ms:number) {
     return new Promise((resolve)=>{ setTimeout( resolve,ms )})
    }
 
@@ -75,7 +91,7 @@ export default function veiculo({params}:any){
 
                 }
 
-        }catch(e){
+        }catch(e:any){
             console.error("Erro ao consultar Veículo:", e);
             setMsgAlert(`${e.reponse.data.msg}`);
             setVisibleAlert(true)

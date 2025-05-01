@@ -18,6 +18,7 @@
  import { ScrollArea } from '@/components/ui/scroll-area'; // Ensure ScrollArea is imported
 import SelectCategorias from '../components/selectCategorias';
 import SelectMarca from '../components/selectMarcas';
+import { ThreeDot } from 'react-loading-indicators';
  
  interface Produto {
     id?:number;
@@ -80,7 +81,7 @@ interface FotoProduto {
      const { user, loading  }: any = useAuth();
      const router = useRouter();
  
- 
+  
  
      
      const handleActive = useCallback((param: 'S' | 'N') => {
@@ -120,9 +121,10 @@ interface FotoProduto {
             }
             init();
 
-     },[])
+     },[user,router])
 
  
+    
  async function gravar (){
     try {
         let result = await api.post('/produto', data ,{
@@ -166,7 +168,31 @@ interface FotoProduto {
              return { ...prevData, [field]: value };
          });
      };
-
+ 
+     useEffect(() => {
+        if (!loading) {
+          if (!user) {
+            router.push('/login'); // Redireciona para a página de login (ajuste se for outra)
+          }
+        }
+      }, [user, loading, router]);
+    
+    
+      if (loading) {
+        return (
+          <div className="flex justify-center items-center h-screen">
+             <p>Verificando autenticação...</p>
+          </div>
+        );
+      }
+    
+      if (!user) {
+        return (
+           <div className="flex justify-center items-center h-screen">
+             <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+           </div>
+        );
+      }
 
 
      return (
