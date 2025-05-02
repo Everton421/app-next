@@ -14,7 +14,8 @@ export const TipoPedidoSeletor=({tipo, setTipo}:any)=>{
                         title="Ordem de Serviço"
                     >
                    
-                      <Wrench size={30} color="#FFF" strokeWidth={3}/>
+                      <Wrench size={30} color="#FFF"  />
+                      Ordem de Serviço
                     </Button>  
                
                     <Button 
@@ -22,7 +23,8 @@ export const TipoPedidoSeletor=({tipo, setTipo}:any)=>{
                     onClick={()=> setTipo(1)}
                     title="Pedido de Venda"
                     >    
-                     <ClipboardList size={30} color="#FFF" strokeWidth={3} />
+                     <ClipboardList size={30} color="#FFF"    />
+                     Pedido de Venda
                     </Button>    
                 </div>
         </div>

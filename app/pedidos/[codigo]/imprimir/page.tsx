@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { configApi } from '@/app/services/api';  
 import { useAuth } from '@/contexts/AuthContext'; // Ajuste o caminho se necessário
 import { useParams, useRouter } from 'next/navigation'; // Use useParams para pegar o [codigo]
+import { ThreeDot } from 'react-loading-indicators';
 
 // Defina uma interface para a estrutura detalhada do pedido (ajuste conforme sua API)
 interface PedidoDetalhes {
@@ -79,9 +80,14 @@ export default function ImprimirPedidoPage() {
   const api = configApi();
   const { user }:any = useAuth(); 
 
+
+
+
+
+
   useEffect(() => {
     const fetchPedidoDetalhes = async () => {
-      if (!codigo || !user?.cnpj) {
+      if (!codigo  ) {
         setError("Código do pedido ou informações do usuário ausentes.");
         setLoading(false);
         return;
@@ -118,6 +124,26 @@ export default function ImprimirPedidoPage() {
   }, [codigo ]); 
 
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+       <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+      </div>
+    );
+  } 
+
+  if (error) {
+    return <div className="p-5 text-center text-red-600">Erro: {error}</div>;
+  }
+
+  if (!pedido) {
+    return <div className="p-5 text-center">Pedido não encontrado.</div>;
+  }
+
+
+
+
+
   // Opcional: Disparar a impressão automaticamente após carregar
   // useEffect(() => {
   //   if (pedido && !loading && !error) {
@@ -134,17 +160,6 @@ export default function ImprimirPedidoPage() {
   };
 
    
-  if (loading) {
-    return <div className="p-5 text-center">Carregando dados para impressão...</div>;
-  } 
-
-  if (error) {
-    return <div className="p-5 text-center text-red-600">Erro: {error}</div>;
-  }
-
-  if (!pedido) {
-    return <div className="p-5 text-center">Pedido não encontrado.</div>;
-  }
 
   return (
     <div className="p-4 print:p-0 max-w-2xl mx-auto font-sans">  
