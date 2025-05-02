@@ -15,7 +15,7 @@ export const SelectVendedor = ({ defaultVendedor, onChangeVendedor  }: any ) => 
     const [ vendedores, setVendedores ] = useState([]);
     const { user, loading }: any = useAuth();
 
-    const handleSelect = async (value) => {
+    const handleSelect = async (value:any) => {
         onChangeVendedor(value)
         console.log(value)
     };
@@ -43,7 +43,7 @@ export const SelectVendedor = ({ defaultVendedor, onChangeVendedor  }: any ) => 
             <SelectContent>
                 { 
                  vendedores.length > 0 ? ( 
-                    vendedores.map((v)=>(
+                    vendedores.map((v:any)=>(
                         <SelectItem value={String(v.codigo)}  key={v.codigo}> { v.codigo } {v.nome}</SelectItem>
                     ))
                     ):(

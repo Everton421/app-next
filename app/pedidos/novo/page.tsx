@@ -35,9 +35,9 @@ export default function NovoPedido( ){
     const  [ orcamento , setOrcamento ] = useState({});
     const  [ dadosOrcamento, setDadosOrcamento ] = useState<pedido>();
     const  [ parcelas, setParcelas ] = useState<parcela>();
-    const  [ situacao, setSituacao  ] = useState<string>('EA');
+    const  [ situacao, setSituacao  ] = useState<any>('EA');
 
-    const  [ observacoes, setObservacoes ] = useState<string>('')
+    const  [ observacoes, setObservacoes ] = useState<any>('')
     const [visibleAlertPrice, setVisibleAlertPrice] = useState(false);
     const [ codigoNovoPedido, setCodigoNovoPedido ] = useState<number>(0);
     const [ formaSelecionada , setFormaSelecionada] = useState <formaPagamento>();

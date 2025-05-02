@@ -6,10 +6,10 @@ import { configApi } from "@/app/services/api";
 
 type props = 
 {
-    obsPedido:string ,
-    setObsPedido: Dispatch<SetStateAction<string>>,
-    situacao:string ,
-    setSituacao: Dispatch<SetStateAction<string>>,
+    obsPedido:string | undefined,
+    setObsPedido: Dispatch<SetStateAction<string | undefined>>,
+    situacao:string | undefined ,
+    setSituacao: Dispatch<SetStateAction<string | undefined>>,
 }
  
 

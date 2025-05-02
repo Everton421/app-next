@@ -33,9 +33,9 @@ export default function EditPedido(){
     const  [ totalServicos , setTotalServicos ] = useState<number>(0);
      const  [ dadosOrcamento, setDadosOrcamento ] = useState<pedido>();
     const  [ parcelas, setParcelas ] = useState<parcela[]>();
-    const  [ situacao, setSituacao  ] = useState<string>('');
+    const  [ situacao, setSituacao  ] = useState<string | undefined >('');
 
-    const  [ observacoes, setObservacoes ] = useState<string>('')
+    const  [ observacoes, setObservacoes ] = useState<string | undefined>('')
     const [visibleAlertPrice, setVisibleAlertPrice] = useState(false);
     const [ codigoNovoPedido, setCodigoNovoPedido ] = useState();
     const [ formaSelecionada , setFormaSelecionada] = useState<formaPagamento | undefined>();

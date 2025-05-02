@@ -143,7 +143,7 @@ export default function ServicoEdit({ params }: { params: { codigo: string } }) 
     const handleActive = useCallback((newStatus: 'S' | 'N') => {
          //console.log("Status change requested (implement if needed):", newStatus);
          setData(
-            (prev)=> { 
+            (prev:any)=> { 
                return  {...prev, ativo:newStatus};
             }
 

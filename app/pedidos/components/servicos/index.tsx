@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 
 export default function ListaServicos( { selecionarServico}:any){
 
-        const [pesquisa, setPesquisa] = useState('');
+        const [pesquisa, setPesquisa] = useState<any>('');
         const [dados, setDados] = useState([]);
         const [loading, setLoading] = useState(false);
         const [ selecionado , setSelecionado ] = useState({});

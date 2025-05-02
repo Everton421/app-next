@@ -4,7 +4,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { AlignLeft, ArrowLeft, Check, Edit, Plus, Tag, X } from "lucide-react";
+import {    ArrowLeft, Check, Edit, Plus,    X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { configApi } from "../services/api";
 import { useAuth } from "@/contexts/AuthContext";
@@ -23,7 +23,7 @@ export default function Categorias (){
     const [ dados , setDados ] = useState<categoria[]>([]);
 
       const api = configApi();
-      const { user, loading } :any = useAuth();
+      const { user  } :any = useAuth();
     const router = useRouter();
 
     async function busca(){

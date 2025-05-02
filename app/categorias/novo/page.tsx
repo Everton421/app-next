@@ -5,9 +5,8 @@
 
 'use client'
 
-import { UseDateFunction } from "@/app/hooks/useDateFunction"
 import { configApi } from "@/app/services/api"
-import { useEffect, useState, useCallback } from "react" // Import useCallback
+import { useEffect, useState   } from "react" // Import useCallback
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext"
 import { Input } from "@/components/ui/input";
@@ -17,25 +16,24 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Save } from "lucide-react";
 import { DateService } from "@/app/services/dateService";
 import { AlertDemo } from "@/components/alert/alert";
-
+import { ThreeDot } from "react-loading-indicators";
 
 type categoria = {
     codigo?:number
-    descricao:string
-    data_cadastro:string
-    data_recadastro:string
+    descricao?:string
+    data_cadastro?:string
+    data_recadastro?:string
 }
 
 export default function NovaCategoria() {
 
     const api = configApi()
-    const [data, setData] = useState<categoria | null >(null); // Inicializar como null
-    const [dados, setDados] = useState<categoria| null > (null); // Inicializar como null
+    const [data   ] = useState<categoria | null >(null); // Inicializar como null
+    const [dados, setDados] = useState<categoria | undefined | null> (null); // Inicializar como null
     
     const [visibleAlert, setVisibleAlert] = useState(false);
     const [msgAlert, setMsgAlert] = useState<string>('');
     const [isSaving, setIsSaving] = useState(false); // Add saving state
-    const [isLoading, setIsLoading] = useState(true); // Add loading state for initial fetch
 
     const { user, loading }: any = useAuth();
     const router = useRouter();
@@ -50,9 +48,8 @@ export default function NovaCategoria() {
     }, [user, loading, router]);
 
 
-
     useEffect(()=>{
-        let aux:categoria = { 
+        const aux:categoria = { 
             descricao:'',
             data_cadastro: dateService.obterDataAtual(),
             data_recadastro: dateService.obterDataHoraAtual()
@@ -67,7 +64,7 @@ export default function NovaCategoria() {
     setIsSaving(true);
 
         try {
-            let result = await api.post('/offline/categorias', dados ,{
+            const result = await api.post('/offline/categorias', dados ,{
                 headers:{ token:  user.token }
             });
             if (result.status === 200 && result.data.codigo > 0) {
@@ -104,9 +101,11 @@ export default function NovaCategoria() {
     }
    
      function handleDescricao(descricao:string){
-        setDados((prev)=> {
-            return { ...prev , descricao:descricao };
-             });
+        setDados((prev) => {
+            if(prev){
+                return { ...prev , descricao:descricao };
+            }
+            });
      }
 
     return (

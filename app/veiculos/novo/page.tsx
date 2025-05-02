@@ -28,7 +28,7 @@ interface veiculo
 
 export default function veiculo(){
 
-    const [ cliente, setCliente] = useState();
+    const [ cliente, setCliente] = useState<any>();
     const [data, setData ] = useState<veiculo | null> ();
     const [ placa, setPlaca] = useState<string | null >();
     const [ modelo, setModelo] = useState<string>();
@@ -67,7 +67,7 @@ export default function veiculo(){
                     setMsgAlert(`Veículo ${aux.modelo} cadastrado com Sucesso!`);
                 }
 
-            }catch(e){
+            }catch(e:any){
                 console.error("Erro ao gravar Veículo:", e);
                 setMsgAlert(`${e.reponse.data.msg}`);
                 setVisibleAlert(true);

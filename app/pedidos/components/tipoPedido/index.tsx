@@ -3,7 +3,7 @@ import { BadgeDollarSign, Check, ClipboardList, Wrench } from "lucide-react"
 
      
 
-export const TipoPedidoSeletor=({tipo, setTipo})=>{
+export const TipoPedidoSeletor=({tipo, setTipo}:any)=>{
     return(
         <div>
                 <div className="flex items-center gap-1" >

@@ -11,6 +11,7 @@ import { Label } from "@radix-ui/react-label";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Save } from "lucide-react";
 import { AlertDemo } from "@/components/alert/alert";
+import { ThreeDot } from "react-loading-indicators";
 
 
 type marca = {
@@ -119,7 +120,7 @@ useEffect(()=>{
     }
 
     function handleDescricao(descricao:string){
-        setData((prev)=> {
+        setData((prev:any)=> {
             return { ...prev , descricao:descricao };
              });
      }

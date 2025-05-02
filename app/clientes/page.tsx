@@ -204,7 +204,7 @@ export default function Clientes() {
                     <TableBody>
                       {
                         clientes.length > 0 &&
-                        clientes.map((i) => (
+                        clientes.map((i:client) => (
                           <TableRow
                             className="h-14 justify-center items-center"
                             key={i?.codigo}

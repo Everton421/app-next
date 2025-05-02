@@ -59,7 +59,7 @@ useEffect(
     }, [ pesquisa ]
 )
 
-    function seleciona(c){
+    function seleciona(c:any){
         setSelecionado(c)
         selecionarCliente(c)
         setPesquisa('')

@@ -49,7 +49,7 @@ export default function NovaConta(){
                         setLoading(true)
                         router.push('/')
                     }
-            }catch(e){
+            }catch(e:any){
                 
                 if(e.status === 400) console.log(e.response.data.msg);
             }
@@ -94,7 +94,7 @@ export default function NovaConta(){
                 <input
                   type="text"
                   id="cnpj"
-                  onChange={(e)=>setCnpj(e.target.value) }
+                  onChange={(e:any)=>setCnpj(e.target.value) }
                   name="cnpj"
                   placeholder="00.000.000/0000-00"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
@@ -111,7 +111,7 @@ export default function NovaConta(){
                   type="email"
                   id="companyEmail"
                   name="companyEmail"
-                  onChange={ (e)=> setEmailEmpresa(e.target.value) }
+                  onChange={ (e:any)=> setEmailEmpresa(e.target.value) }
                   placeholder="contato@suaempresa.com"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   required
@@ -126,7 +126,7 @@ export default function NovaConta(){
                 <input
                   type="text"
                   id="companyName"
-                  onChange={(e)=>setNomeEmpresa(e.target.value) }
+                  onChange={(e:any)=>setNomeEmpresa(e.target.value) }
                   name="companyName"
                   placeholder="Nome Fantasia ou Razão Social"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
@@ -143,7 +143,7 @@ export default function NovaConta(){
                   type="tel"
                   id="companyPhone"
                   name="companyPhone"
-                  onChange={ (e)=> setTelefoneEmpresa(e.target.value)}
+                  onChange={ (e:any)=> setTelefoneEmpresa(e.target.value)}
                   placeholder="(XX) XXXX-XXXX"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   required
@@ -176,7 +176,7 @@ export default function NovaConta(){
                   type="text"
                   id="responsibleName"
                   name="responsibleName"
-                  onChange={(e)=> setNomeUsuario(e.target.value)}
+                  onChange={(e:any)=> setNomeUsuario(e.target.value)}
                   placeholder="Seu Nome"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   required
@@ -191,7 +191,7 @@ export default function NovaConta(){
                 <input
                   type="email"
                   id="responsibleEmail"
-                  onChange={(e)=> setEmailUsuario(e.target.value)}
+                  onChange={(e:any)=> setEmailUsuario(e.target.value)}
                   name="responsibleEmail"
                   placeholder="seu.email@exemplo.com"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
@@ -208,7 +208,7 @@ export default function NovaConta(){
                   type="password"
                   id="password"
                   name="password"
-                  onChange={(e)=> setSenhaUsuario(e.target.value)}
+                  onChange={(e:any)=> setSenhaUsuario(e.target.value)}
                   placeholder="********"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   required
@@ -224,7 +224,7 @@ export default function NovaConta(){
                   type="tel"
                   id="responsiblePhone"
                   name="responsiblePhone"
-                  onChange={(e)=> setTelefoneUsuario(e.target.value)}
+                  onChange={(e:any)=> setTelefoneUsuario(e.target.value)}
                   placeholder="(XX) 9XXXX-XXXX"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   required

@@ -4,8 +4,8 @@ import { UseDateFunction } from "@/app/hooks/useDateFunction"
 import { Active } from "@/app/pedidos/components/active"
 import { configApi } from "@/app/services/api"
 import { AlertDemo } from "@/components/alert/alert"
-import { ArrowLeft, Check, Delete, Save, ShieldCheck, ShieldClose, X } from "lucide-react"
-import { redirect, useSearchParams } from "next/navigation"
+import { ArrowLeft,  Save,   } from "lucide-react"
+import { redirect   } from "next/navigation"
 import { useEffect, useState, useCallback } from "react" // Import useCallback
 import { SelectPessoa } from "../select"
 import { InputMask } from "primereact/inputmask"
@@ -58,7 +58,7 @@ export default function Cliente({ params }:prop) {
             setIsLoading(true);
 
             try {
-                let dados = await api.get(`/clientes`,
+                const dados = await api.get(`/clientes`,
                     {
                         headers: { token:  user.token  },
                         params:{codigo:params.codigo, limit:1}

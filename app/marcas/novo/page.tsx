@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Save } from "lucide-react";
 import { DateService } from "@/app/services/dateService";
 import { AlertDemo } from "@/components/alert/alert";
+import { ThreeDot } from "react-loading-indicators";
 
 
 type marca = {
@@ -101,7 +102,7 @@ export default function NovaMarca() {
     }
    
      function handleDescricao(descricao:string){
-        setDados((prev)=> {
+        setDados((prev:any)=> {
             return { ...prev , descricao:descricao };
              });
      }

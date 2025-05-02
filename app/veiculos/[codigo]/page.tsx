@@ -108,7 +108,7 @@ export default function veiculo({params}:any){
     };
 
     const handleClientChange = (cliente:any)=>{
-            setData((prev)=> {
+            setData((prev:any)=> {
                 if(!prev) return;
                 return { ...prev, cliente:cliente.codigo}
             })
@@ -137,7 +137,7 @@ export default function veiculo({params}:any){
                     setMsgAlert(`Veículo ${ data && data.modelo} atualizado com Sucesso!`);
                 }
 
-            }catch(e){
+            }catch(e:any){
                 console.error("Erro ao atualizar Veículo:", e);
                 setMsgAlert(`${e.reponse.data.msg}`);
                 setVisibleAlert(true);

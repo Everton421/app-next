@@ -62,15 +62,15 @@ export default function MainPedido( { codigo_pedido}:any ){
     const  [ totalProdutos , setTotalProdutos ] = useState(0);
     const  [ totalServicos , setTotalServicos ] = useState(0);
     const  [ orcamento , setOrcamento ] = useState({});
-    const  [ dadosOrcamento, setDadosOrcamento ] = useState();
+    const  [ dadosOrcamento, setDadosOrcamento ] = useState <any>();
     const  [ parcelas, setParcelas ] = useState();
-    const  [ situacao, setSituacao  ] = useState();
+    const  [ situacao, setSituacao  ] = useState<string>();
 
     const  [ observacoes, setObservacoes ] = useState<string>()
     const  [ visibleAlertQtdProdutos ,setVisibleAlertQtdProdutos ] = useState<boolean>( false );
     const [visibleAlertPrice, setVisibleAlertPrice] = useState(false);
     const [ codigoNovoPedido, setCodigoNovoPedido ] = useState();
-    const [ formaSelecionada , setFormaSelecionada] = useState();
+    const [ formaSelecionada , setFormaSelecionada] = useState<any>();
     const [isLoading, setIsLoading] = useState(false);  
  
      const [ visible, setVisible ] = useState<boolean>(false);
@@ -165,7 +165,7 @@ function dataAtual() {
                 if(i){
                     i.quantidade = 1 
                     if(!i.valor) i.valor = 0.00;
-                    i.total = i.preco * i.quantidade
+                    i.total = i.valor * i.quantidade
 
                     let v = servicosSelecionados.some((p:Servico_pedido)=> p.codigo === i.codigo )
                     if(v){
@@ -274,12 +274,12 @@ function dataAtual() {
             return aux
        }
        
-       function gerarParcelaUnica( total,codigoPedido ){
+       function gerarParcelaUnica( total:any,codigoPedido:any ){
         const aux = [{ pedido: codigoPedido, parcela: 1, valor: total, vencimento: dataAtual() }];
           return aux 
       }
 
-      function gerarParcelas(forma, total, codigo_pedido) {
+      function gerarParcelas(forma:any, total:any, codigo_pedido:any) {
     
         const intervalo = forma?.intervalo;
         const numParcelas = forma?.parcelas;
@@ -314,14 +314,14 @@ function dataAtual() {
    
       function handleVeic   (veic:any) {
         setDadosOrcamento(
-            (prev)=>{
+            (prev:any)=>{
                 return { ...prev, veiculo:veic.codigo}
             }
         )
       }
       function handleType   (tipo:any) {
         setDadosOrcamento(
-            (prev)=>{
+            (prev:any)=>{
                 return { ...prev, tipo:tipo}
             }
         )
@@ -329,8 +329,8 @@ function dataAtual() {
 
 
       async function gravar (){
-        if( dadosOrcamento.parcelas.length === 0 ){
-            const aux = [{ pedido: dadosOrcamento.codigo ,parcela: 1, valor: total, vencimento: dataAtual() }];
+        if( dadosOrcamento &&  dadosOrcamento.parcelas.length === 0 ){
+            const aux:any = [{ pedido: dadosOrcamento.codigo ,parcela: 1, valor: total, vencimento: dataAtual() }];
             dadosOrcamento.parcelas = aux;
             setParcelas(aux);
         }
@@ -372,9 +372,7 @@ function dataAtual() {
 
 
         
-    function delay(ms) {
-        return new Promise((resolve)=>{ setTimeout( resolve,ms )})
-       }
+  
 
 
 {/*************************************************** */}
@@ -453,7 +451,7 @@ useEffect(()=>{
 useEffect(
     ()=>{
         if( codigo_pedido === null){
-            let aux = gerarCodigo(110);
+            let aux:any = gerarCodigo(110);
             setCodigoNovoPedido(aux)
             let data_cadastro = dataAtual();
 
@@ -461,7 +459,7 @@ useEffect(
 
             let parcelaGerada = gerarParcelaUnica(0,aux);
             setDadosOrcamento(
-                ( prev )=>({
+                ( prev:any )=>({
                     ...prev,
                     total_geral:0,
                     descontos:0,
@@ -498,13 +496,13 @@ useEffect(
              
            
              
-             const produtos = produtosSelecionados.map( (p)=>{
+             const produtos = produtosSelecionados.map( (p:any)=>{
                 totalProdutos= p.quantidade * p.preco
 
                 return {...p, total:( p.quantidade * p.preco)}
              })
 
-             const servicos = servicosSelecionados.map((s)=>{
+             const servicos = servicosSelecionados.map((s:any)=>{
                 totalServicos += s.quantidade * s.valor;
 
                     return { ...s, total: (s.quantidade * s.valor)}
@@ -523,7 +521,7 @@ useEffect(
              setTotal(totalGeral)
          
             
-              let novasParcelas;
+              let novasParcelas:any;
  
              if(codigo_pedido !== null ){
                 if( dadosOrcamento?.total_geral !== totalGeral){
@@ -537,7 +535,7 @@ useEffect(
             }
 
             setDadosOrcamento(
-                (prev)=>({
+                (prev:any)=>({
                     ...prev, 
                     cliente:clienteSelecionado,
                     codigo_cliente: clienteSelecionado?.codigo,
@@ -566,7 +564,7 @@ useEffect(
         if( codigo_pedido !== null ){
         let aux =  gerarParcelas(formaSelecionada, total,codigo_pedido )
           setDadosOrcamento(
-              (prev)=>({
+              (prev:any)=>({
                   ...prev,
                      quantidade_parcelas: aux.length,
                      parcelas:aux
@@ -575,7 +573,7 @@ useEffect(
         }else{
             let aux =  gerarParcelas(formaSelecionada, total,codigoNovoPedido )
             setDadosOrcamento(
-                (prev)=>({
+                (prev:any)=>({
                     ...prev,
                        quantidade_parcelas: aux.length,
                        parcelas:aux
@@ -677,7 +675,7 @@ return(
                     <TabsContent value="Produtos">
                             <div className="w-full  flex justify-start items-center   ">
                                 <div className="w-6/12  ml-12" >
-                                     <ListaProdutos selecionarProduto={selecionarItens} itens={produtosSelecionados} />
+                                     <ListaProdutos selecionarProduto={selecionarItens}    />
                                 
                                 </div>
                             </div>
@@ -772,7 +770,7 @@ return(
                                                             </TableCell>
                                                         <TableCell className=" w-80 font-medium text-center font-bold text-gray-600" > 
                                                         <input className=" border-gray-400 border-2 rounded-md w-20 text-center "
-                                                                placeholder="Preco:"  onChange={ (e)=>  handlePriceServices(i, e.target.value ) }
+                                                                placeholder="Preco:"  onChange={ (e:any)=>  handlePriceServices(i, e.target.value ) }
                                                                 defaultValue={i.valor }
                                                                 />
                                                         <span>  valor R$ { Number(i.valor).toFixed(2)  } </span>
@@ -822,11 +820,9 @@ return(
                             </div>               
 
                                 <Parcelas  
-                                  parcelas={  parcelas}
                                   dadosOrcamento={dadosOrcamento}
                                   setDadosOrcamento={setDadosOrcamento}
                                   total={total}
-                                  formaSelecionada={formaSelecionada}
                               />
                         
                         </TabsContent>
@@ -835,7 +831,7 @@ return(
                  
 
                         <div className="mt-4">                                                
-                            <Detalhes setSituacao={setSituacao} situacao={situacao} obsPedido={observacoes} setObsPedido={setObservacoes} cliente={dadosOrcamento?.cliente} />
+                            <Detalhes setSituacao={setSituacao} situacao={situacao} obsPedido={observacoes} setObsPedido={setObservacoes}  />
                          </div>
                     </TabsContent>
 

@@ -4,8 +4,8 @@
 import { UseDateFunction } from "@/app/hooks/useDateFunction"
 import { configApi } from "@/app/services/api"
 import { AlertDemo } from "@/components/alert/alert"
-import { ArrowLeft, Check, Delete, Save, ShieldCheck, ShieldClose, X } from "lucide-react"
-import { redirect, useRouter, useSearchParams } from "next/navigation"
+import { ArrowLeft, Save  } from "lucide-react"
+import {  useRouter  } from "next/navigation"
 import { useEffect, useState, useCallback } from "react" // Import useCallback
 
 import { InputMask } from 'primereact/inputmask';
@@ -18,10 +18,7 @@ import { useAuth } from "@/contexts/AuthContext"
 
 export default function NovoCliente() {
     const api = configApi()
-    const [data, setData] = useState(); // Inicializar como null
-    const [visibleAlert, setVisibleAlert] = useState(false);
     const [msgAlert, setMsgAlert] = useState<string>('');
-    const useDateService = UseDateFunction()
 
     const [ nome, setNome ]       = useState<string>();
     const [ cnpj, setCnpj ]       = useState<string>();
@@ -40,18 +37,12 @@ export default function NovoCliente() {
     const [pessoa , setPessoa ]             = useState<string  > ('f')
     const [ placeholderPessoa , setPlaceholderPessoa ] = useState<string > ("000.000.000.00")
     const [ codigoVendedor, setCodigoVendedor ]     = useState<number>();
-
     const [ numero, setNumero ] = useState<string | null>(null);
-
     const [ visible, setVisible ] = useState<boolean>(false)
-    const [value, setValue] = useState();
     const router = useRouter();
 
       const dateService = DateService();
-   const { user, loading }:any = useAuth();
- 
-        const [ msg, setMsg ] = useState('')
-
+   const { user    }:any = useAuth();
  
  
  
@@ -141,20 +132,6 @@ export default function NovoCliente() {
     }
 
 
-       // Usar useCallback para otimizar e evitar recriações desnecessárias da função
-       const handleActive = useCallback((param: string) => {
-        setData((prevData:any) => {
-            if (!prevData) return prevData; // Evita erros se prevData for null
-
-            return {
-                ...prevData,
-                ativo: param,
-            };
-        });
-    }, []);
-
- 
- 
 
     useEffect(()=>{
             if( pessoa === 'j'  ){

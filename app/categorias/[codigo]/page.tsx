@@ -1,8 +1,7 @@
 'use client'
 
-import { UseDateFunction } from "@/app/hooks/useDateFunction"
 import { configApi } from "@/app/services/api"
-import { useEffect, useState, useCallback } from "react" // Import useCallback
+import { useEffect, useState  } from "react" // Import useCallback
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext"
 import { Input } from "@/components/ui/input";
@@ -11,6 +10,7 @@ import { Label } from "@radix-ui/react-label";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Save } from "lucide-react";
 import { AlertDemo } from "@/components/alert/alert";
+import { ThreeDot } from "react-loading-indicators";
 
 
 type categoria = {
@@ -21,14 +21,11 @@ export default function Categoria({ params }:any ) {
 
     const api = configApi()
     const [data, setData] = useState<categoria | null >(null); // Inicializar como null
-    const [dados, setDados] = useState(null); // Inicializar como null
     
     const [isSaving, setIsSaving] = useState(false); // Add saving state
     const [isLoading, setIsLoading] = useState(true); // Add loading state for initial fetch
-
     const [visibleAlert, setVisibleAlert] = useState(false);
     const [msgAlert, setMsgAlert] = useState<string>('');
-
     const { user, loading }: any = useAuth();
     const router = useRouter();
 
@@ -119,7 +116,7 @@ useEffect(()=>{
     }
 
     function handleDescricao(descricao:string){
-        setData((prev)=> {
+        setData((prev:any)=> {
             return { ...prev , descricao:descricao };
              });
      }

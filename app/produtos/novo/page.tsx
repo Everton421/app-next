@@ -37,13 +37,12 @@ import { ThreeDot } from 'react-loading-indicators';
      data_recadastro?: string; 
      data_cadastro?: string; 
      cst:string;
-     grupo:number;
-     marca?:number;
+     grupo:grupo;
+     marca?:marca;
      num_original?:string;
      origem?:string | number;
      tipo:number
  }
- 
  interface FotoProduto {
      sequencia: number;
      link: string;
@@ -73,7 +72,6 @@ interface FotoProduto {
      const [fotos, setFotos] = useState<FotoProduto[]>([]);
      const [visibleAlert, setVisibleAlert] = useState(false);
      const [msgAlert, setMsgAlert] = useState<string>('');
-     const [isLoading, setIsLoading] = useState(true); // Add loading state for initial fetch
      const [isSaving, setIsSaving] = useState(false); // Add saving state
  
      const api = configApi();
@@ -95,7 +93,7 @@ interface FotoProduto {
      useEffect(()=>{
 
             function init (){
-                let aux:Produto ={
+                let aux:any ={
                     ativo:'S',
                     class_fiscal:'0000.00.00',
                      cst:'00',
@@ -148,14 +146,14 @@ interface FotoProduto {
 
 
      const handleCategory =(categoria:grupo) => {
-        setData(prevData => {
+        setData((prevData:any) => {
             if (!prevData) return null;
             return { ...prevData, grupo: categoria };
         });
     }
 
     const handleMarca =(marca:marca) => {
-        setData(prevData  => {
+        setData((prevData:any)  => {
             if (!prevData) return null;
             return { ...prevData, marca: marca };
         });
@@ -325,7 +323,7 @@ interface FotoProduto {
                                  </div>
 
                              <div>
-                                  <Label htmlFor="ncm" className="text-sm font-medium text-gray-600">Categoria:  { data?.grupo &&  data?.grupo.descricao }</Label>
+                                  <Label htmlFor="ncm" className="text-sm font-medium text-gray-600">Categoria:  {  data?.grupo &&  data?.grupo.descricao }</Label>
                                    <SelectCategorias setCodigoCategoria={  handleCategory } codigoCategoria={ data?.grupo ? data?.grupo.codigo : null} />
                                  </div>
                                 <div>
