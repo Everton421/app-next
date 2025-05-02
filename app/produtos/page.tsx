@@ -258,7 +258,7 @@ export default function Produtos() {
                   <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
                 </div>
             ):
-            <p  className="text-xl text-gray-500   ml-7"> nenhum pedido encontrado!</p>  
+            <p  className="text-xl text-gray-500   ml-7"> nenhum Produto encontrado!</p>  
         
               ) }
                 

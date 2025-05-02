@@ -60,7 +60,7 @@ interface FotoProduto {
 
 export default function Prod({ params }: { params: { codigo: string } }) { // Add type for params
 
-    const [data, setData] = useState<Produto | null>(null); // Initialize with null
+    const [data, setData] = useState<any>(null); // Initialize with null
     const [fotos, setFotos] = useState<FotoProduto[]>([]);
     const [visibleAlert, setVisibleAlert] = useState(false);
     const [msgAlert, setMsgAlert] = useState<string>('');
@@ -72,28 +72,12 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
     const { user, loading  }: any = useAuth();
     const router = useRouter();
 
-    async function delay(ms:number){
-        return new Promise((resolve)=>{
-             setTimeout(  resolve,ms  )
-        })
-    }
-
     useEffect(() => {
-        if (!user) {
-            router.push('/login');
-            return;
-        }
-
-        if (!params.codigo) {
-            router.push('/produtos');  
-            return;
-        }
-
+       
         async function busca() {
-            console.log(params)
-
-            //await delay(2000)
-
+            if (!loading && !user.token) {
+                router.push('/login');  
+              }
             let cod = Number(params.codigo);
             try {
                 const [dadosRes, fotosRes] = await Promise.all([
@@ -137,28 +121,26 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
                 setIsLoading(false);
             }
         }
-
-        if (user?.cnpj) {
              busca();
-        }
     }, [ params.codigo, user, router ]);  
 
 
+
     const handleInputChange = (field: keyof Produto, value: string | number) => {
-        setData(prevData => {
+        setData((prevData:any) => {
             if (!prevData) return null;
             return { ...prevData, [field]: value };
         });
     };
 
     const handleCategory =(categoria:grupo) => {
-        setData(prevData => {
+        setData((prevData:any) => {
             if (!prevData) return null;
             return { ...prevData, grupo: categoria };
         });
     }
     const handleMarca =(marca:marca) => {
-        setData(prevData => {
+        setData((prevData:any) => {
             if (!prevData) return null;
             return { ...prevData, marca: marca };
         });
@@ -199,13 +181,40 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
     };
 
     const handleActive = useCallback((param: 'S' | 'N') => {
-         setData((prevData) => {
+         setData((prevData:any) => {
             if (!prevData) return prevData;
             return { ...prevData, ativo: param };
         });
     }, []);
 
-     if (isLoading) {
+   //  useEffect(() => {
+   //     if (!loading && !user.token) {
+   //       router.push('/login');  
+   //     }
+   //   }, [user, loading, router]);
+    
+ 
+   
+      if (loading) {
+        return (
+          <div className="flex justify-center items-center min-h-screen">
+           <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+          </div>
+        );
+      }
+    
+      if (!user) {
+        // Optional: You can show a message or just rely on the redirect
+        return (
+          <div className="flex justify-center items-center min-h-screen">
+           <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+            {/* Or return null; the redirect will happen */}
+          </div>
+        );
+      }
+
+    
+    if (isLoading) {
         return (
             <div className="flex justify-center items-center min-h-screen">
                <div className="flex justify-center my-4"> {/* Container para centralizar */}
@@ -227,8 +236,6 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
              </div>
          );
      }
-
-     if (!data) return null;
 
 
     return (
