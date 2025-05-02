@@ -30,7 +30,8 @@ export default function Home() {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-         <p>Verificando autenticação...</p>
+               <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+
       </div>
     );
   }
@@ -42,10 +43,9 @@ export default function Home() {
        </div>
     );
   }
-
+ 
 
   return (
-
     <main className="sm:ml-14 p-4 bg-slate-100 min-h-screen  h-full  " > {/* Garantir altura mínima */}
     <ScrollArea className="w-full   h-full " >
       
@@ -69,7 +69,9 @@ export default function Home() {
          <Button variant="outline" onClick={() => router.push('/pedidos')}>
              <ClipboardList className="mr-2 h-4 w-4" /> Meus Pedidos
         </Button>
-       
+        <Button variant="outline" onClick={() => console.log(user)}>
+             <ClipboardList className="mr-2 h-4 w-4" />   teste
+        </Button>
     </section>
 
     {/* Seção de KPIs (Cards)  

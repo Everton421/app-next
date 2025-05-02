@@ -31,7 +31,7 @@ export default function Produtos() {
   const [pesquisa, setPesquisa] = useState(''); 
   const [searchTerm, setSearchTerm] = useState('');  
   const [produtos, setProdutos] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(false);  
+  const [isLoading, setIsLoading] = useState(true);  
 
   const [ msgApi, setMsgApi ] = useState();
   const [ filtroAtivo, setFiltroAtivo ] = useState<'S'| 'N' >('S');
@@ -41,19 +41,11 @@ export default function Produtos() {
   const router = useRouter();
 
 
-  useEffect(() => {
-    if (!authLoading && !user) {
-      router.push('/');  
-    }
-  }, [user, authLoading, router]);
-
-
 
   async function busca(term: string) {
     setProdutos([])
     setIsLoading(true);
 
-    if (!user?.cnpj) return;
     const query = term.trim() === '' ? 'a' : term.trim();
     try {
       const aux = await api.get(`/produtos`, {
@@ -65,19 +57,27 @@ export default function Produtos() {
           ativo: filtroAtivo
         }
       });
-
       if(aux.status === 200 ){
         setProdutos(aux.data || []);
-
       }
     } catch (e) {
       console.error('Erro ao buscar produtos:', e);
-      
       setProdutos([]);
     } finally {
       setIsLoading(false);
     }
   }
+
+  function handleEditClick(codigo: number) {
+    router.push(`/produtos/${codigo}`);
+  }
+ 
+ 
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login');  
+    }
+  }, [user, authLoading, router]);
 
 
   useEffect(() => {
@@ -90,22 +90,15 @@ export default function Produtos() {
     };
   }, [pesquisa]);
 
-
   useEffect(() => {
-    if (user?.cnpj) {  
        busca(searchTerm);
-    }
-  }, [searchTerm, filtroAtivo ,user?.cnpj]);  
+  }, [searchTerm, filtroAtivo   ]);  
+  
 
-
-  function handleEditClick(codigo: number) {
-    router.push(`/produtos/${codigo}`);
-  }
- 
   if (authLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <p>Verificando autenticação...</p>
+       <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
       </div>
     );
   }
@@ -120,8 +113,7 @@ export default function Produtos() {
     );
   }
 
-   
-  
+
 
 
     return (
@@ -145,6 +137,7 @@ export default function Produtos() {
             value={pesquisa}
             onChange={(e) => setPesquisa(e.target.value)}
           />
+
           <div className="flex items-center justify-center sm:justify-start gap-4 m-3">
 
             <div className="flex items-center gap-1" title="Ativo">

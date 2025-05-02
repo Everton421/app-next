@@ -3,8 +3,8 @@ import axios from "axios";
  
 export function configApi   ()  {
   const api = axios.create({
-  //   baseURL: "https://template-api-nu.vercel.app/v1/" ,
-    baseURL: "http://localhost:3000/v1/" ,
+      baseURL: "https://template-api-nu.vercel.app/v1/" ,
+    //baseURL: "http://localhost:3000/v1/" ,
 
   });
 

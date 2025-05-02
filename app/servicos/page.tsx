@@ -75,7 +75,7 @@ const {user, loading }:any = useAuth();
     if (loading) {
       return (
         <div className="flex justify-center items-center h-screen">
-           <p>Verificando autenticação...</p>
+                  <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
         </div>
       );
     }

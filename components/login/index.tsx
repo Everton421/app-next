@@ -46,7 +46,9 @@ console.log(response.data)
                // };
 
                  const userData = { 
-                    token: response.data.token
+                    token: response.data.token,
+                    codigo:response.data.codigo,
+                    nome: response.data.usuario
                 }
 
                 setUser(userData); 
