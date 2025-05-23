@@ -92,10 +92,6 @@ const {user, loading }:any = useAuth();
       router.push(`/servicos/${i}`)
   
        }
-  
-
-
-    
 
     return(
       <div className= " min-h-screen flex flex-col sm:ml-14 p-4 w-full h-full  justify-itens-center items-center    bg-slate-100"  >

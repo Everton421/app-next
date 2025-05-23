@@ -77,7 +77,7 @@ export default function NovoPedido( ){
                             descontos:0,
                             observacoes:'',
                             quantidade_parcelas: numParcelas,
-                            vendedor: user.vendedor ,
+                            vendedor: user.codigo ,
                             situacao:'EA' ,
                             tipo: 1,
                             total_produtos: 0,

@@ -82,7 +82,6 @@ export default function NovoServico() {
             const result = await api.post('/servico', dadosParaGravar, {
                 headers: { token:  user.token  },
             });
-            console.log(result);
             if (result.status === 200 && result.data?.codigo > 0) {  
                 console.log(result);
                 setVisibleAlert(true);

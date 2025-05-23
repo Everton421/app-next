@@ -34,6 +34,8 @@ export default function Pedidos(){
 
 
   const { user, loading }:any = useAuth();
+
+
  
   useEffect(() => {
     if (!loading) {
