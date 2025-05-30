@@ -248,7 +248,7 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
                 <div className="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 pb-24"> {/* Added pb-24 */}
 
                     <div className="flex justify-between items-center mb-2">
-                        <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+                        <h1 className="text-xl md:text-4xl font-bold font-sans text-gray-800">
                             Detalhes do Produto
                         </h1>
                         <Button variant="outline" onClick={() => router.push('/produtos')}>
@@ -260,13 +260,13 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
                         <CardContent className="p-4 md:p-6 flex flex-col gap-4">
                             <div className="flex items-center gap-2 justify-between">
                                 <div>
-                                   <Label htmlFor="codigo" className="text-lg font-semibold text-gray-700">Código:</Label>
-                                   <span id="codigo" className="text-lg font-bold text-gray-900"> {data.codigo}</span>
+                                   <Label htmlFor="codigo" className=" text-xs md:text-lg font-semibold text-gray-700">Código:</Label>
+                                   <span id="codigo" className="text-xs md:text-lg font-bold text-gray-900"> {data.codigo}</span>
                                 </div>
      
-                                <div>
-                                  <Label htmlFor="codigo" className="text-lg font-semibold text-gray-700">Data cadastro:</Label>
-                                   <span id="codigo" className="text-lg font-bold text-gray-900"> {data?.data_cadastro}</span>
+                                <div  >
+                                  <Label htmlFor="codigo" className=" text-xs md:text-lg  font-semibold text-gray-700">Data cadastro:</Label>
+                                   <span id="codigo" className=" text-xs md:text-lg font-bold text-gray-900"> {data?.data_cadastro}</span>
                                 </div>
                             </div>
 

@@ -7,9 +7,9 @@ import { configApi } from "@/app/services/api";
 type props = 
 {
     obsPedido:string | undefined,
-    setObsPedido: Dispatch<SetStateAction<string | undefined>>,
+    setObsPedido: any,
     situacao:string | undefined ,
-    setSituacao: Dispatch<SetStateAction<string | undefined>>,
+    setSituacao: any,
 }
  
 

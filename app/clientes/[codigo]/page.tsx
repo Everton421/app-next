@@ -1,467 +1,378 @@
 'use client'
 
 import { UseDateFunction } from "@/app/hooks/useDateFunction"
-import { Active } from "@/app/pedidos/components/active"
+import { Active } from "@/app/pedidos/components/active" // Supondo que este componente é responsivo
 import { configApi } from "@/app/services/api"
 import { AlertDemo } from "@/components/alert/alert"
-import { ArrowLeft,  Save,   } from "lucide-react"
-import { redirect   } from "next/navigation"
-import { useEffect, useState, useCallback } from "react" // Import useCallback
-import { SelectPessoa } from "../select"
+import { ArrowLeft, Save } from "lucide-react"
+import { redirect, useRouter } from "next/navigation" // useRouter de next/navigation
+import { useEffect, useState, useCallback } from "react"
+import { SelectPessoa } from "../select" // Supondo que este componente é responsivo
 import { InputMask } from "primereact/inputmask"
-import { SelectVendedor } from "../selectVendedor"
-import { useRouter } from "next/navigation";
+import { SelectVendedor } from "../selectVendedor" // Supondo que este componente é responsivo
 import { useAuth } from "@/contexts/AuthContext"
 import { Button } from "@/components/ui/button"
 import { ThreeDot } from "react-loading-indicators"
 
-type prop = { params:{ codigo:number}}
+type prop = { params: { codigo: string } } // Código geralmente é string na URL
 
-export default function Cliente({ params }:prop) {
+interface ICliente { // Definir a interface para melhor tipagem
+    id: number;
+    codigo: number;
+    nome: string;
+    cnpj: string | null;
+    ie: string | null;
+    celular: string | null;
+    cep: string | null;
+    estado: string | null;
+    cidade: string | null;
+    endereco: string | null;
+    bairro: string | null;
+    numero: string | null;
+    observacoes: string | null;
+    ativo: string;
+    vendedor: number | null;
+    data_cadastro: string;
+    data_recadastro: string | null;
+    // Adicione outros campos se existirem
+}
 
+
+export default function Cliente({ params }: prop) {
     const api = configApi()
-    const [data, setData] = useState<ICliente | null>(null); // Inicializar como null
+    const [data, setData] = useState<ICliente | null>(null);
     const [visibleAlert, setVisibleAlert] = useState(false);
-    const [msgAlert, setMsgAlert] = useState < string > ('');
+    const [msgAlert, setMsgAlert] = useState<string>('');
     const useDateService = UseDateFunction()
-
-    const [pessoa, setPessoa] = useState < string > ()
-    const [maskCnpj, setMaskCnpj] = useState < string > ('')
-    const [placeholderPessoa, setPlaceholderPessoa] = useState < string > ("")
-    const [cnpj, setCnpj] = useState < string > ();
-
-
-    const [nome, setNome] = useState < string > ();
-    const [ie, setIe] = useState < string > ();
-    const [celular, setCelular] = useState < string > ();
-
-    const [cep, setCep] = useState < string > ('');
-    const [estado, setEstado] = useState < string > ();
-    const [cidade, setCidade] = useState < string > ();
-    const [endereco, setEndereco] = useState < string > ();
-    const [bairro, setBairro] = useState < string > ();
-    const [observacoes, setObservacoes] = useState < string > ();
-    const [ativo, setAtivo] = useState < string > ('S');
-    const [codigoVendedor, setCodigoVendedor] = useState < number > ();
-    const [codigo, setCodigo] = useState<number>();
-    const [data_cadastro, setData_cadastro] = useState<string>();
-    const [maskCelular, setMaskCelular] = useState<string>();
-    const [numero, setNumero] = useState<string>();
-    const [isLoading, setIsLoading] = useState(false);  
-
-    const { user, loading }: any = useAuth();
     const router = useRouter();
+    const { user, loading: authLoading }: any = useAuth(); // Renomear loading para authLoading para evitar conflito
+
+    // Estados para os campos do formulário
+    const [pessoa, setPessoa] = useState<string>('f'); // Default 'f'
+    const [maskCnpj, setMaskCnpj] = useState<string>('999.999.999-99');
+    const [placeholderPessoa, setPlaceholderPessoa] = useState<string>("000.000.000-00");
+    const [cnpj, setCnpj] = useState<string>('');
+
+    const [nome, setNome] = useState<string>('');
+    const [ie, setIe] = useState<string>('');
+    const [celular, setCelular] = useState<string>('');
+    const [maskCelular, setMaskCelular] = useState<string>("(99) 9999-9999");
+
+
+    const [cep, setCep] = useState<string>('');
+    const [estado, setEstado] = useState<string>('');
+    const [cidade, setCidade] = useState<string>('');
+    const [endereco, setEndereco] = useState<string>('');
+    const [bairro, setBairro] = useState<string>('');
+    const [numero, setNumero] = useState<string>('');
+    const [observacoes, setObservacoes] = useState<string>('');
+    const [ativo, setAtivo] = useState<string>('S'); // Manter estado local para o componente Active
+    const [codigoVendedor, setCodigoVendedor] = useState<number | undefined>(); // Pode ser undefined inicialmente
+    
+    // Dados não editáveis diretamente no formulário, mas exibidos
+    const [codigoCliente, setCodigoCliente] = useState<number | undefined>();
+    const [dataCadastro, setDataCadastro] = useState<string | undefined>();
+    
+    const [isLoading, setIsLoading] = useState(true); // Inicia true para busca inicial
+
+    // Redireciona se não estiver autenticado
+    useEffect(() => {
+        if (!authLoading && !user) {
+            router.push('/');
+        }
+    }, [user, authLoading, router]);
 
     useEffect(() => {
-        if (!params.codigo) redirect('/clientes');
-        async function busca() {
+        if (!params.codigo || !user?.token) {  
+            if(!params.codigo) router.push('/clientes');  
+            setIsLoading(false);  
+            return;
+        }
+        
+        async function buscaCliente() {
             setIsLoading(true);
-
             try {
-                const dados = await api.get(`/clientes`,
-                    {
-                        headers: { token:  user.token  },
-                        params:{codigo:params.codigo, limit:1}
+                const response = await api.get(`/clientes`, {
+                    headers: { token: user.token },
+                    params: { codigo: params.codigo, limit: 1 }
+                });
+                if (response.data && response.data.length > 0) {
+                    const clienteData = response.data[0] as ICliente;
+                    setData(clienteData); // Guarda os dados originais
+
+                    // Popula os estados do formulário
+                    setNome(clienteData.nome || '');
+                    setCodigoCliente(clienteData.codigo);
+                    setIe(clienteData.ie || '');
+                    setCelular(clienteData.celular || '');
+                    setCep(clienteData.cep || '');
+                    setEstado(clienteData.estado || '');
+                    setCidade(clienteData.cidade || '');
+                    setEndereco(clienteData.endereco || '');
+                    setBairro(clienteData.bairro || '');
+                    setNumero(clienteData.numero || '');
+                    setObservacoes(clienteData.observacoes || '');
+                    setAtivo(clienteData.ativo || 'S');
+                    setDataCadastro( clienteData.data_cadastro );
+                    setCodigoVendedor(clienteData.vendedor ?? undefined);
+
+                    if (clienteData.celular) {
+                        const celularNumeros = clienteData.celular.replace(/\D/g, "");
+                        setMaskCelular(celularNumeros.length > 10 ? "(99) 99999-9999" : "(99) 9999-9999");
                     }
-                );
-                if (dados.data.length > 0) {
-                    setData(dados.data[0])
-                    // console.log(dados.data)
-                }
-                if (dados.data[0].cnpj) {
-                    setCnpj(dados.data[0].cnpj)
-                    if (dados.data[0].cnpj.replace(/\D/g, "").length > 11) {
-                        setMaskCnpj("99.999.999/999-99")
-                        setPlaceholderPessoa("99.999.999/9999-99")
-                        setPessoa('j')
+
+                    if (clienteData.cnpj) {
+                        const cnpjNumeros = clienteData.cnpj.replace(/\D/g, "");
+                        setCnpj(clienteData.cnpj); // Mantém a formatação original se houver
+                        if (cnpjNumeros.length > 11) {
+                            setPessoa('j');
+                        } else {
+                            setPessoa('f');
+                        }
+                    } else {
+                        setPessoa('f'); // Default se não houver CNPJ
+                        setCnpj('');
                     }
-                    if (dados.data[0].cnpj.replace(/\D/g, "").length === 11) {
-                        setMaskCnpj("999.999.999-99")
-                        setPlaceholderPessoa("999.999.999-99")
-                        setPessoa('f')
-                    }
+
+                } else {
+                    setMsgAlert("Cliente não encontrado.");
+                    setVisibleAlert(true);
+                    router.push('/clientes'); // Opcional: redirecionar se não encontrar
                 }
             } catch (e) {
-                console.error(e);
-            }finally{
-                setIsLoading(false)
+                console.error("Erro ao buscar cliente:", e);
+                setMsgAlert("Erro ao carregar dados do cliente.");
+                setVisibleAlert(true);
+            } finally {
+                setIsLoading(false);
             }
         }
-        busca();
-    }, [ user, loading, router ]); // Adicionar dependências ao useEffect
-
-     useEffect(() => {
-         if (!loading) {
-             if (!user) {
-                 router.push('/'); // Redireciona para a página de login (ajuste se for outra)
-             }
-         }
-     }, [user, loading, router]);
-
-
-
-
+        buscaCliente();
+    }, [params.codigo, user?.token, router   ]);  
 
     useEffect(() => {
-        if (data?.nome !== undefined) setNome(data.nome)
-        if (data?.codigo !== undefined) setCodigo(data.codigo);
-        if (data?.ie !== undefined) setIe(data.ie);
-
-        if (data?.celular !== undefined) {
-            let count = Number(data.celular.replace(/\D/g, ""));
-            if (count > 10) setMaskCelular("(99) 99999-9999")
-            if (count <= 10) setMaskCelular("(99) 9999-9999")
-
-            setCelular(data.celular);
+        if (pessoa === 'j') {
+            setMaskCnpj("99.999.999/9999-99");
+            setPlaceholderPessoa("00.000.000/0000-00");
+        } else { // 'f' ou qualquer outro valor
+            setMaskCnpj("999.999.999-99");
+            setPlaceholderPessoa("000.000.000-00");
         }
-        if (data?.vendedor !== undefined) setCodigoVendedor(data?.vendedor);
-        if (data?.cep !== undefined) {
-            let count = data.cep.replace(/\D/g, "");
-            setCep(data.cep);
-        }
-
-        if (data?.estado !== undefined) setEstado(data.estado);
-        if (data?.cidade !== undefined) setCidade(data.cidade);
-        if (data?.endereco !== undefined) setEndereco(data.endereco);
-        if (data?.bairro !== undefined) setBairro(data.bairro);
-        if (data?.observacoes !== undefined) setObservacoes(data.observacoes);
-        if (data?.ativo !== undefined) setAtivo(data.ativo);
-        if (data?.data_cadastro !== undefined) setData_cadastro(data.data_cadastro)
-        if (data?.numero !== undefined) setNumero(data?.numero);
-
-        if (data?.vendedor !== undefined) {
-            setCodigoVendedor(data?.vendedor);
-        }
-
-    }, [data]); // Adicionar dependências ao useEffect
-
+    }, [pessoa]);
 
     const handlePessoaChange = (value: string) => {
         setPessoa(value);
     };
 
-    const handleVendedorChange = (value:number) => {
+    const handleVendedorChange = (value: any) => {  
         setCodigoVendedor(Number(value));
     };
-    /////////
-    useEffect(() => {
-        if (pessoa === 'j') {
-            setMaskCnpj("99.999.999/9999-99")
-            setPlaceholderPessoa("00.000.000/0000-00")
-        }
-        if (pessoa === 'f') {
-            setMaskCnpj("999.999.999.99")
-            setPlaceholderPessoa("000.000.000.00")
-        }
-    }, [handlePessoaChange]);
-    /////////////
+
+    const handleActiveChange = useCallback((newAtivoState: string) => {
+        setAtivo(newAtivoState);
+    }, []);
 
     const gravar = async () => {
-        
-            setIsLoading(true)
-
-        if (!data) return;
+        if (!data) {
+            setMsgAlert("Dados originais do cliente não carregados. Não é possível salvar.");
+            setVisibleAlert(true);
+            return;
+        }
+        setIsLoading(true);
 
         const dataParaGravar = {
-            ...data,
-            cnpj: cnpj,
-            ie: ie,
-            celular: celular,
+            ...data, // Mantém id, data_cadastro, etc.
+            nome,
+            cnpj: pessoa === 'j' ? cnpj : (pessoa === 'f' ? cnpj : null), // Garante que CNPJ/CPF está correto
+            ie,
+            celular,
             vendedor: codigoVendedor,
-            cep: cep,
-            estado: estado,
-            cidade: cidade,
-            endereco: endereco,
-            bairro: bairro,
-            observacoes: observacoes,
-            numero: numero,
-            data_recadastro: useDateService.obterDataHoraAtual()
+            cep,
+            estado,
+            cidade,
+            endereco,
+            bairro,
+            numero,
+            observacoes,
+            ativo,  
         };
 
         try {
-            let result = await api.put('/cliente', dataParaGravar,
-                 {
-                    headers: { token:  user.token  },
-
-                 }
-                );
-            if (result.status === 200 && result.data.codigo > 0) {
-                console.log(result)
-                setVisibleAlert(true);
-                setMsgAlert(`Cliente ${data.codigo} Alterado com Sucesso!`);
+            const result = await api.put(`/cliente`, dataParaGravar, {  
+                headers: { token: user.token },
+            });
+            if (result.status === 200 ) { // verificar se tem result.data.erro se o backend retornar
+                 if (result.data.erro) {
+                    setMsgAlert(result.data.msg || `Erro ao alterar cliente.`);
+                    setVisibleAlert(true);
+                } else {
+                    setMsgAlert(`Cliente ${data.codigo || ''} alterado com sucesso!`);
+                    setVisibleAlert(true);
+                    // setData(dataParaGravar as ICliente); // Atualiza o 'data' original se necessário
+                }
+            } else {
+                 setMsgAlert(`Erro ao alterar cliente. Status: ${result.status}`);
+                 setVisibleAlert(true);
             }
-        } catch (e) {
-            console.error(e);
-        }finally{
+        } catch (e: any) {
+            console.error("Erro ao gravar cliente:", e);
+            const errorMsg = e.response?.data?.msg || e.message || "Ocorreu um erro ao tentar gravar as alterações.";
+            setMsgAlert(errorMsg);
+            setVisibleAlert(true);
+        } finally {
             setIsLoading(false);
         }
-
-        console.log(dataParaGravar)
-
     };
 
-    const handleActive = useCallback((param: string) => {
-        setData((prevData) => {
-            if (!prevData) return prevData; // Evita erros se prevData for null
+    // Classes comuns para inputs e labels
+    const labelClass = "block text-sm md:text-base text-gray-700 font-semibold mb-1";
+    const inputClass = "p-2 w-full text-sm md:text-base text-gray-700 font-medium shadow-md rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 read-only:bg-gray-100 read-only:cursor-not-allowed";
 
-            return {
-                ...prevData,
-                ativo: param,
-            };
-        });
-    }, []);
-
-//
-
-
-if (loading) {
-    return (
-        <div className="flex justify-center items-center h-screen">
-            <p>Verificando autenticação...</p>
-        </div>
-    );
-}
-
-if (!user) {
-    return (
-        <div className="flex justify-center items-center h-screen">
-           <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
-        </div>
-    );
-}
-
-
-    if (isLoading) {
-        return <div className=" min-h-screen flex items-center justify-center flex-col sm:ml-14 p-4 bg-slate-100"  >
-             <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
-        </div>;  
+    if (authLoading) {
+        return (
+            <div className="flex justify-center items-center h-screen bg-slate-100 sm:ml-14">
+                <ThreeDot variant="pulsate" color="#2563eb" size="medium"   textColor="#2563eb" />
+            </div>
+        );
+    }
+    
+    if (isLoading && !data) { // Mostra loading principal se estiver carregando e não houver dados ainda
+        return (
+            <div className="min-h-screen flex items-center justify-center flex-col sm:ml-14 p-4 bg-slate-100">
+                <ThreeDot variant="pulsate" color="#2563eb" size="medium"   textColor="#2563eb" />
+            </div>
+        );
     }
 
-
     return (
-        <div className="min-h-screen flex flex-col sm:ml-14 p-4 bg-slate-100 space-y-6 pb-20"> {/* Adiciona space-y e padding-bottom */}
-            <AlertDemo content={msgAlert} title="titulo" visible={visibleAlert} setVisible={setVisibleAlert} to={'/clientes'} />
+        <div className="min-h-screen flex flex-col sm:ml-14 p-4 bg-slate-100 pb-24 md:pb-20">
+            <AlertDemo content={msgAlert} title="Atenção" visible={visibleAlert} setVisible={setVisibleAlert} to={msgAlert.includes("sucesso") ? '/clientes' : undefined} />
+
+            {/* Cabeçalho: Título e Botão Voltar */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <h1 className="text-xl md:text-2xl font-bold text-gray-800">
+                    Editar Cliente
+                </h1>
+                <Button variant="outline" onClick={() => router.push('/clientes')}>
+                    <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
+                </Button>
+            </div>
+
+            {/* Informações do Cliente (Código, Data Cadastro) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <div className="bg-white p-3 rounded-md shadow">
+                    <span className={labelClass}>Código:</span>
+                    <p className="text-gray-900 font-medium">{codigoCliente || 'N/A'}</p>
+                </div>
+                <div className="bg-white p-3 rounded-md shadow">
+                    <span className={labelClass}>Data Cadastro:</span>
+                    <p className="text-gray-900 font-medium">{dataCadastro || 'N/A'}</p>
+                </div>
+            </div>
             
-                <div className="flex justify-between items-center mb-2">
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
-                            Detalhes do Cliente
-                        </h1>
-                        <Button variant="outline" onClick={() => router.push('/clientes')}>
-                            <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
-                        </Button>
-                     
-              </div>
-
-            <div className="flex flex-col sm:flex-row sm:justify-between gap-2 flex-wrap">
-                <div className="bg-white p-2 rounded-md shadow-md">
-                    <span className="text-lg text-gray-600 font-bold font-sans">
-                        Código: {codigo}
-                    </span>
+            {/* Seção Nome, Pessoa, CNPJ/CPF */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-6 items-end">
+                <div className="lg:col-span-5 flex flex-col">
+                    <label htmlFor="nome" className={labelClass}>Nome / Razão Social:</label>
+                    <input id="nome" className={inputClass} value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Nome completo ou Razão Social" />
                 </div>
-                <div className="bg-white p-2 rounded-md shadow-md">
-                    <span className="text-lg text-gray-600 font-bold font-sans">
-                        Data Cadastro: {data_cadastro}
-                    </span>
+                <div className="lg:col-span-3 flex flex-col">
+                    <label htmlFor="tipoPessoa" className={labelClass}>Pessoa:</label>
+                    <SelectPessoa id="tipoPessoa" defaultTipoPessoa={pessoa} onchange={handlePessoaChange} className={inputClass} />
+                </div>
+                <div className="lg:col-span-4 flex flex-col">
+                    <label htmlFor="cnpjCpf" className={labelClass}>{pessoa === 'j' ? 'CNPJ:' : 'CPF:'}</label>
+                    <InputMask id="cnpjCpf" className={inputClass} mask={maskCnpj} placeholder={placeholderPessoa} value={cnpj} onChange={(e: any) => setCnpj(e.target.value)} />
                 </div>
             </div>
 
-            <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
-                {/* Grupo Nome */}
-                <div className="w-full lg:w-1/2 flex flex-col gap-1">
-                    <label htmlFor="nome" className="text-lg text-gray-600 font-bold font-sans">
-                        Nome:
-                    </label>
-                    <input
-                        id="nome"
-                        className="p-2 w-full text-lg font-bold shadow-md rounded-md" // w-full
-                        placeholder="Nome do Cliente"
-                        value={nome} // Use value para controle
-                        onChange={(v) => setNome(v.target.value)}
-                    />
+            {/* Seção IE/RG e Celular */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 items-end">
+                <div className="flex flex-col">
+                    <label htmlFor="ieRg" className={labelClass}>{pessoa === 'j' ? 'IE (Inscrição Estadual):' : 'RG:'}</label>
+                    <input id="ieRg" className={inputClass} value={ie} onChange={(e) => setIe(e.target.value)} placeholder={pessoa === 'j' ? 'Nº da Inscrição Estadual' : 'Nº do RG'} />
                 </div>
-
-                {/* Grupo Pessoa e CNPJ/CPF */}
-                <div className="w-full lg:w-1/2 flex flex-col sm:flex-row sm:items-end flex-wrap gap-2 sm:gap-4">
-                    {/* Pessoa */}
-                    <div className="flex flex-col gap-1 flex-shrink-0"> {/* flex-shrink-0 para evitar encolher demais */}
-                      <label className="text-lg text-gray-600 font-bold font-sans">
-                            Pessoa:
-                      </label>
-                      {/* Adicione w-full ou min-w para o select se necessário */}
-                      <SelectPessoa defaultTipoPessoa={pessoa} onchange={handlePessoaChange} />
-                    </div>
-
-                    {/* CNPJ/CPF */}
-                    <div className="flex flex-col gap-1 flex-grow"> {/* flex-grow para ocupar espaço */}
-                      <label htmlFor="cnpj" className="text-lg text-gray-600 font-bold font-sans">
-                        CNPJ/CPF:
-                      </label>
-                       <InputMask
-                            id="cnpj"
-                            value={cnpj}
-                            mask={maskCnpj}
-                            placeholder={placeholderPessoa}
-                            onChange={(e) => setCnpj( String(e.target.value))}
-                            // w-full para ocupar espaço no flex-grow, p-2 etc.
-                            className="p-2 text-lg w-full text-gray-600 font-bold font-sans shadow-md rounded-md"
-                        />
-                    </div>
-                </div>
-           </div>
-
-            {/* --- Seção IE/RG e Celular --- */}
-            {/* Alterado para flex-col por padrão, md:flex-row para telas médias, adicionado gap */}
-            <div className="flex flex-col md:flex-row gap-4 md:gap-6">
-                {/* Grupo IE/RG */}
-                <div className="w-full md:w-1/2 flex flex-col gap-1">
-                    <label htmlFor="ie" className="text-lg text-gray-600 font-bold font-sans">
-                        IE/RG:
-                    </label>
-                    <input
-                        id="ie"
-                        className="p-2 w-full text-lg text-gray-600 font-bold font-sans shadow-md rounded-md" // w-full
-                        value={ie} // Use value
-                        onChange={(v) => setIe(v.target.value)}
-                        placeholder="Inscrição Estadual ou RG"
-                    />
-                </div>
-
-                {/* Grupo Celular */}
-                <div className="w-full md:w-1/2 flex flex-col gap-1">
-                    <label htmlFor="celular" className="text-lg text-gray-600 font-bold font-sans">
-                        Celular:
-                    </label>
-                    <InputMask
-                        id="celular"
-                        // value={data?.celular} // Pode usar o estado 'celular' diretamente se for controlado
-                        value={celular}
-                        mask={maskCelular}
-                        placeholder="(99) 99999-9999"
-                        onChange={(v) => setCelular( String(v.target.value))}
-                        className="p-2 w-full text-lg text-gray-600 font-bold font-sans shadow-md rounded-md" // w-full
-                    />
+                <div className="flex flex-col">
+                    <label htmlFor="celular" className={labelClass}>Celular:</label>
+                    <InputMask id="celular" className={inputClass} mask={maskCelular} placeholder="(00) 00000-0000" value={celular} onChange={(e: any) => setCelular(e.target.value)} />
                 </div>
             </div>
 
-            {/* --- Seção Vendedor --- */}
-            {/* Usando flex-col ou flex-row com items-center para alinhar label e select */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <label className="text-lg text-gray-600 font-bold font-sans flex-shrink-0"> {/* flex-shrink-0 para não encolher */}
-                    Vendedor: {/* {codigoVendedor} Removido daqui para clareza, o Select mostra */}
-                </label>
-                {/* Adicionar classes ao SelectVendedor se ele não for responsivo por padrão */}
-                <SelectVendedor defaultVendedor={codigoVendedor} onChangeVendedor={handleVendedorChange} />
+            {/* Seção Vendedor */}
+            <div className="mb-6">
+                <label htmlFor="vendedor" className={labelClass}>Vendedor:</label>
+                <SelectVendedor id="vendedor" defaultVendedor={codigoVendedor} onChangeVendedor={handleVendedorChange} className={inputClass} />
             </div>
-
-            {/* --- Seção Endereço --- */}
-            <div className="w-full space-y-4"> {/* Agrupa os campos de endereço com espaço */}
-                <div>
-                  <span className="text-xl text-gray-700 font-bold font-sans"> {/* Aumentado um pouco */}
-                    Endereço
-                  </span>
-                  <hr className="border-gray-400 mt-1" /> {/* Ajuste na cor e margem */}
-                </div>
-
-                {/* Linha CEP, Estado, Cidade */}
-                {/* flex-col por padrão, md:flex-row, usa flex-1 para distribuir espaço */}
-                <div className="flex flex-col md:flex-row gap-4 md:gap-6">
-                    <div className="flex-1 flex flex-col gap-1"> {/* flex-1 */}
-                        <label htmlFor="cep" className="text-lg text-gray-600 font-bold font-sans">Cep:</label>
-                        <InputMask // MUDADO PARA INPUTMASK CASO CEP TENHA MÁSCARA, senão use input normal
-                            id="cep"
-                            mask="99999-999" // Adicione a máscara apropriada
-                            className="p-2 w-full text-lg text-gray-600 font-bold font-sans shadow-md rounded-md"
-                            placeholder="00000-000"
-                            onChange={(v) => setCep(String(v.target.value))}
-                            value={cep}
-                        />
+            
+            {/* Seção Endereço */}
+            <div className="mb-6">
+                <h2 className="text-lg md:text-xl text-gray-700 font-bold mb-2">Endereço</h2>
+                <hr className="border-gray-300 mb-4" />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 items-end">
+                    <div className="flex flex-col">
+                        <label htmlFor="cep" className={labelClass}>CEP:</label>
+                        <InputMask id="cep" className={inputClass} mask="99999-999" placeholder="00000-000" value={cep} onChange={(e: any) => setCep(e.target.value)} />
                     </div>
-                    <div className="flex-1 flex flex-col gap-1"> {/* flex-1 */}
-                        <label htmlFor="estado" className="text-lg text-gray-600 font-bold font-sans">Estado:</label>
-                        <input
-                            id="estado"
-                            className="p-2 w-full text-lg text-gray-600 font-bold font-sans shadow-md rounded-md"
-                            placeholder="UF"
-                            maxLength={2} // Limita estado a 2 chars
-                            value={estado} // Use value
-                            onChange={(v) => setEstado(v.target.value.toUpperCase())} // Converte para maiúsculo
-                        />
+                    <div className="flex flex-col">
+                        <label htmlFor="estado" className={labelClass}>Estado (UF):</label>
+                        <input id="estado" className={inputClass} value={estado} onChange={(e) => setEstado(e.target.value.toUpperCase())} placeholder="Ex: SP" maxLength={2} />
                     </div>
-                    <div className="flex-1 flex flex-col gap-1"> {/* flex-1 */}
-                        <label htmlFor="cidade" className="text-lg text-gray-600 font-bold font-sans">Cidade:</label>
-                        <input
-                            id="cidade"
-                            className="p-2 w-full text-lg text-gray-600 font-bold font-sans shadow-md rounded-md"
-                            placeholder="Nome da Cidade"
-                            value={cidade} // Use value
-                            onChange={(v) => setCidade(v.target.value)}
-                        />
+                    <div className="flex flex-col">
+                        <label htmlFor="cidade" className={labelClass}>Cidade:</label>
+                        <input id="cidade" className={inputClass} value={cidade} onChange={(e) => setCidade(e.target.value)} placeholder="Ex: São Paulo" />
                     </div>
                 </div>
-
-                {/* Linha Endereço, Bairro, Número */}
-                {/* flex-col por padrão, lg:flex-row */}
-                <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
-                    {/* Endereço - Ocupa mais espaço */}
-                    <div className="w-full lg:flex-[2] flex flex-col gap-1"> {/* lg:flex-[2] ou lg:w-1/2 */}
-                        <label htmlFor="endereco" className="text-lg text-gray-600 font-bold font-sans">Endereço:</label>
-                        <input
-                            id="endereco"
-                            className="p-2 w-full text-lg text-gray-600 font-bold font-sans shadow-md rounded-md"
-                            placeholder="Rua, Avenida, etc."
-                            value={endereco} // Use value
-                            onChange={(v) => setEndereco(v.target.value)}
-                        />
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-4 items-end">
+                    <div className="flex flex-col lg:col-span-6">
+                        <label htmlFor="endereco" className={labelClass}>Logradouro (Rua, Av.):</label>
+                        <input id="endereco" className={inputClass} value={endereco} onChange={(e) => setEndereco(e.target.value)} placeholder="Ex: Av. Paulista" />
                     </div>
-                     {/* Bairro */}
-                     <div className="w-full lg:flex-1 flex flex-col gap-1"> {/* lg:flex-1 ou lg:w-1/4 */}
-                        <label htmlFor="bairro" className="text-lg text-gray-600 font-bold font-sans">Bairro:</label>
-                        <input
-                            id="bairro"
-                            className="p-2 w-full text-lg text-gray-600 font-bold font-sans shadow-md rounded-md"
-                            placeholder="Nome do Bairro"
-                            value={bairro} // Use value
-                            onChange={(v) => setBairro(v.target.value)}
-                        />
+                    <div className="flex flex-col lg:col-span-3">
+                        <label htmlFor="bairro" className={labelClass}>Bairro:</label>
+                        <input id="bairro" className={inputClass} value={bairro} onChange={(e) => setBairro(e.target.value)} placeholder="Ex: Bela Vista" />
                     </div>
-                    {/* Número */}
-                    <div className="w-full lg:w-1/4 flex flex-col gap-1"> {/* lg:w-1/4 ou largura fixa pequena */}
-                        <label htmlFor="numero" className="text-lg text-gray-600 font-bold font-sans">Número:</label>
-                        <input
-                            id="numero"
-                            type="text" // Mantem como texto para S/N etc.
-                            className="p-2 w-full text-lg text-gray-600 font-bold font-sans shadow-md rounded-md"
-                            placeholder="Ex: 123 ou S/N"
-                            value={numero} // Use value
-                            onChange={(v) => setNumero(v.target.value)}
-                        />
+                    <div className="flex flex-col lg:col-span-3">
+                        <label htmlFor="numero" className={labelClass}>Número:</label>
+                        <input id="numero" className={inputClass} value={numero} onChange={(e) => setNumero(e.target.value)} placeholder="Ex: 1000 ou S/N" />
                     </div>
                 </div>
             </div>
 
-            {/* --- Seção Observações --- */}
-            <div className="flex flex-col gap-1">
-                <label htmlFor="observacoes" className="text-lg text-gray-600 font-bold font-sans">
-                    Observações:
-                </label>
-                <textarea
-                    id="observacoes"
-                    className="w-full rounded-md shadow-md p-2 text-lg" // w-full, adiciona p-2 e text-lg
-                    rows={4} // Define uma altura inicial
-                    value={observacoes} // Use value
-                    onChange={(e) => setObservacoes(e.target.value)}
-                />
+            <hr className="border-gray-300 mt-5 mb-4" />
+
+            {/* Seção Observações */}
+            <div className="flex flex-col mb-6">
+                <label htmlFor="observacoes" className={labelClass}>Observações:</label>
+                <textarea id="observacoes" className={`${inputClass} min-h-[100px]`} value={observacoes} onChange={(e) => setObservacoes(e.target.value)} rows={4} />
             </div>
 
-            <Active active={data?.ativo} handleActive={handleActive} />
+            {/* Componente Ativo/Inativo */}
+            <div className="mb-6">
+                 <label className={labelClass}>Status do Cliente:</label>
+                 <Active active={ativo} handleActive={handleActiveChange} />
+            </div>
 
-            <div className="bg-white p-3 sm:ml-14 fixed bottom-0 left-0 right-0 rounded-t-xl shadow-lg border-t border-gray-200"> {/* Ajuste no padding, rounded-t, shadow, border */}
-                {/* Centraliza o botão */}
-                <div className="w-full flex justify-center sm:justify-end"> {/* Centraliza mobile, alinha direita sm+ */}
-                    <button className="bg-black flex items-center rounded-xl gap-2 p-2 px-4 hover:bg-gray-800 transition-colors" onClick={() => gravar()}> {/* Padding e hover */}
-                        <span className="text-white font-bold text-lg">Gravar</span> {/* Texto um pouco maior */}
-                        <Save size={22} color="#FFF" /> {/* Tamanho do ícone */}
-                    </button>
+
+            {/* Botão Gravar Fixo */}
+            <div className="bg-white p-3 fixed bottom-0 left-0 right-0 shadow-md-top sm:ml-14 border-t border-gray-200">
+                <div className="max-w-7xl mx-auto flex justify-end">
+                    <Button 
+                        className="bg-black hover:bg-gray-800 flex items-center gap-2 px-4 py-2 disabled:opacity-50" 
+                        onClick={gravar}
+                        disabled={isLoading} // Desabilita o botão enquanto estiver carregando/gravando
+                    >
+                        {isLoading ? (
+                            <>
+                                <ThreeDot variant="bob" color="#FFF" size="small" />
+                                <span className="text-white font-bold">Salvando...</span>
+                            </>
+                        ) : (
+                            <>
+                                <Save size={20} color="#FFF" />
+                                <span className="text-white font-bold">Salvar Alterações</span>
+                            </>
+                        )}
+                    </Button>
                 </div>
             </div>
         </div>

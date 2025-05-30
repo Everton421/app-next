@@ -11,7 +11,7 @@ import { SelectFormasPagamento } from "../selectFormasPagamento";
 type props = 
 {
   dadosOrcamento:any 
-  setDadosOrcamento:  Dispatch<SetStateAction<pedido | undefined>> 
+  setDadosOrcamento:any 
   total:number
 }
 export default function Parcelas ( {  dadosOrcamento   }:props ){

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "../ui/button"
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
-import { Car, Home, Package, PanelBottom, Settings, ShoppingBag, ShoppingCart, SlidersVertical, User, Wrench } from "lucide-react";
+import { Car, Ellipsis, Home, Package, PanelBottom, Settings, ShoppingBag, ShoppingCart, SlidersVertical, User, Wrench } from "lucide-react";
 import { Tooltip, TooltipProvider } from  "../ui/tooltip"
 import { TooltipContent, TooltipTrigger } from "@radix-ui/react-tooltip";
 
@@ -117,7 +117,7 @@ export function Sidebar(){
             < TooltipProvider>
                             <Tooltip>
                                 <TooltipTrigger asChild>
-                                        <Link href="#" 
+                                        <Link href="/configuracoes" 
                                             className="flex h-9 w-9 shrink-0 items-center justify-center
                                             rounded-lg text-muted-foreground transition-colors hover:text-foreground
                                         ">
@@ -141,7 +141,7 @@ export function Sidebar(){
                     <Sheet>
                         <SheetTrigger asChild>
                                 <Button size="icon" variant="outline" className="sm:hidden">
-                                    <PanelBottom className="w-5 h-5"/>
+                                    <Ellipsis className="w-5 h-5" />
                                         <span className="sr-only" > Abrir / Fechar menu  </span>
                                 </Button>
                             </SheetTrigger>
@@ -149,20 +149,10 @@ export function Sidebar(){
                         <SheetContent className="sm:max-2-x" side="left">
                             <nav className="grid gap gap-6 tex"> 
                                 
-                                <Link href="#"
-                                    className="flex h-10 w-10 bg-primary rounded-full
-                                    text-lg items-center justify-center text-primary-foreground md:text-base
-                                        gap-2"
-                                    prefetch={false}
-                                   >
-                                    <Package className="h-5 w-5 transition-all"/>
-                                    <span className="sr-only">
-                                        Logo
-                                    </span>
-                                </Link>
+                                 
 
                                 <Link 
-                                    href="#"
+                                    href="/home"
                                     className="flex items-center gap-4 px-2.5 text-foreground hover:text-foreground"
                                     prefetch={false}
                                     >
@@ -171,7 +161,7 @@ export function Sidebar(){
                                 </Link>
                                 
                                 <Link 
-                                    href="#"
+                                    href="/pedidos"
                                     className="flex items-center gap-4 px-2.5 text-foreground hover:text-foreground"
                                     prefetch={false}
                                     >
@@ -180,7 +170,7 @@ export function Sidebar(){
                                 </Link>
 
                                 <Link 
-                                    href="#"
+                                    href="/produtos"
                                     className="flex items-center gap-4 px-2.5 text-foreground hover:text-foreground"
                                     prefetch={false}
                                     >
@@ -188,7 +178,7 @@ export function Sidebar(){
                                      Produtos
                                 </Link>
                                 <Link 
-                                    href="#"
+                                    href="/clientes"
                                     className="flex items-center gap-4 px-2.5 text-foreground hover:text-foreground"
                                     prefetch={false}
                                     >
@@ -196,7 +186,7 @@ export function Sidebar(){
                                      Clientes
                                 </Link>
                                 <Link 
-                                    href="#"
+                                    href="/servicos"
                                     className="flex items-center gap-4 px-2.5 text-foreground hover:text-foreground"
                                     prefetch={false}
                                     >
@@ -205,18 +195,17 @@ export function Sidebar(){
                                 </Link>
 
                                 <Link 
-                                    href="#"
+                                    href="/veiculos"
                                     className="flex items-center gap-4 px-2.5 text-foreground hover:text-foreground"
                                     prefetch={false}
                                     >
                                 <Car className="h-5 w-5 transition-all"/>
-
                                      veículos
                                 </Link>
 
 
                                 <Link 
-                                    href="#"
+                                    href="/configuracoes"
                                     className="flex items-center gap-4 px-2.5 text-foreground hover:text-foreground"
                                     prefetch={false}
                                     >

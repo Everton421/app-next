@@ -13,10 +13,10 @@ interface VeiculoData {
 }
 
 type props = {
-    cliente: clientePedido | undefined,
-    setVeiculo:  Dispatch<SetStateAction<VeiculoData | null>>
+    cliente: any,
+    setVeiculo: any
     codigoPedido: number,
-    codigoVeiculo:number | undefined
+    codigoVeiculo: any
 }
 
 export const Veiculos = ({ cliente, setVeiculo, codigoPedido, codigoVeiculo }:props ) => {

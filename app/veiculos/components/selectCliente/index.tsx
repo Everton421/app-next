@@ -121,9 +121,9 @@ function selecionar(e:cliente){
                                    onClick={() => selecionar(i)} 
                                    className="   sm:ml-14 p-2 m-1 shadow-lg bg-gray-500 border-current rounded-md cursor-pointer  ">
                                 
-                                 <span className=" text-white font-bold">Código: {i.codigo}  {i.nome}  </span>
+                                 <span className=" text-xs md:text-base text-white font-bold">Código: {i.codigo}  {i.nome}  </span>
                                     <br/>
-                                 <span className=" text-white font-bold">  cnpj: {i.cnpj}</span>
+                                 <span className="text-xs md:text-base text-white font-bold">  cnpj: {i.cnpj}</span>
                             </div>
                         ))}
                     </div>

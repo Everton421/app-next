@@ -87,33 +87,30 @@ useEffect(() => {
   }, [user, loading, router]);
 
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-         <p>Verificando autenticação...</p>
-      </div>
-    );
-  }
 
-    if (isLoading) {
-        return (
-             <div className="flex  my-4 items-center justify-center"> {/* Container para centralizar */}
-                 <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
-               </div>
-        );
+    if (loading) {
+      return (
+        <div className="flex justify-center items-center h-screen">
+                  <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+        </div>
+      );
     }
-
+  
+    if (!user) {
+      return (
+         <div className="flex justify-center items-center h-screen">
+           <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+         </div>
+      );
+    }
 
     return(
         <div className= " min-h-screen flex flex-col sm:ml-14 p-4 w-full h-full  justify-itens-center items-center    bg-slate-100"  >
-       
-       
           <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} to={'/veiculos'}/>
-       
-        <div className="w-5/6 p-8 mt-22 h-screen    rounded-lg bg-white shadow-md " >
+           <div className="  w-full md:w-5/6   p-2 mt-22 min-h-screen    rounded-lg bg-white shadow-md " >
 
               <div className="flex justify-between items-center mb-2">
-                        <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+                            <h1 className="text-md md:text-3xl font-bold text-gray-800">
                             Detalhes do Veículo
                         </h1>
                         <Button variant="outline" onClick={() => router.push('/veiculos')}>

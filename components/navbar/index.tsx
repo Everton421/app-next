@@ -8,7 +8,7 @@ export default   function Navbar  () {
   const { logout }:any = useAuth();
 
   return (
-    <nav className=" w-auto bg-black sm:ml-14 p-2 flex justify-between  print:hidden  ">
+    <nav className=" w-auto bg-black sm:ml-14  flex justify-between  print:hidden  ">
          <Image 
           className="rounded-sm ml-1"
             src="/images/design.png"

@@ -28,7 +28,7 @@ export default function Marcas (){
 
     async function busca(){
         try{
-        let dados = await api.get(`/next/marcas`,{
+        let dados = await api.get(`/marcas`,{
             headers: {
                 token:  user.token 
            },
@@ -58,10 +58,11 @@ export default function Marcas (){
 
  return(
     <div className= " min-h-screen flex flex-col sm:ml-14 p-4 w-full h-full  justify-itens-center items-center    bg-slate-100"  >
-           
-         <div className="w-4/5 p-8 min-h-screen  rounded-lg bg-white shadow-md " >
-             <div className="m-5 flex justify-between"> 
-                 <h1 className="text-4xl  font-sans font-bold  ">
+       <div className="  w-full md:w-5/6   p-2 mt-22 min-h-screen    rounded-lg bg-white shadow-md " >
+        <div className="  p-2   rounded-sm bg-slate-100 w-full  ">
+
+             <div className="m-5 flex justify-between "> 
+                    <h1 className="text-2xl md:text-4xl font-bold font-sans text-gray-800">
                      Marcas
                  </h1>
                  <Button variant="outline" onClick={() => router.push('/produtos')} className="mb-5 shadow-md">
@@ -74,7 +75,7 @@ export default function Marcas (){
                          <Input
                              onChange={(e:any) => setPesquisa(e.target.value)}
                              placeholder="pesquisar"
-                             className="shadow-md"
+                            className="shadow-md flex-grow bg-white" // Takes available space
                          />
                      </div>
                  </div>
@@ -100,14 +101,15 @@ export default function Marcas (){
                      </div>
                  </div>
              </div>
+         </div>
 
 
 
         <div className="w-full mt-4  min-h-screen shadow-lg ">
               <Table  className="w-full  bg-gray-100 rounded-sm">
 
-                  <TableHead className= " w-[10%]   text-base">Codigo</TableHead>
-                  <TableHead className= " w-[80%]  text-base   " >Descrição</TableHead>
+                  <TableHead className= " w-[10%]  text-xs md:text-base">Codigo</TableHead>
+                  <TableHead className= " w-[80%]  text-xs md:text-base   " >Descrição</TableHead>
               </Table >
 
         <ScrollArea className="w-full mt-4  h-4/6 overflow-auto  shadow-lg rounded-lg  ">
@@ -120,9 +122,9 @@ export default function Marcas (){
                             className="h-14 justify-center items-center"
                             key={i?.codigo}
                             > 
-                            <TableCell className="p-3 text-left font-medium text-gray-700 whitespace-nowrap "> {i?.codigo } </TableCell>
-                            <TableCell className="p-3 text-left font-medium text-gray-700 whitespace-nowrap ">   {i?.descricao}      </TableCell>
-                            <TableCell className=" text-left   font-bold text-gray-600">  
+                            <TableCell className=" text-xs md:text-base text-left font-medium text-gray-700 whitespace-nowrap "> {i?.codigo } </TableCell>
+                            <TableCell className=" text-xs md:text-base text-left font-medium text-gray-700 whitespace-nowrap ">   {i?.descricao}      </TableCell>
+                            <TableCell className=" text-xs md:text-base  text-left font-bold text-gray-600">  
                             <Button
                                 variant="ghost"
                                 size="icon"

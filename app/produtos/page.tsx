@@ -119,11 +119,11 @@ export default function Produtos() {
     return (
 
  <div className=" min-h-screen flex flex-col sm:ml-14 p-4 w-full h-full justify-itens-center items-center   bg-slate-100 "  >
-   <div className="w-5/6 p-8 mt-22 min-h-screen    rounded-lg bg-white shadow-md " >
-       <div className="p-2 rounded-sm bg-slate-100">
+   <div className="  w-full md:w-5/6   p-2 mt-22 min-h-screen    rounded-lg bg-white shadow-md " >
+       <div className="  p-2   rounded-sm bg-slate-100 w-full  ">
 
          <div className="m-5  flex justify-between   ">
-        <h1 className="text-3xl md:text-4xl font-bold font-sans text-gray-800">
+        <h1 className="text-2xl md:text-4xl font-bold font-sans text-gray-800">
           Produtos
         </h1>
         </div>
@@ -201,12 +201,12 @@ export default function Produtos() {
 
        <div className="w-full mt-4  h-screen shadow-lg ">
                 <Table  className="w-full  bg-gray-100 rounded-sm ">
-                      <TableHead className= " w-[7%]   text-base">Codigo</TableHead>
-                      <TableHead className= " w-[50%]  text-base   " >Descricao</TableHead>
-                      <TableHead className="  w-[15%] text-base " > Preco</TableHead>
-                      <TableHead  className=" text-base"   >Estoque</TableHead>
-                      <TableHead className="  w-[15%] text-base " > </TableHead>
-                      <TableHead className="  w-[15%] text-base " > </TableHead>
+                      <TableHead className= " w-[7%]   text-xs md:text-base ">Codigo</TableHead>
+                      <TableHead className= " w-[35%]  text-xs md:text-base   text-start" >Descricao</TableHead>
+                      <TableHead className="   text-xs md:text-base max-w-16  " > Preco</TableHead>
+                      <TableHead  className=" text-xs md:text-base text-center  "   >Estoque</TableHead>
+                      <TableHead className="    text-xs md:text-base " > </TableHead>
+                      <TableHead className="    text-xs md:text-base " > </TableHead>
                   </Table >
    
           <ScrollArea className="w-full mt-4  h-[80%] overflow-auto  shadow-lg rounded-lg  ">
@@ -220,11 +220,11 @@ export default function Produtos() {
                     key={produto.codigo}
                     className="hover:bg-gray-50 h-14"
                   >
-                    <TableCell className="p-3 text-left font-medium text-gray-700 whitespace-nowrap w-[80px]">{produto.codigo}</TableCell>
-                    <TableCell className="p-3 text-left text-gray-600 w-[45%]">{produto.descricao}</TableCell>
-                    <TableCell className="p-3 text-left text-gray-600 whitespace-nowrap w-[100px]">R$ {produto.preco?.toFixed(2) ?? '0.00'}</TableCell>
-                    <TableCell className="p-3 text-left text-gray-600 whitespace-nowrap w-[100px]">{produto.estoque}</TableCell>
-                    <TableCell className="p-3 text-center w-[120px]">
+                    <TableCell className=" text-left font-medium text-gray-700 whitespace-nowrap w-[7%] items-center text-xs md:text-base ">{produto.codigo}</TableCell>
+                    <TableCell className=" text-left text-gray-600 w-[50%]   text-xs md:text-base "  > {produto.descricao}</TableCell>
+                    <TableCell className=" text-left text-gray-600   text-xs md:text-base ">R$ {produto.preco?.toFixed(2) ?? '0.00'}</TableCell>
+                    <TableCell className=" text-center text-gray-600   text-xs md:text-base ">{produto.estoque}</TableCell>
+                    <TableCell className=" text-center  ">
                       <div className="flex items-center justify-center gap-2">
                         <Button
                           variant="ghost"

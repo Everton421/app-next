@@ -194,11 +194,14 @@ export default function Pedidos(){
 
     return (
         <div className=" min-h-screen flex flex-col sm:ml-14 p-4 w-full h-full justify-itens-center items-center   bg-slate-100"  >
-         <div className="w-5/6 p-8 mt-22 h-screen    rounded-lg bg-white shadow-md " >
+           <div className="  w-full md:w-5/6   p-2 mt-22 min-h-screen    rounded-lg bg-white shadow-md " >
+
+
           <div className="p-2 rounded-sm bg-slate-100">
               <div className="m-5  flex justify-between   ">
-                <h1 className="text-4xl  font-sans font-bold  ">
-                  
+              
+        <h1 className="text-2xl md:text-4xl font-bold font-sans text-gray-800">
+
                   Pedidos
                 </h1>
               </div>
@@ -244,12 +247,20 @@ export default function Pedidos(){
             </div>
 
           <div className="  flex  w-full">
-                <TableHead className="text-lg  " > situaçao</TableHead>
-                <TableHead  className=" w-[60%]">
-                    <span className=" text-lg ml-8 "> Cliente </span>
-                </TableHead>
-                <TableHead className="text-center text-lg w-[10%] ">Total</TableHead>
-                <TableHead className="text-center text-lg  w-[20%]">  data cadastro    </TableHead>
+                <TableHead   > 
+                      <span className=" text-xs md:text-lg   text-left ">
+                        situaçao
+                      </span>
+                  </TableHead>
+                <TableHead  className="  w-[60%]">
+                    <span className=" text-xs md:text-lg  text-left "> Cliente </span>
+                </TableHead>  
+                <TableHead className=" w-[10%] ">
+                  <span className=" text-xs md:text-lg ">
+                    Total
+                  </span>
+                  </TableHead>
+                <TableHead className=" max-md:hidden text-center text-lg  w-[20%]">  data cadastro    </TableHead>
                 <TableHead className="text-center  text-lg   items-center justify-center flex ">     </TableHead>
                 <TableHead className="text-center  text-lg   items-center justify-center flex ">      </TableHead>
 
@@ -274,30 +285,33 @@ export default function Pedidos(){
                                 <Tooltip >
                                     <TooltipTrigger >   
                                         <TableCell className="  text-center font-bold text-gray-600 items-center justify-center flex   ">
-                                              {i.situacao  === 'RE' &&  <div className="bg-red-600     rounded-sm"> <X size={20} color="#FFF"/>  </div>}
-                                              {i.situacao  === 'EA' &&  <div className="bg-green-700   rounded-sm">   <Check size={20} color="#FFF" /> </div>}
-                                              {i.situacao  === 'AI' &&  <div className="bg-blue-400    rounded-sm"> <CheckCheck size={20} color="#FFF" /> </div>}
-                                              {i.situacao  === 'FI' &&  <div className="bg-orange-500  rounded-sm"> <ClipboardCheck size={20} color="#FFF" /> </div>}
-                                              {i.situacao  === 'FP' &&  <div className="bg-blue-700    rounded-sm">    <ClipboardPenLine size={20} color="#FFF" /></div>}
+                                              {i.situacao  === 'RE' &&  <div className="bg-red-600      rounded-sm"> <X size={20} color="#FFF"/>  </div>}
+                                              {i.situacao  === 'EA' &&  <div className="bg-green-700    rounded-sm"> <Check size={20} color="#FFF" /> </div>}
+                                              {i.situacao  === 'AI' &&  <div className="bg-blue-400     rounded-sm"> <CheckCheck size={20} color="#FFF" /> </div>}
+                                              {i.situacao  === 'FI' &&  <div className="bg-orange-500   rounded-sm"> <ClipboardCheck size={20} color="#FFF" /> </div>}
+                                              {i.situacao  === 'FP' &&  <div className="bg-blue-700     rounded-sm"> <ClipboardPenLine size={20}  color="#FFF" /></div>}
                                             
                                             </TableCell>
                                       </TooltipTrigger>
                                            <TableCell className=" w-[60%]  font-bold text-gray-600"
                                                > 
-                                               <button onClick={ ( )=>handleOrder(i.codigo) } className="ml-[5%]">
-                                                   {i.nome}
+                                               <button onClick={ ( )=>handleOrder(i.codigo) } className="  ml-[5%]">
+                                                 <span className=" text-xs md:text-lg">
+                                                    {i.nome}
+                                                 </span> 
                                                </button> 
                                           </TableCell>
 
                                         <TableCell className="  w-[15%]  text-center font-bold text-gray-600 ">  
-                                            R$  {i?.total_geral.toFixed(2)}
-                                          
+                                            <span className=" text-xs md:text-lg">
+                                              R$  {i?.total_geral.toFixed(2)}
+                                            </span>
                                           </TableCell>
-                                        <TableCell className="   w-[10%]    text-center font-bold text-gray-600 "> 
+                                        <TableCell className="  max-md:hidden w-[10%]    text-center font-bold text-gray-600 "> 
                                              {i.data_cadastro  }
                                         </TableCell>
                                         
-                                        <TableCell className="  text-center font-bold text-gray-600 " rowSpan={1} > 
+                                        <TableCell className=" max-md:hidden text-center font-bold text-gray-600 " rowSpan={1} > 
                                           <button 
                                           onClick={()=>{ 
                                           router.push(`/pedidos/${i.codigo}/imprimir`)}}
@@ -311,16 +325,16 @@ export default function Pedidos(){
                                              onClick={ ( )=>handleOrder(i.codigo) }
                                              className="cursor-pointer "
                                            >
-                                              <div className="bg-black  p-1  w-7 rounded-sm">   <Edit size={20} color="#FFF" />   </div>
+                                              <div className="bg-black md:p-1 md:w-7 rounded-sm">   <Edit size={20} color="#FFF" />   </div>
                                            </button>
                                         </TableCell>
 
-                                        <TableCell className="      text-center font-bold text-gray-600 "> 
+                                        <TableCell className="    text-center font-bold text-gray-600 "> 
                                          
                                               { i.tipo === 1 ?  
                                                 <button className="cursor-pointer " title="Pedido de Venda" >
-                                                  <div className="bg-green-800  p-1  w-7 rounded-sm">  
-                                                      <ClipboardList  size={20} color="#FFF" strokeWidth={2} />
+                                                  <div className="bg-green-800  md:p-1  md:w-7 rounded-sm">  
+                                                      <ClipboardList  size={20}   color="#FFF" strokeWidth={2} />
                                                   </div>
                                                 </button>
                                                  :
@@ -371,60 +385,58 @@ export default function Pedidos(){
       <div className=" bg-slate-100 p-2  sm:ml-14  fixed bottom-0 left-0 right-0 rounded-xl shadow-md items-center flex justify-center ">
           <div className="">
             
-               
-              
                  <TableRow> 
                                  <TableCell className=" w-40    text-center font-bold text-gray-600 ">
-                                     <div className="items-center justify-center flex gap-1" >
+                                     <div className="items-center justify-center md:flex gap-1" >
                                         <button onClick={   ()=>{   filtroSituacao !== 'EA' ? setFiltroSituacao('EA') : setFiltroSituacao('full')    }}  >
-                                          <div className="bg-green-700   p-1 rounded-sm cursor-pointer" >
+                                          <div className="bg-green-700   md:p-1 rounded-sm cursor-pointer" >
                                            <Check size={20} color="#FFF" /> 
                                           </div>
                                         </button>
-                                         <span className="text-center  ">orçamento</span>
+                                         <span className="text-center text-xs md:text-lg max-md:hidden ">orçamento</span>
                                        </div>
                                     </TableCell>
                                  <TableCell className=" w-40    text-center font-bold text-gray-600 "> 
-                                       <div className="items-center justify-center flex gap-1" >
+                                       <div className="items-center justify-center md:flex gap-1" >
                                           <button onClick={   ()=>{   filtroSituacao !== 'RE' ? setFiltroSituacao('RE') : setFiltroSituacao('full')    }} >
-                                            <div className="bg-red-600     p-1   rounded-sm cursor-pointer "  >
+                                            <div className="bg-red-600  md:p-1  rounded-sm cursor-pointer "  >
                                               <X size={20} color="#FFF"/> 
                                             </div>
                                           </button>
-                                           <span className="text-center  ">reprovado</span>
+                                           <span className="text-center text-xs md:text-lg max-md:hidden ">reprovado</span>
                                         </div> 
                                    </TableCell>
 
                                    <TableCell className=" w-40    text-center font-bold text-gray-600 "> 
-                                       <div className="items-center justify-center flex gap-1" >
+                                       <div className="items-center justify-center md:flex gap-1" >
                                           <button onClick={   ()=>{   filtroSituacao !== 'AI' ? setFiltroSituacao('AI') : setFiltroSituacao('full')    }}  >
-                                          <div className="bg-blue-400    p-1  rounded-sm cursor-pointer" >
+                                          <div className="bg-blue-400  md:p-1  rounded-sm cursor-pointer" >
                                             <CheckCheck size={20} color="#FFF" />
                                          </div>  
                                          </button>
-                                            <span className="text-center  ">pedido</span>
+                                            <span className="text-center text-xs md:text-lg max-md:hidden ">pedido</span>
                                        </div> 
                                    </TableCell>
 
                                    <TableCell className=" w-40    text-center font-bold text-gray-600 "> 
-                                   < div className="items-center justify-center flex gap-1" >
+                                   < div className="items-center justify-center md:flex gap-1" >
                                         <button   onClick={   ()=>{   filtroSituacao !== 'FI' ? setFiltroSituacao('FI') : setFiltroSituacao('full')    }} >
-                                        <div className="bg-orange-500  p-1   rounded-sm cursor-pointer" >
+                                        <div className="bg-orange-500  md:p-1 rounded-sm cursor-pointer" >
                                           <ClipboardCheck size={20} color="#FFF" />
                                         </div>  
                                         </button>
-                                       <span className="text-center  ">faturado</span>
+                                       <span className="text-center text-xs md:text-lg max-md:hidden ">faturado</span>
                                    </div> 
                                    </TableCell>
                                  
                                    <TableCell className="     text-center font-bold text-gray-600 "> 
-                                    <div className="items-center justify-center flex gap-1" >
+                                    <div className="items-center justify-center md:flex gap-1" >
                                       <button   onClick={   ()=>{   filtroSituacao !== 'FP' ? setFiltroSituacao('FP') : setFiltroSituacao('full')    }}>
-                                        <div className="bg-blue-700    p-1  rounded-sm cursor-pointer"  >
+                                        <div className="bg-blue-700  md:p-1 rounded-sm cursor-pointer"  >
                                            <ClipboardPenLine size={20} color="#FFF" />
                                         </div>    
                                         </button>
-                                      <span className="text-center  ">faturado parcialmente</span>
+                                      <span className="text-center text-xs md:text-lg max-md:hidden">faturado parcialmente</span>
                                     </div> 
                                    </TableCell>
                </TableRow>

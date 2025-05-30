@@ -92,17 +92,17 @@ export default function Clientes() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <p>Verificando autenticação...</p>
-      </div>
+      <div className=" min-h-screen flex items-center justify-center flex-col sm:ml-14 p-4 bg-slate-100"  >
+             <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+        </div> 
     );
   }
 
   if (!user) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-       <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
-      </div>
+   return (
+        <div className="flex justify-center items-center h-screen">
+           <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+        </div>
     );
   }
 
@@ -117,17 +117,17 @@ export default function Clientes() {
   return (
     <div className=" min-h-screen flex flex-col sm:ml-14 p-4 w-full h-full  justify-itens-center items-center   bg-slate-100">
 
+   <div className="  w-full md:w-5/6   p-2 mt-22 min-h-screen    rounded-lg bg-white shadow-md " >
 
-      <div className="w-5/6 p-8 min-h-screen  rounded-lg bg-white shadow-md " >
         <div className="p-2 rounded-sm bg-slate-100">
 
         <div className="m-5  ">
-          <h1 className="text-4xl  font-sans font-bold  ">
+        <h1 className="text-2xl md:text-4xl font-bold font-sans text-gray-800">
             Clientes
           </h1>
         </div>
 
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6  ">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6    ">
           <div className="  md:w-auto md:max-w-md md:min-w-[60%] items-center gap-2 mt-3" >
             <Input
               placeholder="Pesquisar por código ou descrição..."
@@ -169,7 +169,7 @@ export default function Clientes() {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4 mt-4 md:mt-0">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 mt-0 md:mt-4">
             <Button type="button" className="shadow-sm w-full sm:w-auto"
               onClick={()=> router.push('/clientes/novo')}
             >
@@ -187,9 +187,11 @@ export default function Clientes() {
         <div className="w-full mt-4  h-screen shadow-lg ">
           <Table className="w-full  bg-gray-100 rounded-sm">
 
-            <TableHead className=" w-[5%]   text-base">Codigo</TableHead>
-            <TableHead className=" w-[30%]  text-base   " >Nome</TableHead>
-            <TableHead className="   w-[23%]   text-base " > cnpj</TableHead>
+            <TableHead className=" text-xs md:text-base  w-[5%] ">Codigo</TableHead>
+            <TableHead className=" text-xs md:text-base text-left  " >Nome</TableHead>
+            <TableHead className=" text-xs md:text-base  max-md:hidden text-center " > cnpj</TableHead>
+            <TableHead className=" text-xs md:text-base  " >  </TableHead>
+
           </Table >
 
           {
@@ -206,12 +208,12 @@ export default function Clientes() {
                         clientes.length > 0 &&
                         clientes.map((i:client) => (
                           <TableRow
-                            className="h-14 justify-center items-center"
+                            className="h-14 justify-center items-center w-full"
                             key={i?.codigo}
                           >
-                            <TableCell className="p-3 text-left font-medium text-gray-700 whitespace-nowrap "> {i?.codigo} </TableCell>
-                            <TableCell className="p-3 text-left font-medium text-gray-700 whitespace-nowrap ">   {i?.nome}      </TableCell>
-                            <TableCell className="p-3 text-left font-medium text-gray-700 whitespace-nowrap ">   {i?.cnpj}   </TableCell>
+                            <TableCell className=" text-xs md:text-base text-center w-[5%] font-medium text-gray-700 whitespace-nowrap "> {i?.codigo} </TableCell>
+                            <TableCell className=" text-xs md:text-base text-left font-medium   text-gray-700 ">   {i?.nome}      </TableCell>
+                            <TableCell className=" max-md:hidden text-xs md:text-base text-left font-medium text-gray-700 whitespace-nowrap ">   {i?.cnpj}   </TableCell>
                             <TableCell className=" text-left   font-bold text-gray-600">
                                         <div className="flex items-center justify-center gap-2">
                                                         {/* Status Indicator */}
@@ -225,7 +227,7 @@ export default function Clientes() {
 
                                                           title="Editar Produto"
                                                         >
-                                                          <Edit className="h-4 w-4" />
+                                                          <Edit className="h-4 w-4" size={15} />
                                                         </Button>
                                                         <div
                                                           className={`p-1 w-5 h-5 rounded-full flex items-center justify-center ${

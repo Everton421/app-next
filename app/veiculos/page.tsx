@@ -83,29 +83,29 @@ export default function Veiculos(){
   }, [user, loading, router]);
 
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-         <p>Verificando autenticação...</p>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-       <div className="flex justify-center items-center h-screen">
-         <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
-       </div>
-    );
-  }
+if (loading) {
+      return (
+        <div className="flex justify-center items-center h-screen">
+                  <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+        </div>
+      );
+    }
+  
+    if (!user) {
+      return (
+         <div className="flex justify-center items-center h-screen">
+           <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+         </div>
+      );
+    }
 
     return (
 
         <div className=" min-h-screen flex flex-col sm:ml-14 p-4 w-full h-full justify-itens-center items-center   bg-slate-100"  >
-           <div className="w-5/6 p-8 mt-22 min-h-screen    rounded-lg bg-white shadow-md " >
+           <div className="  w-full md:w-5/6   p-2 mt-22 min-h-screen    rounded-lg bg-white shadow-md " >
             <div className="p-2 rounded-sm bg-slate-100">
                 <div className="m-5  flex justify-between   ">
-                      <h1 className="text-3xl md:text-4xl font-bold font-sans text-gray-800">
+                      <h1 className="text-2xl md:text-4xl font-bold font-sans text-gray-800">
                             Veículos
                       </h1>
                </div>
@@ -153,7 +153,7 @@ export default function Veiculos(){
            
             <Checkbox className="bg-red-500"/>
             
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4 mt-4 md:mt-0">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4   md:mt-0">
                 <Button type="button" className="shadow-sm w-full sm:w-auto" 
                     onClick={()=> router.push('/veiculos/novo')}
                 >
@@ -171,11 +171,11 @@ export default function Veiculos(){
          <div className="w-full mt-4  h-screen shadow-lg ">
       
         <Table  className="w-full  bg-gray-100 rounded-sm ">
-            <TableHead className= " w-[5%]   text-base">Codigo</TableHead>
-            <TableHead className= " w-[40%]  text-base   " >Modelo</TableHead>
-            <TableHead className="  w-[15%] text-base " > Marca</TableHead>
-            <TableHead className="  w-[15%] text-base " > Placa</TableHead>
-            <TableHead className="  w-[15%] text-base " > Ano</TableHead>
+            <TableHead className= " w-[5%]   text-xs md:text-base">Codigo</TableHead>
+            <TableHead className= " w-[40%]  text-xs md:text-base   " >Modelo</TableHead>
+            <TableHead className=" max-md:hidden  w-[15%] text-xs md:text-base " > Marca</TableHead>
+            <TableHead className="  w-[15%] text-xs md:text-base " > Placa</TableHead>
+            <TableHead className=" max-md:hidden  w-[15%]  text-xs md:text-base " > Ano</TableHead>
 
          <TableHead className=" text-base" > </TableHead>
       
@@ -196,12 +196,12 @@ export default function Veiculos(){
                         key={i.codigo}
                         > 
                         
-                        <TableCell className="p-3 text-center font-medium text-gray-700 whitespace-nowrap w-[80px]" >  {i.codigo}     </TableCell>
-                        <TableCell className="p-3 text-left text-gray-600 w-[40%]"> {i?.modelo ?? ''}  </TableCell>
-                        <TableCell className="p-3 text-left text-gray-600 whitespace-nowrap w-[15%]">  { i.marca ?? '' } </TableCell>
-                        <TableCell className="p-3 text-left text-gray-600 whitespace-nowrap w-[15%]">  { i.placa ?? '' } </TableCell>
+                        <TableCell className="  text-xs md:text-base text-center font-medium text-gray-700 whitespace-nowrap w-[80px]" >  {i.codigo}     </TableCell>
+                        <TableCell className="  text-xs md:text-base text-left text-gray-600 w-[40%]"> {i?.modelo ?? ''}  </TableCell>
+                        <TableCell className="  max-md:hidden text-left text-gray-600 whitespace-nowrap w-[15%]">  { i.marca ?? '' } </TableCell>
+                        <TableCell className="  text-xs md:text-base text-left text-gray-600 whitespace-nowrap w-[15%]">  { i.placa ?? '' } </TableCell>
 
-                        <TableCell className="p-3 text-left text-gray-600 whitespace-nowrap w-[15%]">  { i.ano ?? '' } </TableCell>
+                        <TableCell className=" max-md:hidden p-3 text-left text-gray-600 whitespace-nowrap w-[15%]">  { i.ano ?? '' } </TableCell>
 
                         <TableCell className=" text-left   font-bold text-gray-600">  
                 <div className="flex items-center justify-center gap-2">
@@ -255,7 +255,7 @@ export default function Veiculos(){
                   <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
                 </div>
             ):
-            <span className="text-xl text-gray-500 text-center m-7 "> nenhum veículo encontrado!</span>
+            <span className=" text-xs md:text-xl text-gray-500 text-center m-7 "> nenhum veículo encontrado!</span>
 
             )  
             }         

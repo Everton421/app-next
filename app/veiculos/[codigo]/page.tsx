@@ -34,13 +34,7 @@ type cliente =
 
 export default function veiculo({params}:any){
 
-    const [ cliente, setCliente] = useState();
     const [data, setData ] = useState<veiculo | null> (null);
-    const [ placa, setPlaca] = useState<string | null >();
-    const [ modelo, setModelo] = useState<string>();
-    const [ marca, setMarca ] = useState<string>();
-    const [ ano, setAno ] = useState<string>();
-    const [ combustivel, setCombustivel ] = useState<string>();
     const [ msgAlert, setMsgAlert] = useState<string>('');
     const [ visibleAlert, setVisibleAlert] = useState(false);
     const [isLoading, setIsLoading] = useState(true); // Add loading state for initial fetch
@@ -49,35 +43,13 @@ export default function veiculo({params}:any){
 
      const { user, loading  }: any = useAuth();
     const api = configApi();
-
-
-    useEffect(() => {
-        if (!loading) {
-          if (!user) {
-            router.push('/login'); // Redireciona para a página de login (ajuste se for outra)
-          }
-        }
-      }, [user, loading, router]);
     
     
-      if (loading) {
-        return (
-          <div className="flex justify-center items-center h-screen">
-             <p>Verificando autenticação...</p>
-          </div>
-        );
-      }
-
-    
- function delay(ms:number) {
-    return new Promise((resolve)=>{ setTimeout( resolve,ms )})
-   }
-
+ 
     async function busca(){
         try{
             setIsLoading(true);
 
-            await delay(2000)
            let result = await api.get('/veiculos', {
                  headers:{ token: user.token },
                     params:{ codigo:  params.codigo  }
@@ -125,6 +97,15 @@ export default function veiculo({params}:any){
 
     }, [ params.codigo, user, router ]);  
 
+   useEffect(() => {
+        if (!loading) {
+          if (!user) {
+            router.push('/login'); // Redireciona para a página de login (ajuste se for outra)
+          }
+        }
+      }, [user, loading, router]);
+    
+    
 
     async  function gravar( ){
             setIsLoading(true)
@@ -155,13 +136,21 @@ export default function veiculo({params}:any){
          });
      }, []);
 
-     if (isLoading) {
-        return (
-                  <div className=" min-h-screen flex items-center justify-center flex-col sm:ml-14 p-4 bg-slate-100"  >
+    if (loading) {
+      return (
+        <div className="flex justify-center items-center h-screen">
                   <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
-                </div>
-        );
-     }
+        </div>
+      );
+    }
+  
+    if (!user) {
+      return (
+         <div className="flex justify-center items-center h-screen">
+           <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+         </div>
+      );
+    }
 
      if (!data && !isLoading) {
         return (
@@ -179,13 +168,12 @@ export default function veiculo({params}:any){
     return(
         <div className= " min-h-screen flex flex-col sm:ml-14 p-4 w-full h-full  justify-itens-center items-center    bg-slate-100"  >
        
-       
           <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} to={'/veiculos'}/>
        
-        <div className="w-5/6 p-8 mt-22 h-screen    rounded-lg bg-white shadow-md " >
+        <div className="  w-full md:w-5/6   p-2 mt-22 min-h-screen    rounded-lg bg-white shadow-md " >
 
               <div className="flex justify-between items-center mb-2">
-                        <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+                        <h1 className="text-md md:text-3xl font-bold text-gray-800">
                             Detalhes do Veículo
                         </h1>
                         <Button variant="outline" onClick={() => router.push('/veiculos')}>

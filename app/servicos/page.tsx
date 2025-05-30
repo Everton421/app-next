@@ -95,17 +95,17 @@ const {user, loading }:any = useAuth();
 
     return(
       <div className= " min-h-screen flex flex-col sm:ml-14 p-4 w-full h-full  justify-itens-center items-center    bg-slate-100"  >
-   <div className="w-5/6 p-8 mt-22 min-h-screen    rounded-lg bg-white shadow-md " >
-              
+        <div className="  w-full md:w-5/6   p-2 mt-22 min-h-screen    rounded-lg bg-white shadow-md " >
+           
           <div className="p-2 rounded-sm bg-slate-100">
 
-              <div className="m-5  ">
-                  <h1 className="text-4xl  font-sans font-bold  ">
+            <div className="m-5  flex justify-between   ">
+                 <h1 className="text-2xl md:text-4xl font-bold font-sans text-gray-800">
                      Serviços
                   </h1>
                 </div>
 
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6  ">
+           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6  ">
           <div className="  md:w-auto md:max-w-md md:min-w-[60%] items-center gap-2 mt-3" >
 
             <Input
@@ -145,9 +145,8 @@ const {user, loading }:any = useAuth();
               </div>
             </div>
           </div>
-
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4 mt-4 md:mt-0">
-            <Button type="button" className="shadow-sm w-full sm:w-auto"
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4   md:mt-0">
+              <Button type="button" className="shadow-sm w-full sm:w-auto" 
               onClick={()=> router.push('/servicos/novo')}
             >
               <Plus className="h-4 w-4 mr-2" /> Novo
@@ -157,13 +156,13 @@ const {user, loading }:any = useAuth();
           </div>
 
         </div>  
-     </div>
+         </div>
 
             <div className="w-full mt-4  h-screen shadow-lg ">
                         <Table  className="w-full  bg-gray-100 rounded-sm ">
-                           <TableHead className= " w-[7%]   text-base">Codigo</TableHead>
-                           <TableHead className= " w-[75%]  text-base   " >aplicacao</TableHead>
-                           <TableHead className="  w-[15%] text-base " > Valor</TableHead>
+                           <TableHead className= " w-[7%]   text-xs md:text-base">Codigo</TableHead>
+                           <TableHead className= " w-[75%]  text-xs md:text-base   " >aplicacao</TableHead>
+                           <TableHead className="  w-[15%]  text-xs md:text-base " > Valor</TableHead>
                            <TableHead className=" text-base" > </TableHead>
                         </Table >
       { 
@@ -181,9 +180,9 @@ const {user, loading }:any = useAuth();
                               key={i.codigo}
                               > 
                               
-                                <TableCell className="p-3 text-center font-medium text-gray-700 whitespace-nowrap w-[80px]" >  {i.codigo}     </TableCell>
-                                <TableCell className="p-3 text-left text-gray-600 w-[75%]"> {i?.aplicacao ?? ''}  </TableCell>
-                                <TableCell className="p-3 text-left text-gray-600 whitespace-nowrap w-[100px]"> R$ { i.valor?.toFixed(2) ?? '00' } </TableCell>
+                                <TableCell className=" text-xs md:text-base text-center font-medium text-gray-700 whitespace-nowrap w-[80px]" >  {i.codigo}     </TableCell>
+                                <TableCell className=" text-xs md:text-base text-left text-gray-600 w-[75%]"> {i?.aplicacao ?? ''}  </TableCell>
+                                <TableCell className=" text-xs md:text-base text-left text-gray-600 whitespace-nowrap w-[100px]"> R$ { i.valor?.toFixed(2) ?? '00' } </TableCell>
                                 <TableCell className=" text-left   font-bold text-gray-600">  
                       <div className="flex items-center justify-center gap-2">
                               
@@ -227,7 +226,7 @@ const {user, loading }:any = useAuth();
             <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
           </div>
       ):
-          <span className="text-xl text-gray-500 text-center m-7 "> nenhum serviço encontrado!</span>
+          <span className=" text-xs md:text-xl text-gray-500 text-center   m-7 "> nenhum serviço encontrado!</span>
       
         )  
       }         

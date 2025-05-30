@@ -45,7 +45,7 @@ export default function Marca({ params }:any ) {
         setIsLoading(true);
 
         try{
-        let dados = await api.get(`/next/marcas`,{
+        let dados = await api.get(`/marcas`,{
             headers: {
                  token:  user.token 
             },
@@ -96,27 +96,26 @@ useEffect(()=>{
 
            }
 
-           if (loading) {
+
+    if (loading) {
         return (
             <div className="flex justify-center items-center h-screen">
-                <p>Verificando autenticação...</p>
+                <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
             </div>
         );
     }
 
-    if (!user) {
+  if (!user) {
         return (
             <div className="flex justify-center items-center h-screen">
                <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
             </div>
         );
     }
-    if (!data) {
-        return <div className=" min-h-screen flex flex-col sm:ml-14 p-4 bg-slate-100"  >
-            < span className=" text-gray-500 font-bold text-2xl">
-                Carregando...
-            </span>
-        </div>; // Ou algum outro indicador de carregamento
+     if (!data) {
+        return   <div className="flex justify-center items-center h-screen">
+                    <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+        </div>;  
     }
 
     function handleDescricao(descricao:string){

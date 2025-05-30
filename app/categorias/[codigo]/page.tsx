@@ -42,7 +42,7 @@ export default function Categoria({ params }:any ) {
         setIsLoading(true);
 
         try{
-        let dados = await api.get(`/next/categorias`,{
+        let dados = await api.get(`/categorias`,{
             headers:{ token: user.token  },
             params:{ codigo: params.codigo}
 
@@ -95,7 +95,7 @@ useEffect(()=>{
     if (loading) {
         return (
             <div className="flex justify-center items-center h-screen">
-                <p>Verificando autenticação...</p>
+                <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
             </div>
         );
     }
@@ -108,10 +108,9 @@ useEffect(()=>{
         );
     }
     if (!data) {
-        return <div className=" min-h-screen flex flex-col sm:ml-14 p-4 bg-slate-100"  >
-            < span className=" text-gray-500 font-bold text-2xl">
-                Carregando...
-            </span>
+        return   <div className="flex justify-center items-center h-screen">
+
+                    <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
         </div>; // Ou algum outro indicador de carregamento
     }
 
@@ -129,7 +128,7 @@ useEffect(()=>{
                     
 
                     <div className="flex justify-between items-center mb-4">
-                        <h1 className="text-2xl font-bold text-gray-800">
+                        <h1 className=" text-sm md:text-2xl font-bold text-gray-800">
                             Editar Categoria
                         </h1>
                         <Button variant="outline" onClick={() => router.push('/categorias')}>

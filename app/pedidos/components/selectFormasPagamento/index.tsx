@@ -8,7 +8,7 @@ type props = {
     codigoForma:number,
     setCodigoForma: Dispatch<SetStateAction<number>> ,
     setFormaSelecionada: Dispatch<SetStateAction<any>> ,
-    formaSelecionada: formaPagamento | undefined,
+    formaSelecionada: any,
 }
 
 export const SelectFormasPagamento = ({codigoForma, setCodigoForma, formaSelecionada, setFormaSelecionada }: props )=>{
