@@ -27,7 +27,7 @@ export default function Home() {
   const router = useRouter();
   const api = configApi();
  
-  const [ dadosGrafico , setDadosGrafico ] = useState<arrChartData[]>([]);
+  const [ dadosGrafico , setDadosGrafico ] = useState<any[]>([]);
   const [ totalVendasGrafico, setTotalVendasGrafico ] = useState<number>(0);
   const [melhorVenda , setMelhorVenda] = useState<any>();
  const [loadingDados, setLoadingDados] = useState(false)
