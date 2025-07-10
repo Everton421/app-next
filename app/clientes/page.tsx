@@ -211,10 +211,10 @@ export default function Clientes() {
                             className="h-14 justify-center items-center w-full"
                             key={i?.codigo}
                           >
-                            <TableCell className=" text-xs md:text-base text-center w-[5%] font-medium text-gray-700 whitespace-nowrap "> {i?.codigo} </TableCell>
-                            <TableCell className=" text-xs md:text-base text-left font-medium   text-gray-700 ">   {i?.nome}      </TableCell>
-                            <TableCell className=" max-md:hidden text-xs md:text-base text-left font-medium text-gray-700 whitespace-nowrap ">   {i?.cnpj}   </TableCell>
-                            <TableCell className=" text-left   font-bold text-gray-600">
+                            <TableCell className=" text-xs md:text-base text-center w-[5%]      whitespace-nowrap "> {i?.codigo} </TableCell>
+                            <TableCell className=" text-xs md:text-base text-left   text-gray-700 ">   {i?.nome}      </TableCell>
+                            <TableCell className=" max-md:hidden text-xs md:text-base text-left   text-gray-700 whitespace-nowrap ">   {i?.cnpj}   </TableCell>
+                            <TableCell className=" text-left  font-bold text-gray-600">
                                         <div className="flex items-center justify-center gap-2">
                                                         {/* Status Indicator */}
                                                        

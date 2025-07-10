@@ -10,6 +10,10 @@ import { ThreeDot } from "react-loading-indicators";
 import { GraficoHome } from "@/components/grafico-home";
 import { configApi } from "../services/api";
 import { resolve } from "path";
+import { DateService } from "../services/dateService";
+import { ChartPieDonutText } from "@/components/pie-chart/pie-chart";
+import { ChartRadialText   } from "@/components/radial-chart/radial-chart";
+import { ChartAreaInteractive } from "@/components/area-chart/ara-chart";
 
 type chartData = {
     date: string
@@ -26,29 +30,27 @@ export default function Home() {
   const { user , loading   }:any = useAuth();
   const router = useRouter();
   const api = configApi();
- 
+  const dateService = DateService();
+
   const [ dadosGrafico , setDadosGrafico ] = useState<any[]>([]);
   const [ totalVendasGrafico, setTotalVendasGrafico ] = useState<number>(0);
   const [melhorVenda , setMelhorVenda] = useState<any>();
  const [loadingDados, setLoadingDados] = useState(false)
  
- 
+ const [ dataInicial, setDataInicial ] = useState( dateService.obterDataAtualPrimeiroDiaDoMes()+'00:00:00');
+ const [ dataFinal, setDataFinal ] = useState(dateService.obterDataHoraAtual() );
+
   function delay(ms:any)  {
     return new Promise((resolve)=>{ setTimeout( resolve,ms )})
    }
 
-  
-    useEffect(
-    ()=>{
-     
-      async function busca(){
-        await delay(2000)
+    async function busca(){
         try{
           setLoadingDados(true)
           let result = await api.get('/pedidos/vendas',{
                   params : {        
-                dataInicial: "2025-01-01 00:00:00",
-                dataFinal: "2025-05-30 00:00:00",
+                dataInicial: dataInicial,
+                dataFinal:  dataFinal,
                 limit:10000,
                   vendedor: user.codigo
                   },
@@ -78,7 +80,6 @@ export default function Home() {
                       })
                       
                       setTotalVendasGrafico(auxTotal);
-                      
                       setDadosGrafico(aux);
                     }
                       }
@@ -90,14 +91,26 @@ export default function Home() {
         }finally{
           setLoadingDados(false)
         }
-      
-
       }
-   
+    useEffect(
+    ()=>{
+      async function filterData(){
+        await delay(2000)
         busca()
-    
+      }
+      filterData()
+    },[   ]  )
 
-    },[]  )
+  useEffect(
+    ()=>{
+        async function filterData(){
+        await delay(2000)
+        busca()
+      }
+      filterData()
+    },[ dataInicial ,dataFinal   ]  )
+
+
 
   useEffect(() => {
     if (!loading) {
@@ -112,7 +125,6 @@ export default function Home() {
     return (
       <div className="flex justify-center items-center h-screen">
                <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
-
       </div>
     );
   }
@@ -168,11 +180,19 @@ export default function Home() {
           
          {/* Adicionar talvez um seletor de período para o gráfico */}
         <div className="w-full items-center justify-center flex  ">
-        { loadingDados ? 
+        {   loadingDados ? 
             <ThreeDot color="blue" />  
           :
-               <GraficoHome chartData={dadosGrafico} totalVendas={totalVendasGrafico} />
-          }         
+               <GraficoHome 
+                chartData={dadosGrafico}
+                totalVendas={totalVendasGrafico}
+                setDataFinal={setDataFinal}
+                setDataInicial={setDataInicial}
+                dataFinal={dataFinal}
+              dataInicial={dataInicial}
+                   />
+          }
+
         </div>
 
 
@@ -184,7 +204,7 @@ export default function Home() {
          <>
          <ThreeDot color="blue" /> 
          </>
-          :   <div className=" flex justify-between  w-full">
+          :   <div className=" flex justify-between flex-col md:flex-row w-full">
                 <div className="flex items-center gap-1"  >
                  <span className=" text-black  text-xs md:text-base font-bold " > Código: </span>
                  <span className=" text-zinc-500 text-xs md:text-base" >   { melhorVenda?.codigo} </span>
@@ -195,12 +215,11 @@ export default function Home() {
 
                 <div className="flex items-center" >
                    <DollarSign className="w-4"/>
-                   <span className=" text-zinc-500  text-xs md:text-base" >   { melhorVenda?.total_geral} </span>
+                   <span className=" text-zinc-500  text-xs md:text-base" >   { melhorVenda && new Intl.NumberFormat('de-DE').format( melhorVenda?.total_geral) } </span>
                </div>
       
           </div>
            }
-              
 
         </div>
     </section>

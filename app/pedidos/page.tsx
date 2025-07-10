@@ -296,7 +296,7 @@ export default function Pedidos(){
                                            <TableCell className=" w-[60%]  font-bold text-gray-600"
                                                > 
                                                <button onClick={ ( )=>handleOrder(i.codigo) } className="  ml-[5%]">
-                                                 <span className=" text-xs md:text-lg">
+                                                 <span className=" text-xs md:text-lg  font-bold">
                                                     {i.nome}
                                                  </span> 
                                                </button> 

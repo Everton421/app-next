@@ -4,6 +4,10 @@ import * as React from "react"
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 import {Card,CardContent,CardDescription,CardHeader,CardTitle, } from "@/components/ui/card"
 import {ChartConfig,ChartContainer,ChartTooltip,ChartTooltipContent, } from "@/components/ui/chart"
+import { DollarSign, Ellipsis, RefreshCw } from "lucide-react"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/popover"
+import { Button } from "@/components/ui/button";
+import { ListFilter } from "lucide-react";
 
 type chartData = {
     date: string
@@ -11,7 +15,11 @@ type chartData = {
 }
 type props ={
    chartData:chartData[],
-   totalVendas:number
+   totalVendas:number,
+   setDataInicial:React.Dispatch<React.SetStateAction<string>>,
+   setDataFinal:React.Dispatch<React.SetStateAction<string>>,
+dataInicial:string,
+dataFinal:string
 }
 
 const chartConfig = {
@@ -26,7 +34,7 @@ const chartConfig = {
  
 } satisfies ChartConfig
 
-export function GraficoHome( {chartData ,totalVendas }:props) {
+export function GraficoHome( {chartData ,totalVendas, setDataInicial, setDataFinal, dataInicial, dataFinal }:props) {
     const [activeChart, setActiveChart] = React.useState<keyof typeof chartConfig>("desktop" )
 
   const total = React.useMemo(
@@ -36,11 +44,51 @@ export function GraficoHome( {chartData ,totalVendas }:props) {
     []
   )
 
+ 
+
   return (
     <Card className="w-full ">
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row ">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
-          <CardTitle> Visão Geral de Vendas (Últimos 30 dias)</CardTitle>
+          <div className="">
+          <CardTitle> Visão Geral de Vendas </CardTitle>
+
+           <Popover>
+          <PopoverTrigger>  
+                <Button   className="bg-white shadow-md mt-1">
+                        <Ellipsis  className=" w-4 md:w-10"   color="#000" />
+                </Button> 
+
+        </PopoverTrigger>
+
+          <PopoverContent className="bg-white w-full ">
+                  <div className="w-full  flex">
+                    
+                    < label className="m-5 font-bold "> inicio</label>
+
+                        <input 
+                          type="date"
+                          className="font-bold text-gray-500"
+                          onChange={( v )=> setDataInicial(v.target.value)}  
+                          defaultValue={dataInicial} 
+                        />
+                    
+                    < label className="m-5 font-bold">  final</label>
+                        <input 
+                          type="date"
+                          className="font-bold text-gray-500" 
+                           onChange={(v)=> setDataFinal(v.target.value)} 
+                           defaultValue={dataFinal} 
+                          />
+                  </div>                     
+              
+                <div className=" m-2">
+                {/*<TipoPedidoSeletor  setTipo={setFiltroTipo} tipo={filtrTipo}  /> */}
+                </div>
+              </PopoverContent>
+
+          </Popover>
+        </div>
           <CardDescription>
          
           </CardDescription>
@@ -57,7 +105,7 @@ export function GraficoHome( {chartData ,totalVendas }:props) {
               >
         
                 <span className="text-lg items-center font-bold leading-none sm:text-3xl flex">
-                  { totalVendas && totalVendas.toFixed(2)}
+                <DollarSign className="w-4 md:w-6 "/>   { totalVendas &&   new Intl.NumberFormat('de-DE').format(totalVendas)   }
                 </span>
               </button>
             )
