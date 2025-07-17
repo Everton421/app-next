@@ -61,6 +61,8 @@ interface formaPagamento {
 }
 interface pedido {
     codigo: number;
+    id:string  ,
+    id_externo: number  ,
     cliente: clientePedido;
     codigo_cliente: number;
     total_geral: number;
@@ -543,9 +545,15 @@ export default function EditPedido(){
         
             {/* Cabeçalho */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6">
-                <h1 className="text-xl md:text-2xl font-bold text-gray-800">
-                    {codigo_pedido ? `Editando Pedido: ${codigo_pedido}` : "Novo Pedido"}
+                <h1 className="text-lg md:text-2xl font-bold text-gray-800">
+                     Editando Pedido: { dadosOrcamento && dadosOrcamento.id &&  dadosOrcamento.id } 
                 </h1>     
+                     {
+                       dadosOrcamento && dadosOrcamento.id_externo &&  
+                    <h1 className="text-lg md:text-2xl font-bold text-gray-800">
+                        Código Externo: { dadosOrcamento.id_externo} 
+                    </h1>     
+                     }
                 <Button variant="outline" onClick={() => router.push('/pedidos')}>
                     <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
                 </Button>

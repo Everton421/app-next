@@ -14,6 +14,8 @@ import { DateService } from "../services/dateService";
 import { ChartPieDonutText } from "@/components/pie-chart/pie-chart";
 import { ChartRadialText   } from "@/components/radial-chart/radial-chart";
 import { ChartAreaInteractive } from "@/components/area-chart/ara-chart";
+import { ChartOverView } from "@/components/chart";
+import { ChartRadialShape } from "@/components/chart-radial-shape/chart-radial-shape";
 
 type chartData = {
     date: string
@@ -49,8 +51,8 @@ export default function Home() {
           setLoadingDados(true)
           let result = await api.get('/pedidos/vendas',{
                   params : {        
-                dataInicial: dataInicial,
-                dataFinal:  dataFinal,
+                dataInicial: dataInicial ,
+                dataFinal:  dataFinal ,
                 limit:10000,
                   vendedor: user.codigo
                   },
@@ -62,7 +64,6 @@ export default function Home() {
                 if( result.status === 200 && result.data.length > 0 ){
                     let arr:any[] = result.data;
                     let arrLength = arr.length;
-                      console.log(arr)
                     if (arrLength > 0 ){
                           let arrTotais = arr.map((i)=> i.total_geral )
                           let maxTotal = Math.max(...arrTotais) 
@@ -78,6 +79,7 @@ export default function Home() {
                       aux.push({ date:i.data_cadastro, desktop:i.total_geral })
                         auxTotal += i.total_geral
                       })
+                      console.log(aux)
                       
                       setTotalVendasGrafico(auxTotal);
                       setDadosGrafico(aux);
@@ -195,6 +197,8 @@ export default function Home() {
 
         </div>
 
+        <ChartRadialText/>
+    <ChartRadialShape/>
 
     </section>
 

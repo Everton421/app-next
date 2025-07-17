@@ -29,9 +29,6 @@ export default function Parcelas ( {  dadosOrcamento   }:props ){
  
     return(
         <div className="relative p-4 w-full  ">
-          
-          
-   
 
             <div className="w-[90%]  ">                        
                 <Table className="w-[70%] bg-white m-2">

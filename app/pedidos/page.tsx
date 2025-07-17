@@ -4,7 +4,7 @@
 import {   useEffect, useState } from "react";
 import { configApi } from "../services/api";
 import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead,   TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead,   TableHeader,   TableRow } from "@/components/ui/table";
 import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button";
 import {   Check, CheckCheck, ClipboardCheck, ClipboardList, ClipboardPenLine,    Edit,    Plus,    Printer,   Terminal,   Wrench,   X  } from "lucide-react";
@@ -245,138 +245,139 @@ export default function Pedidos(){
           </div>
  
             </div>
-
-          <div className="  flex  w-full">
-                <TableHead   > 
-                      <span className=" text-xs md:text-lg   text-left ">
-                        situaçao
-                      </span>
-                  </TableHead>
-                <TableHead  className="  w-[60%]">
-                    <span className=" text-xs md:text-lg  text-left "> Cliente </span>
-                </TableHead>  
-                <TableHead className=" w-[10%] ">
-                  <span className=" text-xs md:text-lg ">
-                    Total
-                  </span>
-                  </TableHead>
-                <TableHead className=" max-md:hidden text-center text-lg  w-[20%]">  data cadastro    </TableHead>
-                <TableHead className="text-center  text-lg   items-center justify-center flex ">     </TableHead>
-                <TableHead className="text-center  text-lg   items-center justify-center flex ">      </TableHead>
-
-          </div>
+ 
       
    
  
-          {   dados.length > 0 ?
-              (
-                <ScrollArea className="h-2/3 w-full" >
-                  <Table  className="w-full  rounded-xl   ">
-                   <TableBody>
+     {dados.length > 0 ? (
+  <ScrollArea className="h-[calc(100vh-320px)] w-full rounded-md border">
+    {/* Dica: Usar calc() para a altura da ScrollArea a torna mais robusta */}
+    <Table className="w-full">
+      {/* 1. O Cabeçalho (TableHeader) deve estar DENTRO da Table */}
+      <TableHeader>
+        <TableRow>
+          <TableHead className="w-[5%] text-center">Sit.</TableHead>
+          <TableHead className="w-[10%]">ID</TableHead>
+          <TableHead className="w-[45%]">Cliente</TableHead>
+          <TableHead className="text-right">Total</TableHead>
+          <TableHead className="max-md:hidden text-center">Data</TableHead>
+          <TableHead className="text-center" colSpan={3}>Ações</TableHead>
+        </TableRow>
+      </TableHeader>
 
-               { 
-                  dadosFiltro.length > 0 && !carregando &&
-                    dadosFiltro.map((i:any)=>(
+      {/* 2. O Corpo (TableBody) também fica DENTRO da Table, depois do Header */}
+      <TableBody>
+        {dadosFiltro.length > 0 && !carregando &&
+          dadosFiltro.map((i: any) => (
+            <TableRow key={i.codigo} className="hover:bg-slate-50">
+              
+              {/* Célula de Situação */}
+              <TableCell className="w-[5%] text-center">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      {i.situacao === 'RE' && <div className="bg-red-600 rounded-sm inline-flex"><X size={20} color="#FFF" /></div>}
+                      {i.situacao === 'EA' && <div className="bg-green-700 rounded-sm inline-flex"><Check size={20} color="#FFF" /></div>}
+                      {i.situacao === 'AI' && <div className="bg-blue-400 rounded-sm inline-flex"><CheckCheck size={20} color="#FFF" /></div>}
+                      {i.situacao === 'FI' && <div className="bg-orange-500 rounded-sm inline-flex"><ClipboardCheck size={20} color="#FFF" /></div>}
+                      {i.situacao === 'FP' && <div className="bg-blue-700 rounded-sm inline-flex"><ClipboardPenLine size={20} color="#FFF" /></div>}
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Situação do Pedido</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </TableCell>
 
-                 
-                          <TableRow key={ i.codigo } 
-                              > 
-                            <TooltipProvider>
-                                <Tooltip >
-                                    <TooltipTrigger >   
-                                        <TableCell className="  text-center font-bold text-gray-600 items-center justify-center flex   ">
-                                              {i.situacao  === 'RE' &&  <div className="bg-red-600      rounded-sm"> <X size={20} color="#FFF"/>  </div>}
-                                              {i.situacao  === 'EA' &&  <div className="bg-green-700    rounded-sm"> <Check size={20} color="#FFF" /> </div>}
-                                              {i.situacao  === 'AI' &&  <div className="bg-blue-400     rounded-sm"> <CheckCheck size={20} color="#FFF" /> </div>}
-                                              {i.situacao  === 'FI' &&  <div className="bg-orange-500   rounded-sm"> <ClipboardCheck size={20} color="#FFF" /> </div>}
-                                              {i.situacao  === 'FP' &&  <div className="bg-blue-700     rounded-sm"> <ClipboardPenLine size={20}  color="#FFF" /></div>}
-                                            
-                                            </TableCell>
-                                      </TooltipTrigger>
-                                           <TableCell className=" w-[60%]  font-bold text-gray-600"
-                                               > 
-                                               <button onClick={ ( )=>handleOrder(i.codigo) } className="  ml-[5%]">
-                                                 <span className=" text-xs md:text-lg  font-bold">
-                                                    {i.nome}
-                                                 </span> 
-                                               </button> 
-                                          </TableCell>
+              {/* Célula ID */}
+              <TableCell className="w-[10%] font-bold text-gray-700">
+                <button onClick={() => handleOrder(i.codigo)} className="text-left">
+                  <span className="text-xs md:text-base font-bold">{i.id}</span>
+                </button>
+              </TableCell>
 
-                                        <TableCell className="  w-[15%]  text-center font-bold text-gray-600 ">  
-                                            <span className=" text-xs md:text-lg">
-                                              R$  {i?.total_geral.toFixed(2)}
-                                            </span>
-                                          </TableCell>
-                                        <TableCell className="  max-md:hidden w-[10%]    text-center font-bold text-gray-600 "> 
-                                             {i.data_cadastro  }
-                                        </TableCell>
-                                        
-                                        <TableCell className=" max-md:hidden text-center font-bold text-gray-600 " rowSpan={1} > 
-                                          <button 
-                                          onClick={()=>{ 
-                                          router.push(`/pedidos/${i.codigo}/imprimir`)}}
-                                          >
-                                              <div className="bg-black  p-1  w-7 rounded-sm">  <Printer size={20} color="#FFF" />  </div>
-                                          </button>
-                                        </TableCell>
+              {/* Célula Cliente - Note que apliquei a mesma largura do header */}
+              <TableCell className="w-[45%] font-medium text-gray-700">
+                <button onClick={() => handleOrder(i.codigo)} className="text-left">
+                  <span className="text-xs md:text-lg">{i.nome}</span>
+                </button>
+              </TableCell>
 
-                                        <TableCell className="      text-center font-bold text-gray-600 "> 
-                                           <button 
-                                             onClick={ ( )=>handleOrder(i.codigo) }
-                                             className="cursor-pointer "
-                                           >
-                                              <div className="bg-black md:p-1 md:w-7 rounded-sm">   <Edit size={20} color="#FFF" />   </div>
-                                           </button>
-                                        </TableCell>
+              {/* Célula Total */}
+              <TableCell className="text-right font-bold text-gray-600">
+                <span className="text-xs md:text-lg">
+                  R$ {i?.total_geral.toFixed(2)}
+                </span>
+              </TableCell>
 
-                                        <TableCell className="    text-center font-bold text-gray-600 "> 
-                                         
-                                              { i.tipo === 1 ?  
-                                                <button className="cursor-pointer " title="Pedido de Venda" >
-                                                  <div className="bg-green-800  md:p-1  md:w-7 rounded-sm">  
-                                                      <ClipboardList  size={20}   color="#FFF" strokeWidth={2} />
-                                                  </div>
-                                                </button>
-                                                 :
-                                                <button className="cursor-pointer " title="Ordem De Serviço" >
-                                                   <div className="bg-green-800  p-1  w-7 rounded-sm">  
-                                                     <Wrench  size={20} color="#FFF" strokeWidth={2} />
-                                                  </div>
-                                                </button>
-                                                 
-                                                 }
+              {/* Célula Data - com classe para esconder em telas pequenas */}
+              <TableCell className="max-md:hidden text-center font-medium text-gray-600">
+                {i.data_cadastro}
+              </TableCell>
 
+              {/* Células de Ações */}
+              <TableCell className="text-center">
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                             <button onClick={() => router.push(`/pedidos/${i.codigo}/imprimir`)}>
+                                <div className="bg-gray-700 p-1 w-7 rounded-sm inline-flex justify-center"><Printer size={18} color="#FFF" /></div>
+                             </button>
+                        </TooltipTrigger>
+                        <TooltipContent><p>Imprimir</p></TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+              </TableCell>
 
+              <TableCell className="text-center">
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                             <button onClick={() => handleOrder(i.codigo)}>
+                                <div className="bg-blue-600 p-1 w-7 rounded-sm inline-flex justify-center"><Edit size={18} color="#FFF" /></div>
+                             </button>
+                        </TooltipTrigger>
+                        <TooltipContent><p>Editar</p></TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+              </TableCell>
 
-                                        </TableCell>
+              <TableCell className="text-center">
+                 <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                             {i.tipo === 1 ? (
+                                <button className="cursor-help" title="Pedido de Venda">
+                                  <div className="bg-green-800 p-1 w-7 rounded-sm inline-flex justify-center"><ClipboardList size={18} color="#FFF" strokeWidth={2} /></div>
+                                </button>
+                              ) : (
+                                <button className="cursor-help" title="Ordem De Serviço">
+                                  <div className="bg-purple-800 p-1 w-7 rounded-sm inline-flex justify-center"><Wrench size={18} color="#FFF" strokeWidth={2} /></div>
+                                </button>
+                              )}
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            {i.tipo === 1 ? <p>Pedido de Venda</p> : <p>Ordem de Serviço</p>}
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+              </TableCell>
 
-                                        <TooltipContent>
-                                           <p>codigo: {i?.codigo}</p>
-                                           <p>cliente: {i?.nome}</p>
-                                        </TooltipContent>
-                                 </Tooltip>
-                            </TooltipProvider>
-
-                          </TableRow>
-                          
-                      ) )
-                    
-                     }
-
-                    </TableBody>
-                  </Table>
-               </ScrollArea>
-
-                ) : (
-                    carregando  ? (
-                     <div className="flex justify-center my-4"> {/* Container para centralizar */}
-                       <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
-                     </div>
-                     ) :
-              <p   className="text-xl text-gray-500   ml-7"> nenhum pedido encontrado!</p>  
-
-              )
+            </TableRow>
+          ))
         }
+      </TableBody>
+    </Table>
+  </ScrollArea>
+) : (
+  carregando ? (
+    <div className="flex justify-center my-4">
+      <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+    </div>
+  ) : (
+    <p className="text-xl text-gray-500 ml-7 mt-4">Nenhum pedido encontrado!</p>
+  )
+)}
 
 
    

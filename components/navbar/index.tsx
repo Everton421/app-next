@@ -11,7 +11,7 @@ export default   function Navbar  () {
     <nav className=" w-auto bg-black sm:ml-14  flex justify-between  print:hidden  ">
          <Image 
           className="rounded-sm ml-1"
-            src="/images/design.png"
+            src="/images/vercel.png"
             alt="img"
             width={100}
             height={100}

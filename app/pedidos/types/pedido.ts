@@ -37,6 +37,9 @@ type Produto_pedido =
    }
 
    type pedido = {
+    codigo?:number,
+    id?:string,
+    id_externo?:number | string,
      cliente:clientePedido,
      codigo_cliente:number,
      contato:string,

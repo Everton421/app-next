@@ -107,7 +107,7 @@ console.log(response.data)
                 <div className="w-full items-center flex justify-center mb-4"> {/* Adicionado mb-4 */}
                     <Image
                         className="rounded-3xl" // Removido ml-1 se não necessário
-                        src="/images/design.png" // Verifique se este caminho está correto na pasta public
+                        src="/images/vercel.png" // Verifique se este caminho está correto na pasta public
                         alt="Logo da Empresa" // Alt text mais descritivo
                         width={150}
                         height={150}

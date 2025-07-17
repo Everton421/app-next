@@ -1,5 +1,5 @@
  
-
+/*
 'use client'
  
 import { useCallback, useEffect, useState } from "react";
@@ -122,9 +122,7 @@ export default function MainPedido( { codigo_pedido}:any ){
         }
 
 
-    // funções dos produtos/servicos
-{/*************************************************** */}
-
+ 
 function dataHoraAtual ( ) {
     const dataAtual = new Date();
     const dia = String(dataAtual.getDate()).padStart(2, '0');
@@ -375,9 +373,7 @@ function dataAtual() {
   
 
 
-{/*************************************************** */}
-
- ////////////////////////
+ /
 useEffect(()=>{
 
     async function filtro(){
@@ -494,8 +490,6 @@ useEffect(
              let totalServicos = 0; 
              let totalGeral = 0; 
              
-           
-             
              const produtos = produtosSelecionados.map( (p:any)=>{
                 totalProdutos= p.quantidade * p.preco
 
@@ -508,11 +502,8 @@ useEffect(
                     return { ...s, total: (s.quantidade * s.valor)}
              })
 
-           
-
                 console.log(produtos);
                 console.log(servicos);
-
 
              setTotalProdutos(totalProdutos)
              setTotalServicos(totalServicos)
@@ -526,13 +517,17 @@ useEffect(
              if(codigo_pedido !== null ){
                 if( dadosOrcamento?.total_geral !== totalGeral){
                      novasParcelas = gerarParcelaUnica(totalGeral, codigoNovoPedido)
-
                 }else{
-
                     novasParcelas = dadosOrcamento?.parcelas
                 }
-               
+            }else{
+                if( !formaSelecionada){
+                     novasParcelas = gerarParcelaUnica(totalGeral, codigoNovoPedido)
+                }else{
+                   novasParcelas = gerarParcelas(formaSelecionada, total,codigoNovoPedido )
+                }
             }
+            console.log("parcelas: ",novasParcelas)
 
             setDadosOrcamento(
                 (prev:any)=>({
@@ -697,7 +692,6 @@ return(
                                                                     onChange={ (e:any)=>  handleIncrement(i, e.target.value ) }
                                                                     value={   i.quantidade  }
                                                                 />
-                                                                { /*i.quantidade &&  <span className=" m-2">   {i.quantidade}  </span>*/  }
 
                                                         </TableCell>
                                                         
@@ -882,3 +876,4 @@ return(
        </div>
     )
 } 
+ */

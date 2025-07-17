@@ -22,66 +22,9 @@ import { TipoPedidoSeletor } from "../components/tipoPedido";  // Assumindo que 
 import { ThreeDot } from "react-loading-indicators";
 import { AlertDemo } from "@/components/alert/alert";
 import { DateService } from "@/app/services/dateService";
+import { constructNow } from "date-fns";
 
 // Interfaces (mantenha ou melhore conforme sua estrutura de dados)
-interface Produto_pedido {
-    codigo: number;
-    descricao: string;
-    quantidade: number;
-    preco: number;
-    desconto?: number;
-    total?: number;
-}
-interface Servico_pedido {
-    codigo: number;
-    aplicacao: string; // ou descricao
-    quantidade: number;
-    valor: number;
-    total?: number;
-}
-interface clientePedido {
-    codigo: number;
-    nome: string;
-    cnpj?: string;
-    cidade?: string;
-    celular?: string;
-}
-interface parcela {
-    pedido: number;
-    parcela: number;
-    valor: number;
-    vencimento: string;
-}
-interface formaPagamento {
-    codigo: number;
-    descricao: string;
-    parcelas: number;
-    intervalo: number;
-    // outros campos...
-}
-interface pedido {
-    codigo: number;
-    cliente: clientePedido;
-    codigo_cliente: number;
-    total_geral: number;
-    descontos: number;
-    observacoes: string;
-    quantidade_parcelas: number;
-    vendedor: number; // ou string, dependendo do seu user.codigo
-    situacao: string;
-    tipo: number;
-    total_produtos: number;
-    total_servicos: number;
-    produtos: Produto_pedido[];
-    servicos: Servico_pedido[];
-    formas_Pagamento: number; // ou objeto formaPagamento
-    parcelas: parcela[];
-    veiculo: number | null; // ou objeto veiculo
-    contato: string;
-    data_cadastro: string;
-    data_recadastro: string;
-}
-
 
 export default function NovoPedido( ){
     const  [ produtosSelecionados, setProdutosSelecionados  ] = useState<Produto_pedido[] >([]);
@@ -93,6 +36,7 @@ export default function NovoPedido( ){
     const  [ dadosOrcamento, setDadosOrcamento ] = useState<Partial<pedido>>({}); // Partial para construção gradual
     const  [ observacoes, setObservacoes ] = useState<string>('') // tipado como string
     const  [ situacao, setSituacao  ] = useState<string>('EA'); // tipado como string
+    const  [ newId, setNewID ] = useState('');
 
     const [ codigoNovoPedido, setCodigoNovoPedido ] = useState<number>(0);
     const [ formaSelecionada , setFormaSelecionada] = useState <formaPagamento | undefined>();
@@ -108,50 +52,92 @@ export default function NovoPedido( ){
     const { user, loading: authHookLoading }:any = useAuth();
     const router = useRouter();
 
-    // Autenticação e Geração de Código Inicial
-    useEffect(() => {
-        if (!authHookLoading) {
-            setIsLoadingAuth(false);
-            if (!user) {
-                router.push('/');
-            } else {
-                const novoCodigo = gerarCodigo(user.codigo || 0); // Garante que user.codigo exista
-                setCodigoNovoPedido(novoCodigo);
-                const data_cadastro = dateService.obterDataAtual();
-                const data_recadastro = dateService.obterDataHoraAtual();
-                const parcelaGerada = gerarParcelaUnica(0, novoCodigo);
+ 
+        async function findOrder() {
 
-                setDadosOrcamento({
-                    codigo: novoCodigo,
-                    total_geral: 0,
-                    descontos: 0,
-                    observacoes: '',
-                    quantidade_parcelas: parcelaGerada.length,
-                    vendedor: user.codigo,
-                    situacao: 'EA',
-                    tipo: 1, // Tipo padrão, pode ser ajustado
-                    total_produtos: 0,
-                    total_servicos: 0,
-                    produtos: [],
-                    servicos: [],
-                    formas_Pagamento: 0, // Código da forma de pagamento
-                    parcelas: parcelaGerada,
-                    veiculo: null,
-                    contato: '',
-                    data_cadastro: data_cadastro,
-                    data_recadastro: data_recadastro,
-                });
+            try{
+                    let result = await api.get('/pedidos',{
+                                    params:{ 
+                                        vendedor: user.codigo,
+                                        data: '0000-00-00 00:00:00'
+                                },
+                            headers: {
+                                token:  user.token 
+                            },
+                            }  );
+
+                       if( result.status === 200 && result.data.length > 0 ){
+                             let arr:any[] = result.data;
+                                let arrID = arr.map( (i) => {
+                                        let pNum =   i.id.split('-'[0]) 
+                                            let num = parseInt(pNum ,10)
+                                            return num;
+                                }  )
+
+                              let generatedId = String(Math.max(...arrID) + 1).padStart(10,'0') + '-'+user.codigo;
+                                 setNewID(generatedId)
+                       return generatedId
+              }    
+
+            }catch(e ){
+                console.log("Erro ao tentar consulta o ultimo id do pedido")
+                       return 0
             }
         }
+
+       
+
+
+    // Autenticação e Geração de Código Inicial
+    useEffect(() => {
+       
+        async function init(){
+            if (!authHookLoading) {
+                        setIsLoadingAuth(false);
+                        if (!user) {
+                            router.push('/');
+                        } else {
+                            const novoCodigo = gerarCodigo(user.codigo || 0); // Garante que user.codigo exista
+                            setCodigoNovoPedido(novoCodigo);
+                            const data_cadastro = dateService.obterDataAtual();
+                            const data_recadastro = dateService.obterDataHoraAtual();
+                            const parcelaGerada = gerarParcelaUnica(0, novoCodigo);
+
+                            let idGen = await findOrder();
+
+                            setDadosOrcamento({
+                                codigo: novoCodigo,
+                                id: String(idGen) ,
+                                id_externo:'0',
+                                total_geral: 0,
+                                descontos: 0,
+                                observacoes: '',
+                                quantidade_parcelas: parcelaGerada.length,
+                                vendedor: user.codigo,
+                                situacao: 'EA',
+                                tipo: 1, // Tipo padrão, pode ser ajustado
+                                total_produtos: 0,
+                                total_servicos: 0,
+                                produtos: [],
+                                servicos: [],
+                                formas_Pagamento: 0, // Código da forma de pagamento
+                                parcelas: parcelaGerada,
+                                veiculo: 0,
+                                contato: '',
+                                data_cadastro: data_cadastro,
+                                data_recadastro: data_recadastro,
+                            });
+                        }
+                    }
+        }
+
+          init();
     }, [user, authHookLoading, router ]); // Adicionado dateService
 
     const inputTableClass = "w-full p-1 text-xs sm:text-sm text-center border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500";
     const cellTableClass = "px-2 py-2 text-xs sm:text-sm font-medium text-gray-700"; // Ajuste de padding e fonte
 
 
-    // Funções (selecionarItens, handleIncrement, etc. - mantidas como no original, mas podem precisar de ajustes de tipagem se `any` for usado excessivamente)
-    // ... (suas funções permanecem aqui, como selecionarItens, handleIncrement, etc.)
-    // Certifique-se que as funções de manipulação usam os tipos corretos
     const selecionarItens = (i: Produto_pedido) => {
         if (i) {
             const itemExistente = produtosSelecionados.find(p => p.codigo === i.codigo);
@@ -264,7 +250,7 @@ export default function NovoPedido( ){
     }
 
     const handleVeic = useCallback((veic: { codigo: number } | null) => {
-        setDadosOrcamento(prev => ({ ...prev, veiculo: veic ? veic.codigo : null }));
+        setDadosOrcamento(prev => ({ ...prev, veiculo: veic ? Number(veic.codigo) : 0 }));
     }, []);
 
     const handleType = useCallback((tipo: number) => {
@@ -336,8 +322,10 @@ export default function NovoPedido( ){
         let parcelasAtuais = dadosOrcamento?.parcelas || [];
         if (formaSelecionada) {
              parcelasAtuais = gerarParcelas(formaSelecionada, totalGeral, codigoNovoPedido);
-        } else if (parcelasAtuais.length === 1 && parcelasAtuais[0].valor !== totalGeral) { // Atualiza parcela única se o total mudou
+        } else {
+            if (  !formaSelecionada ) { // Atualiza parcela única se o total mudou
              parcelasAtuais = gerarParcelaUnica(totalGeral, codigoNovoPedido);
+            }
         }
 
 
@@ -390,7 +378,7 @@ export default function NovoPedido( ){
             {/* Cabeçalho */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6">
                 <h1 className="text-xl md:text-2xl font-bold text-gray-800">
-                    Novo Pedido <span className="text-base font-normal text-gray-600">(Nº {codigoNovoPedido})</span>
+                    Novo Pedido <span className="text-base font-normal text-gray-600">(Nº {newId})</span>
                 </h1>     
                 <Button variant="outline" onClick={() => router.push('/pedidos')}>
                     <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
@@ -609,7 +597,8 @@ export default function NovoPedido( ){
                         </div>
                         <div className="mt-2 md:mt-0 flex justify-center md:justify-end">
                             <Button 
-                                onClick={gravar} 
+                                 onClick={gravar}
+                                //onClick={ ()=> console.log("dados orcamentos: ", dadosOrcamento)} 
                                 disabled={isLoading || !clienteSelecionado || (produtosSelecionados.length === 0 && servicosSelecionados.length === 0)}
                                 className="w-full md:w-auto px-6 py-2 text-sm md:text-base"
                             >

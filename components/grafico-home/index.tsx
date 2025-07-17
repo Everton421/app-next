@@ -4,10 +4,9 @@ import * as React from "react"
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 import {Card,CardContent,CardDescription,CardHeader,CardTitle, } from "@/components/ui/card"
 import {ChartConfig,ChartContainer,ChartTooltip,ChartTooltipContent, } from "@/components/ui/chart"
-import { DollarSign, Ellipsis, RefreshCw } from "lucide-react"
+import { DollarSign, Ellipsis  } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/popover"
 import { Button } from "@/components/ui/button";
-import { ListFilter } from "lucide-react";
 
 type chartData = {
     date: string
@@ -69,7 +68,7 @@ export function GraficoHome( {chartData ,totalVendas, setDataInicial, setDataFin
                         <input 
                           type="date"
                           className="font-bold text-gray-500"
-                          onChange={( v )=> setDataInicial(v.target.value)}  
+                          onChange={( v )=> setDataInicial(v.target.value+' 00:00:00')}  
                           defaultValue={dataInicial} 
                         />
                     
@@ -77,8 +76,8 @@ export function GraficoHome( {chartData ,totalVendas, setDataInicial, setDataFin
                         <input 
                           type="date"
                           className="font-bold text-gray-500" 
-                           onChange={(v)=> setDataFinal(v.target.value)} 
-                           defaultValue={dataFinal} 
+                         onChange={(v)=> setDataFinal(v.target.value+' 23:59:00')} 
+                          defaultValue={dataFinal} 
                           />
                   </div>                     
               
@@ -134,7 +133,7 @@ export function GraficoHome( {chartData ,totalVendas, setDataInicial, setDataFin
               minTickGap={32}
               tickFormatter={(value) => {
                 const date = new Date(value)
-                return date.toLocaleDateString("pt-br", {
+                return date.toLocaleString("pt-br", {
                   month: "short",
                   day: "numeric",
                 })
@@ -146,7 +145,7 @@ export function GraficoHome( {chartData ,totalVendas, setDataInicial, setDataFin
                   className="w-[150px]"
                   nameKey="views"
                   labelFormatter={(value) => {
-                    return new Date(value).toLocaleDateString("pt-br", {
+                    return new Date(value).toLocaleString("pt-br", {
                       month: "short",
                       day: "numeric",
                       year: "numeric",

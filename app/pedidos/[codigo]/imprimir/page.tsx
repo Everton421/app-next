@@ -9,6 +9,8 @@ import { ThreeDot } from 'react-loading-indicators';
 // Defina uma interface para a estrutura detalhada do pedido (ajuste conforme sua API)
 interface PedidoDetalhes {
   codigo: number;
+  id:string,
+  id_externo:number ,
   cliente: cliente;
   nome: string;  
   data_cadastro: string;
@@ -180,7 +182,10 @@ export default function ImprimirPedidoPage() {
 
       {/* --- Conteúdo do Pedido para Impressão --- */}
       <div className="border border-gray-300 p-4 rounded">
-        <h1 className="text-xl font-bold mb-4 text-center">Pedido #{pedido.codigo}</h1>
+        <div className='flex justify-between'>
+          <h1 className="text-base font-bold mb-4 text-center">Pedido #{pedido.id && pedido.id}</h1>
+          <h1 className="text-base font-bold mb-4 text-center">Código externo #{pedido.id_externo && pedido.id_externo}</h1>
+        </div>
 
         <div className="grid grid-cols-2 gap-x-4 mb-4">
           <div><strong>Cliente:</strong> {pedido.cliente.nome}</div>
