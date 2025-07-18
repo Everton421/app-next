@@ -113,7 +113,7 @@ export default function Home() {
                 
                 // Supondo que a API /pedidos_totais_por_data já retorna o formato { date: '...', total: ... }
                 const vendasPorDiaFormatadas = responseVendasPorDia.data.map((venda: any) => ({
-                    date: dateService.formatarData(venda.data_cadastro, 'dd/MM'), // Exemplo de formatação
+                    date: dateService.formatarData(venda.data_cadastro ), // Exemplo de formatação
                     total: parseFloat(venda.total),
                 }));
 
