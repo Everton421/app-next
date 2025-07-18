@@ -55,7 +55,7 @@ export default function Home() {
   const dateService = DateService();
 
   // <<< MUDANÇA 1: Estado inicializado como null para aguardar os dados da API
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [dashboardData, setDashboardData] = useState<any | null>(null);
   const [loadingData, setLoadingData] = useState(true);
   
   // Estados para filtro de data (mantidos para uso futuro)
@@ -216,7 +216,7 @@ export default function Home() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="pl-2">
-                        <ChartOverView data={dashboardData.vendasPorDia} />
+                        <ChartOverView   />
                     </CardContent>
                 </Card>
 
@@ -229,7 +229,7 @@ export default function Home() {
                     </CardHeader>
                     <CardContent>
                        <div className="space-y-4">
-                            {dashboardData.pedidosRecentes.map(pedido => (
+                            {dashboardData.pedidosRecentes.map((pedido:any) => (
                                 <div key={pedido.id} className="flex items-center">
                                     <div className="flex-1 space-y-1">
                                         <p className="text-sm font-medium leading-none">{pedido.cliente.nome}</p>
