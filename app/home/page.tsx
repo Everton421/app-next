@@ -155,8 +155,14 @@ export default function Home() {
     <main className="sm:ml-14 p-4 md:p-8 bg-slate-50 min-h-screen">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-         
+             
+                    { user &&
+                     <span className=" font-bold md:text-3xl  text-base">
+                        Olá, {user.nome}  
+                     </span>
+                 }
             <div className="flex flex-wrap gap-2">
+              
                 <Button onClick={() => router.push('/pedidos/novo')}>
                     <PlusCircle className="mr-2 h-4 w-4" /> Novo Pedido
                 </Button>

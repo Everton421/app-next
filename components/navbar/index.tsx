@@ -25,7 +25,7 @@ export default   function Navbar  () {
       </span>
   */}
       <Button className="bg-white m-7 text-black" onClick={()=> logout()}>
-        Logout
+        Sair
       </Button>
     </nav>
     )
