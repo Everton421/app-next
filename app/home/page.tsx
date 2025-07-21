@@ -229,6 +229,14 @@ export default function Home() {
                        <div className="space-y-4">
                             {dashboardData.pedidosRecentes.map((pedido:any) => (
                                 <div key={pedido.id} className="flex items-center">
+                                    <div className="ml-3 mr-4">
+                                          {pedido.situacao == 'RE' &&  <X size={20}  className="bg-red-600" color='#FFF'  /> }
+                                                 {pedido.situacao == 'EA' &&  <Check size={20} className="bg-green-700 " color='#FFF'  /> }
+                                                 {pedido.situacao == 'AI' &&  <CheckCheck size={20} className="bg-blue-400"  color='#FFF' /> }
+                                                 {pedido.situacao == 'FI' &&  <ClipboardCheck size={20}  className="bg-orange-500"  color='#FFF' /> }
+                                                 {pedido.situacao == 'FP' &&  <ClipboardPenLine size={20}  className="bg-blue-700" color='#FFF' /> }
+                                     </div>
+
                                     <div className="flex-1 space-y-1">
                                         <p className="text-sm font-medium leading-none">{pedido.cliente.nome}</p>
                                         
@@ -244,11 +252,7 @@ export default function Home() {
                                         <p className="font-semibold">
                                             {pedido.valor_total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                         </p>
-                                                 {pedido.situacao == 'RE' &&  <X size={20}  className="bg-red-600" color='#FFF'  /> }
-                                                 {pedido.situacao == 'EA' &&  <Check size={20} className="bg-green-700 " color='#FFF'  /> }
-                                                 {pedido.situacao == 'AI' &&  <CheckCheck size={20} className="bg-blue-400"  color='#FFF' /> }
-                                                 {pedido.situacao == 'FI' &&  <ClipboardCheck size={20}  className="bg-orange-500"  color='#FFF' /> }
-                                                 {pedido.situacao == 'FP' &&  <ClipboardPenLine size={20}  className="bg-blue-700" color='#FFF' /> }
+                                               
                                     </div>
                                 </div>
                             ))}
