@@ -78,7 +78,7 @@ export default function Home() {
             try {
                 const header = { token: user.token };
                 const params = { 
-                    vendedor: 2, 
+                    vendedor: user.codigo, 
                     // Você pode usar as datas do estado aqui quando o filtro estiver ativo
                     // data_inicial: dataInicial,
                     // data_final: dataFinal
@@ -226,9 +226,9 @@ export default function Home() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                       <div className="space-y-4">
+                       <div className="space-y-4 ">
                             {dashboardData.pedidosRecentes.map((pedido:any) => (
-                                <div key={pedido.id} className="flex items-center">
+                                <div key={pedido.id} className="flex items-center border rounded-sm p-2">
                                     <div className="ml-3 mr-4">
                                           {pedido.situacao == 'RE' &&  <X size={20}  className="bg-red-600" color='#FFF'  /> }
                                                  {pedido.situacao == 'EA' &&  <Check size={20} className="bg-green-700 " color='#FFF'  /> }
@@ -252,7 +252,6 @@ export default function Home() {
                                         <p className="font-semibold">
                                             {pedido.valor_total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                         </p>
-                                               
                                     </div>
                                 </div>
                             ))}
