@@ -7,7 +7,6 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Sidebar } from "@/components/sidebar";
 import Navbar from "@/components/navbar";
-import { useContext } from "react";
 
  import { usePathname } from "next/navigation";
 import { AuthProvider } from "@/contexts/AuthContext";
