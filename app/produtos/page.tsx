@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
 import { configApi } from '../services/api'; // Assuming correct path
 import { Button } from '@/components/ui/button';
-import { Check, Edit, X, Search, Plus, AlignLeft, Tag } from 'lucide-react'; // Added Search and Plus icons
+import { Check, Edit, X, Search, Plus, AlignLeft, Tag  , Columns3Icon, FileSliders  } from 'lucide-react'; // Added Search and Plus icons
 import { ScrollArea } from '@/components/ui/scroll-area'; // Use Shadcn ScrollArea
 import { useAuth } from '@/contexts/AuthContext'; // Assuming correct path
 import { ThreeDot } from 'react-loading-indicators';
@@ -119,7 +119,7 @@ export default function Produtos() {
     return (
 
  <div className=" min-h-screen flex flex-col sm:ml-14 p-4 w-full h-full justify-itens-center items-center   bg-slate-100 "  >
-   <div className="  w-full md:w-5/6   p-2 mt-22 min-h-screen    rounded-lg bg-white shadow-md " >
+   <div className="  w-full md:w-11/12  p-2 mt-22 min-h-screen    rounded-lg bg-white shadow-md " >
        <div className="  p-2   rounded-sm bg-slate-100 w-full  ">
 
          <div className="m-5  flex justify-between   ">
@@ -193,7 +193,12 @@ export default function Produtos() {
               Marcas
           </Button>
 
-   
+     <Button type="button" className="shadow-sm w-full sm:w-auto"
+          onClick={()=> router.push('/caracteristicas-produtos')}
+          >
+         <FileSliders   className="h-4 w-4 mr-2" />
+              Características
+          </Button>
         </div>
 
       </div>  
@@ -202,7 +207,7 @@ export default function Produtos() {
        <div className="w-full mt-4  h-screen shadow-lg ">
                 <Table  className="w-full  bg-gray-100 rounded-sm ">
                       <TableHead className= " w-[7%]   text-xs md:text-base ">Codigo</TableHead>
-                      <TableHead className= " w-[35%]  text-xs md:text-base   text-start" >Descricao</TableHead>
+                      <TableHead className= " w-[50%]  text-xs md:text-base   text-start" >Descricao</TableHead>
                       <TableHead className="   text-xs md:text-base max-w-16  " > Preco</TableHead>
                       <TableHead  className=" text-xs md:text-base text-center  "   >Estoque</TableHead>
                       <TableHead className="    text-xs md:text-base " > </TableHead>
@@ -220,8 +225,8 @@ export default function Produtos() {
                     key={produto.codigo}
                     className="hover:bg-gray-50 h-14"
                   >
-                    <TableCell className=" text-left font-medium text-gray-700 whitespace-nowrap w-[7%] items-center text-xs md:text-base ">{produto.codigo}</TableCell>
-                    <TableCell className=" text-left text-gray-600 w-[50%]   text-xs md:text-base "  > {produto.descricao}</TableCell>
+                    <TableCell className="  font-medium text-gray-700 whitespace-nowrap w-[7%]  text-xs md:text-base ">{produto.codigo}</TableCell>
+                    <TableCell className=" text-left text-gray-600 w-[50%]   text-xs md:text-base "  ><span>  {produto.descricao} </span> </TableCell>
                     <TableCell className=" text-left text-gray-600   text-xs md:text-base ">R$ {produto.preco?.toFixed(2) ?? '0.00'}</TableCell>
                     <TableCell className=" text-center text-gray-600   text-xs md:text-base ">{produto.estoque}</TableCell>
                     <TableCell className=" text-center  ">
@@ -269,7 +274,6 @@ export default function Produtos() {
     
                
       </div>
-
       
    </div>
   

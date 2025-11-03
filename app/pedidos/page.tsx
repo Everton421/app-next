@@ -260,7 +260,7 @@ export default function Pedidos(){
           <TableHead className="w-[10%]">ID</TableHead>
           <TableHead className="w-[45%]">Cliente</TableHead>
           <TableHead className="text-right">Total</TableHead>
-          <TableHead className="max-md:hidden text-center">Data</TableHead>
+          <TableHead className="max-md:hidden text-center">Cadastrado</TableHead>
           <TableHead className="text-center" colSpan={3}>Ações</TableHead>
         </TableRow>
       </TableHeader>
@@ -299,69 +299,71 @@ export default function Pedidos(){
               {/* Célula Cliente - Note que apliquei a mesma largura do header */}
               <TableCell className="w-[45%] font-medium text-gray-700">
                 <button onClick={() => handleOrder(i.codigo)} className="text-left">
-                  <span className="text-xs md:text-lg">{i.nome}</span>
+                  <span className="text-xs md:text-base">{i.nome}</span>
                 </button>
               </TableCell>
 
               {/* Célula Total */}
               <TableCell className="text-right font-bold text-gray-600">
-                <span className="text-xs md:text-lg">
+                <span className="text-xs md:text-base">
                   R$ {i?.total_geral.toFixed(2)}
                 </span>
               </TableCell>
 
               {/* Célula Data - com classe para esconder em telas pequenas */}
               <TableCell className="max-md:hidden text-center font-medium text-gray-600">
-                {i.data_cadastro}
+                {new Date (i.data_cadastro).toLocaleDateString('pt-br', { year: 'numeric',day:'2-digit', month:'2-digit' }) }
               </TableCell>
 
               {/* Células de Ações */}
-              <TableCell className="text-center">
-                <TooltipProvider>
+               <div className="flex gap-2 justify-center">
+                  <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger asChild>
                              <button onClick={() => router.push(`/pedidos/${i.codigo}/imprimir`)}>
-                                <div className="bg-gray-700 p-1 w-7 rounded-sm inline-flex justify-center"><Printer size={18} color="#FFF" /></div>
+                                <div className="bg-gray-700 p-1  rounded-full inline-flex justify-center"><Printer size={14} color="#FFF" /></div>
                              </button>
                         </TooltipTrigger>
                         <TooltipContent><p>Imprimir</p></TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
-              </TableCell>
+                  <TooltipProvider>
 
-              <TableCell className="text-center">
-                <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger asChild>
                              <button onClick={() => handleOrder(i.codigo)}>
-                                <div className="bg-blue-600 p-1 w-7 rounded-sm inline-flex justify-center"><Edit size={18} color="#FFF" /></div>
+                                <div className="bg-blue-600   p-1 rounded-full inline-flex justify-center"><Edit size={14} color="#FFF" /></div>
                              </button>
                         </TooltipTrigger>
+
                         <TooltipContent><p>Editar</p></TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
-              </TableCell>
-
-              <TableCell className="text-center">
-                 <TooltipProvider>
+                 
+                  <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger asChild>
+
                              {i.tipo === 1 ? (
                                 <button className="cursor-help" title="Pedido de Venda">
-                                  <div className="bg-green-800 p-1 w-7 rounded-sm inline-flex justify-center"><ClipboardList size={18} color="#FFF" strokeWidth={2} /></div>
+                                  <div className="bg-green-800 p-1 rounded-full inline-flex justify-center"><ClipboardList size={14} color="#FFF" strokeWidth={2} /></div>
                                 </button>
                               ) : (
                                 <button className="cursor-help" title="Ordem De Serviço">
-                                  <div className="bg-purple-800 p-1 w-7 rounded-sm inline-flex justify-center"><Wrench size={18} color="#FFF" strokeWidth={2} /></div>
+                                  <div className="bg-purple-800 p-1   rounded-sm inline-flex justify-center"><Wrench size={14} color="#FFF" strokeWidth={2} /></div>
                                 </button>
                               )}
                         </TooltipTrigger>
+
                         <TooltipContent>
                             {i.tipo === 1 ? <p>Pedido de Venda</p> : <p>Ordem de Serviço</p>}
                         </TooltipContent>
                     </Tooltip>
+
                 </TooltipProvider>
-              </TableCell>
+              </div>
+
+         
 
             </TableRow>
           ))
@@ -394,7 +396,7 @@ export default function Pedidos(){
                                            <Check size={20} color="#FFF" /> 
                                           </div>
                                         </button>
-                                         <span className="text-center text-xs md:text-lg max-md:hidden ">orçamento</span>
+                                         <span className="text-center text-xs md:text-base max-md:hidden ">orçamento</span>
                                        </div>
                                     </TableCell>
                                  <TableCell className=" w-40    text-center font-bold text-gray-600 "> 
@@ -404,7 +406,7 @@ export default function Pedidos(){
                                               <X size={20} color="#FFF"/> 
                                             </div>
                                           </button>
-                                           <span className="text-center text-xs md:text-lg max-md:hidden ">reprovado</span>
+                                           <span className="text-center text-xs md:text-base max-md:hidden ">reprovado</span>
                                         </div> 
                                    </TableCell>
 
@@ -415,7 +417,7 @@ export default function Pedidos(){
                                             <CheckCheck size={20} color="#FFF" />
                                          </div>  
                                          </button>
-                                            <span className="text-center text-xs md:text-lg max-md:hidden ">pedido</span>
+                                            <span className="text-center text-xs md:text-base max-md:hidden ">pedido</span>
                                        </div> 
                                    </TableCell>
 
@@ -426,7 +428,7 @@ export default function Pedidos(){
                                           <ClipboardCheck size={20} color="#FFF" />
                                         </div>  
                                         </button>
-                                       <span className="text-center text-xs md:text-lg max-md:hidden ">faturado</span>
+                                       <span className="text-center text-xs md:text-base max-md:hidden ">faturado</span>
                                    </div> 
                                    </TableCell>
                                  
@@ -437,7 +439,7 @@ export default function Pedidos(){
                                            <ClipboardPenLine size={20} color="#FFF" />
                                         </div>    
                                         </button>
-                                      <span className="text-center text-xs md:text-lg max-md:hidden">faturado parcialmente</span>
+                                      <span className="text-center text-xs md:text-base max-md:hidden">faturado parcialmente</span>
                                     </div> 
                                    </TableCell>
                </TableRow>

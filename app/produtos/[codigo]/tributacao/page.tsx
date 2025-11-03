@@ -15,10 +15,9 @@ import { Save, ArrowLeft, ChartCandlestick } from 'lucide-react'; // Add ArrowLe
 import { useRouter } from 'next/navigation'; // Use useRouter for back navigation
 import { useCallback, useEffect, useState } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area'; // Ensure ScrollArea is imported
-import SelectCategorias from '../components/selectCategorias';
-import SelectMarca from '../components/selectMarcas';
 import { ThreeDot } from 'react-loading-indicators';
 import { resolve } from 'path';
+import { SelectTipoIpi } from '../../components/select-tipo-ipi';
 
 // Define interfaces (assuming these match your API response)
 type grupo=
@@ -58,7 +57,7 @@ interface FotoProduto {
 }
 
 
-export default function Prod({ params }: { params: { codigo: string } }) { // Add type for params
+export default function Tributacao_produto({ params }: { params: { codigo: string } }) { // Add type for params
 
     const [data, setData] = useState<any>(null); // Initialize with null
     const [fotos, setFotos] = useState<FotoProduto[]>([]);
@@ -249,17 +248,13 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
 
                     <div className="flex justify-between items-center mb-2">
                         <h1 className="text-xl md:text-4xl font-bold font-sans text-gray-800">
-                            Detalhes do Produto
+                           Tributação
                         </h1>
                        
                         <div className='flex gap-3'>
-                           <Button variant="outline" onClick={() => router.push('/produtos')}>
+                           <Button variant="outline" onClick={() => router.push(`/produtos/${data.codigo}`)}>
                             <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
                           </Button>
-                              <Button variant="outline" onClick={() => router.push(`/produtos/${data.codigo}/tributacao`)}>
-                            <ChartCandlestick  className="mr-2 h-4 w-4" />
-                            Tributação
-                        </Button>
                         </div>
                        
                     </div>
@@ -274,25 +269,18 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
                                 </div>
      
                                 <div  >
-                                  <Label htmlFor="codigo" className=" text-xs md:text-lg  font-semibold text-gray-700">Data cadastro:</Label>
+                                  <Label htmlFor="codigo" className=" text-xs md:text-lg  font-semibold text-gray-700">Cadastrado: </Label>
                                    <span id="codigo" className=" text-xs md:text-lg font-bold text-gray-900">
-                                     {  new Date(data?.data_cadastro).toLocaleDateString('pt-br', { year:'numeric',month:'numeric', day:'2-digit'})}
+                                      {  new Date(data?.data_cadastro).toLocaleDateString('pt-br', { year:'numeric',month:'numeric', day:'2-digit'})}
                                      </span>
-                                      
-
                                 </div>
                             </div>
 
                    
 
                             <div>
-                                <Label htmlFor="descricao" className="text-base font-medium text-gray-600 mb-1 block">Descrição:</Label>
-                                <Input
-                                    id="descricao"
-                                    value={data.descricao || ''}
-                                    className="text-base"
-                                    onChange={(e) => handleInputChange('descricao', e.target.value)}
-                                />
+                                <Label htmlFor="descricao" className="text-base font-medium text-gray-600 mb-1 block"> {data.descricao || ''} </Label>
+
                             </div>
                         </CardContent>
                     </Card>
@@ -300,43 +288,18 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                        <Card className="lg:col-span-1">
-                            <CardHeader>
-                                <CardTitle className="text-lg">Imagens</CardTitle>
-                            </CardHeader>
-                            <CardContent className="flex justify-center items-center p-4 min-h-[200px]">
-                                {fotos.length > 0 ? (
-                                    <Carousel opts={{ align: "start", loop: true }} className="w-full max-w-xs">
-                                        <CarouselContent>
-                                            {fotos.map((foto) => (
-                                                <CarouselItem key={foto.sequencia}>
-                                                    <img
-                                                        className="object-contain aspect-square w-full h-auto rounded-md"
-                                                        src={String(foto.link)}
-                                                        alt={`Produto ${data.codigo} - Imagem ${foto.sequencia}`}
-                                                        onError={(e) => { e.currentTarget.src = '/placeholder-image.png'; }}
-                                                    />
-                                                </CarouselItem>
-                                            ))}
-                                        </CarouselContent>
-                                        <CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2" />
-                                        <CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2" />
-                                    </Carousel>
-                                ) : (
-                                    <div className="text-center text-gray-500">
-                                        Nenhuma foto encontrada.
-                                    </div>
-                                )}
-                            </CardContent>
-                        </Card>
+               
 
                         <Card className="lg:col-span-2">
                             <CardHeader>
-                                <CardTitle className="text-lg">Detalhes Principais</CardTitle>
+                                { /* 
+                                  <CardTitle className="text-lg">Detalhes Principais</CardTitle>
+                                */}
                             </CardHeader>
                             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 p-4">
                                 <div>
-                                    <Label htmlFor="preco" className="text-sm font-medium text-gray-600">Preço (R$):</Label>
+                                    <SelectTipoIpi/>
+
                                     <Input
                                         id="preco"
                                         type="number"
@@ -346,70 +309,19 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
                                         className="mt-1"
                                         placeholder="0.00"
                                     />
-                                </div>
-                                <div>
-                                    <Label htmlFor="estoque" className="text-sm font-medium text-gray-600">Estoque:</Label>
-                                    <Input
-                                        id="estoque"
-                                        type="number"
-                                        step="1"
-                                        value={data.estoque ?? ''}
-                                        onChange={(e) => handleInputChange('estoque', Number(e.target.value))}
-                                        className="mt-1"
-                                        placeholder="0"
-                                    />
-                                </div>
-                                <div>
-                                    <Label htmlFor="sku" className="text-sm font-medium text-gray-600">SKU:</Label>
-                                    <Input
-                                        id="sku"
-                                        value={data.sku || ''}
-                                        onChange={(e) => handleInputChange('sku', e.target.value)}
-                                        className="mt-1"
-                                    />
-                                </div>
-                                <div>
-                                    <Label htmlFor="gtin" className="text-sm font-medium text-gray-600">GTIN / Nº Fabricante:</Label>
-                                    <Input
-                                        id="gtin"
-                                        value={data.num_fabricante || ''}
-                                        onChange={(e) => handleInputChange('num_fabricante', e.target.value)}
-                                        className="mt-1"
-                                    />
-                                </div>
-                                <div className="md:col-span-1">
-                                    <Label htmlFor="ncm" className="text-sm font-medium text-gray-600">NCM / Class. Fiscal:</Label>
-                                    <Input
-                                        id="ncm"
-                                        value={data.class_fiscal || ''}
-                                        onChange={(e) => handleInputChange('class_fiscal', e.target.value)}
-                                        className="mt-1"
-                                        maxLength={8}
-                                        placeholder="00000000"
-                                    />
-                                </div>
- 
-                                <div>
-                                  <Label htmlFor="ncm" className="text-sm font-medium text-gray-600">Categoria:  { data.grupo &&  data.grupo.descricao }</Label>
-                                   <SelectCategorias setCodigoCategoria={  handleCategory } codigoCategoria={ data.grupo ? data.grupo.codigo : null} />
-                                 </div>
-                                <div>
-                                  <Label htmlFor="ncm" className="text-sm font-medium text-gray-600"> Marca:  { data.marca &&  data.marca.descricao }</Label>
-                                  <SelectMarca setMarca={handleMarca} codigoMarca={data.marca ? data.marca.codigo : null} />
-                                 </div>
-
-
-
-                                {/* Active Component */}
+                          
+                            </div>
+                                {/* 
                                 <div className="md:col-span-2 pt-4">
                                     <Label className="text-sm font-medium text-gray-600 mb-2 block">Status:</Label>
                                     <Active active={data?.ativo} handleActive={handleActive} />
-                                </div>
+                                </div>*/}
                             </CardContent>
                         </Card>
                     </div>
 
-
+  {
+    /***
                     <Card>
                         <CardHeader>
                             <CardTitle className="text-lg">Observações</CardTitle>
@@ -448,6 +360,9 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
                         </CardContent>
                     </Card>
 
+      
+     */
+  }
 
                 </div>  
 

@@ -34,7 +34,7 @@ export default function LoginForm() {
 
         try{
             const response = await api.post(`/login`, data );
-console.log(response.data)
+                console.log(response.data)
             if( response.status === 200  ){
                 setErro(false);  
                 setMsgErro(undefined);
@@ -52,7 +52,7 @@ console.log(response.data)
                 }
 
                 setUser(userData); 
-                localStorage.setItem('authUser', JSON.stringify(userData));  
+              localStorage.setItem('authUser', JSON.stringify(userData));  
                 router.push('/home');  
             } else {
                  setErro(true);
