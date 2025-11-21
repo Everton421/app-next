@@ -29,9 +29,9 @@ export default function Pedidos(){
       const  [ filtertipoPedidos, setFilterTipoPedidos ] = useState(1); // 1: pedido, 3: ordem servico 
 
      const router = useRouter() 
-     const api = configApi();
      const dateService = DateService();
 
+     const api = configApi();
 
   const { user, loading }:any = useAuth();
 

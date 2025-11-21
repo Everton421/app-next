@@ -95,14 +95,12 @@ export default function Home() {
                     api.get('/pedidos_ultimos_inseridos', { headers: header, params })
                 ]);
 
-                // <<< MUDANÇA 4: Processando e combinando os dados das respostas
-                
-                // Supondo que a API /pedidos_totais retorna um array com um único objeto
+                console.log("responseTotais ",responseTotais.data )
+                console.log("responseVendasPorDia ",responseVendasPorDia.data )
+                console.log("responsePedidosRecentes ",responsePedidosRecentes.data )
+
                 const totais = responseTotais.data[0] || {};
 
-                // Supondo que a API /pedidos_ultimos_inseridos retorna um array de pedidos
-                // e o nome do cliente vem como 'cliente_nome' ou algo similar.
-                // É preciso mapear para o formato que o componente espera: { cliente: { nome: '...' } }
                 const pedidosRecentesFormatados = responsePedidosRecentes.data.map((pedido: any) => ({
                     id: pedido.id, // ou pedido.numero_pedido
                     id_externo: pedido.id_externo,
@@ -111,13 +109,11 @@ export default function Home() {
                     situacao: pedido.situacao,
                 }));
                 
-                // Supondo que a API /pedidos_totais_por_data já retorna o formato { date: '...', total: ... }
                 const vendasPorDiaFormatadas = responseVendasPorDia.data.map((venda: any) => ({
                     date: dateService.formatarData(venda.data_cadastro ), // Exemplo de formatação
                     total: parseFloat(venda.total),
                 }));
 
-                // Construindo o objeto final para o estado
                 const dadosFinais: DashboardData = {
                     faturamentoTotal: parseFloat(totais.total_faturado || 0),
                     totalPedidos: parseInt(totais.quantidade_pedidos || 0),
@@ -126,10 +122,9 @@ export default function Home() {
                     vendasPorDia: vendasPorDiaFormatadas,
                     pedidosRecentes: pedidosRecentesFormatados,
                 };
-                
-                // <<< MUDANÇA 5: Atualizando o estado com os dados da API
+               
                 setDashboardData(dadosFinais);
-
+          
             } catch (error) {
                 console.error("Erro ao buscar dados do dashboard:", error);
                 // Opcional: mostrar uma mensagem de erro na tela

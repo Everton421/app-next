@@ -86,7 +86,7 @@ export default function NovoPedido( ){
         }
 
        
-
+        
 
     // Autenticação e Geração de Código Inicial
     useEffect(() => {
