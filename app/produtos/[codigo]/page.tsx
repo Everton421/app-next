@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label'; // Import Shadcn Label
 import { Textarea } from '@/components/ui/textarea'; // Import Shadcn Textarea
 import { Button } from '@/components/ui/button'; // Import Shadcn Button
 import { useAuth } from '@/contexts/AuthContext'; // Assuming correct path
-import { Save, ArrowLeft, ChartCandlestick } from 'lucide-react'; // Add ArrowLeft for back button
+import { Save, ArrowLeft, ChartCandlestick, Store, Loader2, UploadCloud, AlertTriangle } from 'lucide-react'; // Add ArrowLeft for back button
 import { useRouter } from 'next/navigation'; // Use useRouter for back navigation
 import { useCallback, useEffect, useState } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area'; // Ensure ScrollArea is imported
@@ -19,6 +19,8 @@ import SelectCategorias from '../components/selectCategorias';
 import SelectMarca from '../components/selectMarcas';
 import { ThreeDot } from 'react-loading-indicators';
 import { resolve } from 'path';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/select';
 
 // Define interfaces (assuming these match your API response)
 type grupo=
@@ -66,11 +68,25 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
     const [msgAlert, setMsgAlert] = useState<string>('');
     const [isLoading, setIsLoading] = useState(true); // Add loading state for initial fetch
     const [isSaving, setIsSaving] = useState(false); // Add saving state
-
+    const [predicting, setPredicting] = useState(false);
+    const [categoryId, setCategoryId] = useState("");
+    const [categoryName, setCategoryName] = useState("");
+        
     const api = configApi();
     const useDateService = UseDateFunction();
     const { user, loading  }: any = useAuth();
     const router = useRouter();
+
+
+     const [showMlModal, setShowMlModal] = useState(false);
+    const [mlLoading, setMlLoading] = useState(false);
+    
+    // Formulario ML (Separado do produto original para permitir ajustes sem salvar no ERP)
+    const [mlTitle, setMlTitle] = useState("");
+    const [mlPrice, setMlPrice] = useState("");
+    const [mlStock, setMlStock] = useState("");
+    const [mlListingType, setMlListingType] = useState("gold_special"); // Clássico
+    const [mlCondition, setMlCondition] = useState("new");
 
     useEffect(() => {
        
@@ -124,6 +140,29 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
              busca();
     }, [ params.codigo, user, router ]);  
 
+ // --- 1. PREDITOR DE CATEGORIA ---
+    // Assim que a tela abre, tenta adivinhar a categoria pelo nome do produto
+    useEffect(() => {
+        async function guessCategory() {
+            setPredicting(true);
+            try {
+                // Chama seu backend que consulta a API domain_discovery do ML
+                const response = await api.post('/ml/tools/predict-category', { title: data.descricao }, {
+                    headers: { token: user.token }
+                });
+                
+                if (response.data && response.data.category_id) {
+                    setCategoryId(response.data.category_id);
+                    setCategoryName(response.data.category_name);
+                }
+            } catch (error) {
+                console.error("Erro ao prever categoria", error);
+            } finally {
+                setPredicting(false);
+            }
+        }
+        guessCategory();
+    }, [data]);
 
 
     const handleInputChange = (field: keyof Produto, value: string | number) => {
@@ -193,7 +232,64 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
    //     }
    //   }, [user, loading, router]);
     
- 
+   const handleOpenMlModal = () => {
+        if (!data) return;
+        
+        // Copia dados do produto para o state do formulário ML
+        setMlTitle(data.descricao);
+        setMlPrice(String(data.preco));
+        setMlStock(String(data.estoque));
+        
+        // Abre o modal
+        setShowMlModal(true);
+    };
+
+    // --- FUNÇÃO 2: Enviar para API ---
+    const handlePublishToML = async () => {
+        if (!categoryId) {
+            setMsgAlert("A categoria do Mercado Livre não foi identificada automaticamente. Verifique o título.");
+            setVisibleAlert(true);
+            return;
+        }
+
+        setMlLoading(true);
+        try {
+            // Mapeia as fotos do objeto que você já tem
+            const pictureUrls = fotos.map(f => f.link);
+
+            // Payload conforme definimos no Backend anteriormente
+            const payload = {
+                title: mlTitle,
+                price: Number(mlPrice),
+                available_quantity: Number(mlStock),
+                category_id: categoryId,
+                listing_type_id: mlListingType,
+                condition: mlCondition,
+                description: `Produto: ${mlTitle}\n\n${data.observacoes1 || ''}\n${data.observacoes2 || ''}`,
+                pictures: pictureUrls.length > 0 ? pictureUrls : [],
+                // Tenta mandar marca/modelo se existirem, senão vai genérico
+                brand: data.marca?.descricao || "Genérica",
+                model: "Padrão",
+                ean: data.num_fabricante || ""
+            };
+
+            await api.post('/ml/items', payload, {
+                headers: { token: user.token }
+            });
+
+            setShowMlModal(false);
+            setMsgAlert("Produto enviado para o Mercado Livre com sucesso!");
+            setVisibleAlert(true);
+
+        } catch (error: any) {
+            console.error(error);
+            const erroMsg = error.response?.data?.msg || "Erro desconhecido ao publicar.";
+            setMsgAlert(`Erro no Mercado Livre: ${erroMsg}`);
+            setVisibleAlert(true);
+        } finally {
+            setMlLoading(false);
+        }
+    };
    
       if (loading) {
         return (
@@ -248,7 +344,7 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
                 <div className="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 pb-24"> {/* Added pb-24 */}
 
                     <div className="flex justify-between items-center mb-2">
-                        <h1 className="text-xl md:text-4xl font-bold font-sans text-gray-800">
+                        <h1 className="text-xl md:text-2xl font-bold font-sans text-gray-800">
                             Detalhes do Produto
                         </h1>
                        
@@ -264,7 +360,121 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
                        
                     </div>
                     
+            <Dialog open={showMlModal} onOpenChange={setShowMlModal}>
+                <DialogContent className="sm:max-w-[600px]">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2 text-blue-800">
+                            <Store className="h-5 w-5" /> Publicar no Mercado Livre
+                        </DialogTitle>
+                        <DialogDescription>
+                            Revise os dados antes de criar o anúncio. Isso não altera o produto no seu ERP.
+                        </DialogDescription>
+                    </DialogHeader>
 
+                    <div className="grid gap-4 py-4">
+                        
+                        {/* Aviso de Categoria */}
+                        <div className="bg-slate-100 p-3 rounded-md border flex items-center gap-3">
+                            <AlertTriangle className="text-yellow-600 h-5 w-5" />
+                            <div className="text-sm">
+                                <span className="font-bold text-gray-700">Categoria Detectada:</span>
+                                <br />
+                                {categoryName || "Carregando..."} <span className="text-xs text-gray-500">({categoryId})</span>
+                            </div>
+                        </div>
+
+                        {/* Título */}
+                        <div className="grid gap-2">
+                            <Label htmlFor="ml-title">Título do Anúncio (Máx 60 chars)</Label>
+                            <Input 
+                                id="ml-title" 
+                                value={mlTitle} 
+                                onChange={(e) => setMlTitle(e.target.value)}
+                                maxLength={60} 
+                            />
+                            <p className="text-xs text-right text-gray-400">{mlTitle.length}/60</p>
+                        </div>
+
+                        {/* Preço e Estoque */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="grid gap-2">
+                                <Label htmlFor="ml-price">Preço (R$)</Label>
+                                <Input 
+                                    id="ml-price" 
+                                    type="number" 
+                                    value={mlPrice} 
+                                    onChange={(e) => setMlPrice(e.target.value)} 
+                                />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="ml-stock">Estoque ML</Label>
+                                <Input 
+                                    id="ml-stock" 
+                                    type="number" 
+                                    value={mlStock} 
+                                    onChange={(e) => setMlStock(e.target.value)} 
+                                />
+                            </div>
+                        </div>
+
+                        {/* Configurações ML */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="grid gap-2">
+                                <Label>Tipo de Anúncio</Label>
+                                <Select value={mlListingType} onValueChange={setMlListingType}>
+                                    <SelectTrigger>
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="gold_special">Clássico (Exposição Alta)</SelectItem>
+                                        <SelectItem value="gold_pro">Premium (Parc. s/ Juros)</SelectItem>
+                                        <SelectItem value="free">Grátis</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="grid gap-2">
+                                <Label>Condição</Label>
+                                <Select value={mlCondition} onValueChange={setMlCondition}>
+                                    <SelectTrigger>
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="new">Novo</SelectItem>
+                                        <SelectItem value="used">Usado</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
+                        {/* Simulador de Taxas (Opcional visual) */}
+                        <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded text-right">
+                            * Taxas podem variar conforme a categoria e reputação.
+                        </div>
+
+                    </div>
+
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setShowMlModal(false)} disabled={mlLoading}>
+                            Cancelar
+                        </Button>
+                        <Button 
+                            className="bg-blue-600 hover:bg-blue-700"
+                            onClick={handlePublishToML} 
+                            disabled={mlLoading || !categoryId}
+                        >
+                            {mlLoading ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Publicando...
+                                </>
+                            ) : (
+                                <>
+                                    <UploadCloud className="mr-2 h-4 w-4" /> Confirmar Envio
+                                </>
+                            )}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
                     <Card>
                         <CardContent className="p-4 md:p-6 flex flex-col gap-4">
                             <div className="flex items-center gap-2 justify-between">
@@ -454,15 +664,26 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
             </ScrollArea> {/* End ScrollArea */}
 
             <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-md p-3 z-10 sm:ml-14">
-                <div className="w-full max-w-7xl mx-auto flex justify-end">
+                <div className="w-full max-w-7xl mx-auto flex justify-between">
+                   
+                 <Button 
+                    className='bg-[#185FED] gap-2'
+                    onClick={handleOpenMlModal} // <--- ALTERADO AQUI
+                    disabled={isLoading || predicting} // Desabilita se estiver carregando ou prevendo categoria
+                > 
+                    {predicting ? <Loader2 className="animate-spin h-4 w-4"/> : <Store />}
+                    Enviar para marketplace
+                </Button>
+
                     <Button
                         onClick={gravar}
                         disabled={isSaving || isLoading} // Also disable during initial load
                         size="lg"
                     >
-                        <Save className="mr-2 h-5 w-5" />
+                        <Save className="mr-2 h-5 w-5 " />
                         {isSaving ? 'Salvando...' : 'Salvar Alterações'}
                     </Button>
+ 
                 </div>
             </div>
 

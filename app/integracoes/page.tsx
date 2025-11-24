@@ -1,39 +1,61 @@
 'use client'
-import { useState, useEffect } from "react"; // Adicionado useEffect
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { CirclePlus, Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input"; // Importe o Input
+import { Label } from "@/components/ui/label"; // Importe o Label
+import { 
+    Dialog, 
+    DialogContent, 
+    DialogHeader, 
+    DialogTitle, 
+    DialogDescription,
+    DialogFooter 
+} from "@/components/ui/dialog"; // Importe os componentes de Dialog
+import { CirclePlus, Loader2, Save } from "lucide-react";
 import Image from "next/image";
 import { configApi } from "../services/api";
 import { useAuth } from "@/contexts/AuthContext";
-import { useRouter, useSearchParams } from "next/navigation"; // Adicionado useSearchParams
+import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner"; // Sugestão: Use toast para feedback (opcional)
 
 export default function Integracoes() {
     const api = configApi();
     const { user }: any = useAuth();
     const router = useRouter();
-    const searchParams = useSearchParams(); // Hook para ler a URL
-    
-    const [isRedirecting, setIsRedirecting] = useState(false);
+    const searchParams = useSearchParams();
 
-    // --- EFEITO PARA INTERCEPTAR O SUCESSO ---
+    // Estados de carregamento e controle
+    const [isRedirecting, setIsRedirecting] = useState(false); // Loading do botão conectar
+    const [isSaving, setIsSaving] = useState(false); // Loading do botão salvar nome
+
+    // Estados do Modal de Finalização
+    const [showNameModal, setShowNameModal] = useState(false);
+    const [tempToken, setTempToken] = useState("");
+    const [integrationName, setIntegrationName] = useState("");
+
+    // --- EFEITO: Monitora a URL ---
     useEffect(() => {
-        // Lê os parâmetros da URL
-        const status = searchParams.get('status'); // ex: ?status=success
-        const message = searchParams.get('message'); // ex: &message=Integrado...
-
-        if (status === 'success') {
-            // 1. Mostra o alerta (Aqui você pode usar um Toast/Notification mais bonito)
-            alert(message || "Integração realizada com sucesso!");
-
-            // 2. Limpa a URL para remover os parametros visuais (?status=...)
-            // O router.replace altera a URL sem recarregar a página
-            router.replace('/integracoes'); 
-        } else if (status === 'error') {
-             alert(message || "Houve um erro na integração.");
+        // 1. Verifica se voltou com o token temporário (fluxo novo)
+        const tokenData = searchParams.get('data');
+            console.log(tokenData )
+        if (tokenData) {
+            setTempToken(tokenData);
+            setShowNameModal(true); // Abre o modal automaticamente
+            // Limpa a URL visualmente mas mantém o estado
+            // window.history.replaceState(null, '', '/integracoes'); 
         }
-    }, [searchParams, router]);
-    // -----------------------------------------
 
+        // 2. Verifica mensagens de erro antigas ou genéricas
+        const status = searchParams.get('status');
+        if (status === 'error') {
+            toast.success("Houve um erro na integração. Tente novamente.")
+
+            router.replace('/integracoes');
+        }
+
+    }, [searchParams, router]);
+
+    // --- FUNÇÃO 1: Inicia o fluxo (vai pro ML) ---
     async function handleConnectML() {
         setIsRedirecting(true);
         try {
@@ -55,8 +77,47 @@ export default function Integracoes() {
         }
     }
 
+    // --- FUNÇÃO 2: Finaliza o fluxo (Envia nome + token para o backend) ---
+    async function handleFinalizeIntegration() {
+        if (!integrationName.trim()) {
+            toast.success("Por favor, digite um nome para a integração.")
+            return;
+        }
+
+        setIsSaving(true);
+        try {
+            // Chama a rota que cria o registro na tabela principal
+            await api.post('/ml/integrations/finalizeIntegration', {
+                integrationName: integrationName,
+                tempToken: tempToken
+            }, {
+                headers: { token: user.token }
+            });
+
+            // Sucesso!
+            toast.success("Integração concluída com sucesso!")
+            setShowNameModal(false);
+            setIntegrationName("");
+            setTempToken("");
+            
+            // Limpa a URL completamente
+            router.replace('/integracoes');
+            
+            // Opcional: Recarregar a lista de integrações se tiver
+            // window.location.reload(); 
+
+        } catch (error) {
+            console.error(error);
+            alert("Erro ao salvar a integração.");
+        } finally {
+            setIsSaving(false);
+        }
+    }
+
     return (
         <main className="sm:ml-14 p-4 bg-slate-100 min-h-screen h-full">
+            
+            {/* Botão de Conectar */}
             <Button
                 variant='outline'
                 className="w-auto h-auto gap-2"
@@ -77,6 +138,66 @@ export default function Integracoes() {
                     </>
                 )}
             </Button>
+
+            {/* --- MODAL PARA NOMEAR A INTEGRAÇÃO --- */}
+            <Dialog open={showNameModal} onOpenChange={setShowNameModal}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Integração Conectada!</DialogTitle>
+                        <DialogDescription>
+                            A conta do Mercado Livre foi autorizada. <br/>
+                            Defina um nome para identificar esta conta no seu ERP.
+                        </DialogDescription>
+                    </DialogHeader>
+                    
+                    <div className="flex flex-col gap-4 py-4">
+                        <div className="grid w-full items-center gap-1.5">
+                            <Label htmlFor="name">Nome da Loja / Apelido</Label>
+                            <Input
+                                id="name"
+                                placeholder="Ex: Loja Oficial, Outlet, Conta João..."
+                                value={integrationName}
+                                onChange={(e) => setIntegrationName(e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                    <DialogFooter className="sm:justify-end">
+                        {/* Botão Cancelar (opcional) */}
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            onClick={() => {
+                                setShowNameModal(false);
+                                router.replace('/integracoes'); // Limpa URL se cancelar
+                            }}
+                            disabled={isSaving}
+                        >
+                            Cancelar
+                        </Button>
+
+                        {/* Botão Salvar */}
+                        <Button 
+                            type="button" 
+                            onClick={handleFinalizeIntegration}
+                            disabled={isSaving}
+                        >
+                            {isSaving ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Salvando...
+                                </>
+                            ) : (
+                                <>
+                                    <Save className="mr-2 h-4 w-4" />
+                                    Concluir
+                                </>
+                            )}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
         </main>
     )
 }

@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
 import { configApi } from '../services/api'; // Assuming correct path
 import { Button } from '@/components/ui/button';
-import { Check, Edit, X, Search, Plus, AlignLeft, Tag  , Columns3Icon, FileSliders  } from 'lucide-react'; // Added Search and Plus icons
+import { Check, Edit, X, Search, Plus, AlignLeft, Tag  , Columns3Icon, FileSliders, Store  } from 'lucide-react'; // Added Search and Plus icons
 import { ScrollArea } from '@/components/ui/scroll-area'; // Use Shadcn ScrollArea
 import { useAuth } from '@/contexts/AuthContext'; // Assuming correct path
 import { ThreeDot } from 'react-loading-indicators';
@@ -202,7 +202,7 @@ export default function Produtos() {
         </div>
 
       </div>  
-       </div>  
+     </div>  
 
        <div className="w-full mt-4  h-screen shadow-lg ">
                 <Table  className="w-full  bg-gray-100 rounded-sm ">
@@ -251,7 +251,16 @@ export default function Produtos() {
                           ) : (
                             <X size={16} color="#FFF" strokeWidth={3}  />
                           )}
+
                         </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className={`p-1 w-8 h-8 rounded-full flex items-center justify-center  `}
+                            //title="Editar Produto"
+                          >
+                            <Store size={16} color='#185FED'  />
+                          </Button>
                       </div>
                     </TableCell>
                   </TableRow>
