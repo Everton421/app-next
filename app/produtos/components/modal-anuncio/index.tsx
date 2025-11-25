@@ -80,9 +80,11 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
     }, [open, data]);
 
     useEffect(() => {
+   //     async get
         if (open && data) {
             const resultApiIntegration = await api.get(`/ml/accounts/${user.codigo}`)
         }
+
     }, [open, data]);
 
 
