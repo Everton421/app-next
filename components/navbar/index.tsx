@@ -14,8 +14,8 @@ export default   function Navbar  () {
              
                 src="/images/icon.png"
                 alt="img"
-                width={80}
-                height={80}
+                width={50}
+                height={50}
             />
         </div>
       
@@ -24,7 +24,7 @@ export default   function Navbar  () {
         { nomeEmpresa } 
       </span>
   */}
-      <Button className="bg-white m-7 text-black" onClick={()=> logout()}>
+      <Button className="bg-white  text-black" onClick={()=> logout()}>
         Sair
       </Button>
     </nav>
