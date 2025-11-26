@@ -14,6 +14,8 @@ import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/carousel";
 import { Store, Loader2, UploadCloud, AlertTriangle } from "lucide-react";
 import { toast } from "sonner"; // Recomendo usar toast, ou troque por alert()
+import Image from "next/image";
+import { CardTitle } from "@/components/ui/card";
 
 // Tipagens (Idealmente ficariam em um arquivo types.ts)
 interface FotoProduto {
@@ -61,6 +63,12 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
     const [requiredAttrs, setRequiredAttrs] = useState<any[]>([]);
     const [dynamicValues, setDynamicValues] = useState<Record<string, string>>({});
 
+    const [ loadingAccounts, setLoadingAccounts] = useState(false);
+    const [ dataAccounts, setDataAccounts]= useState([]);
+    const [ selectedAccount, setSelectedAccount] = useState();
+
+    const [ ] = useState();
+
     // --- EFEITO 1: Inicializa os dados quando o modal abre ---
     useEffect(() => {
         if (open && data) {
@@ -80,10 +88,24 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
     }, [open, data]);
 
     useEffect(() => {
-   //     async get
-        if (open && data) {
-            const resultApiIntegration = await api.get(`/ml/accounts/${user.codigo}`)
+         async function getAccounts(){
+
+          try{
+             setLoadingAccounts(true)
+             if (open && data) {
+                 const resultApiIntegration = await api.get(`/ml/accounts/${user.codigo}`,{
+                     headers: { token: user.token }
+                 });
+                 setDataAccounts(resultApiIntegration.data )
+                 console.log(resultApiIntegration.data);
+              }
+              setLoadingAccounts(false)
+          }catch(e){
+            console.log("Erro ao buscar integraoções",e)
+            setLoadingAccounts(false)
+            }
         }
+         getAccounts();
 
     }, [open, data]);
 
@@ -176,7 +198,36 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
+            {
+                dataAccounts && !selectedAccount && dataAccounts.length > 0 ? (
+             <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
+                   <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2 text-blue-800">
+                        <Store className="h-5 w-5" />  Integrações
+                    </DialogTitle>
+                    <DialogDescription>
+                      Selecione uma integração para continuar
+                    </DialogDescription>
+                    {dataAccounts.map(( i:any )=>(
+                        <>
+                            <Image
+                                src="/images/ML-logo.png"
+                                alt="ML"
+                                width={24}
+                                height={24}
+                                className="mr-2 object-contain"
+                            />
+                              <CardTitle className="text-base font-bold text-slate-800">
+                                                            {i.integration_name}
+                               </CardTitle>
+                       </>
+                      )
+                    )}
+                     
+                </DialogHeader>
+             </DialogContent>   
+             ):(
+             <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
                <div>
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2 text-blue-800">
@@ -345,7 +396,10 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
                     </Button>
                 </DialogFooter>
                </div>
-            </DialogContent>
+             </DialogContent>
+             )
+            }
+          
         </Dialog>
     );
 }
