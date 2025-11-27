@@ -12,12 +12,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/carousel";
-import { Store, Loader2, UploadCloud, AlertTriangle } from "lucide-react";
-import { toast } from "sonner"; // Recomendo usar toast, ou troque por alert()
+import { Store, Loader2, UploadCloud, AlertTriangle, ChevronRight, User } from "lucide-react";
+import { toast } from "sonner"; 
 import Image from "next/image";
-import { CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card"; // Importe o Card se tiver, ou use div com borda
 
-// Tipagens (Idealmente ficariam em um arquivo types.ts)
+// Tipagens
+interface MlAccount {
+    id: number;
+    ml_user_id: number;
+    integration_name: string;
+}
+
 interface FotoProduto {
     sequencia: number;
     link: string;
@@ -32,7 +38,6 @@ interface Produto {
     num_fabricante?: string | null;
     observacoes1?: string | null;
     observacoes2?: string | null;
-    // ... outros campos
 }
 
 interface ModalAnuncioProps {
@@ -51,64 +56,75 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
     const [mlLoading, setMlLoading] = useState(false);
     const [predicting, setPredicting] = useState(false);
     
+    // Estados do Produto para Envio
     const [mlTitle, setMlTitle] = useState("");
     const [mlPrice, setMlPrice] = useState("");
     const [mlStock, setMlStock] = useState("");
     const [mlListingType, setMlListingType] = useState("gold_special");
     const [mlCondition, setMlCondition] = useState("new");
     
-    // Estados da Categoria e Atributos
+    // Estados da Categoria
     const [categoryId, setCategoryId] = useState("");
     const [categoryName, setCategoryName] = useState("");
     const [requiredAttrs, setRequiredAttrs] = useState<any[]>([]);
     const [dynamicValues, setDynamicValues] = useState<Record<string, string>>({});
 
-    const [ loadingAccounts, setLoadingAccounts] = useState(false);
-    const [ dataAccounts, setDataAccounts]= useState([]);
-    const [ selectedAccount, setSelectedAccount] = useState();
+    // Estados de Seleção de Conta
+    const [loadingAccounts, setLoadingAccounts] = useState(false);
+    const [dataAccounts, setDataAccounts] = useState<MlAccount[]>([]);
+    const [selectedAccount, setSelectedAccount] = useState<MlAccount | null>(null);
 
-    const [ ] = useState();
+    // --- EFEITO 1: Carregar Contas ao Abrir ---
+    useEffect(() => {
+        if (open && user?.codigo) {
+            fetchAccounts();
+        }
+        
+        // Resetar seleção ao fechar/abrir
+        if (!open) {
+            setSelectedAccount(null);
+        }
+    }, [open, user]);
 
-    // --- EFEITO 1: Inicializa os dados quando o modal abre ---
+    // --- EFEITO 2: Inicializa dados do produto quando o modal abre ---
     useEffect(() => {
         if (open && data) {
             setMlTitle(data.descricao || "");
             setMlPrice(String(data.preco || ""));
             setMlStock(String(data.estoque || ""));
             setMlCondition("new");
-            // Limpa estados anteriores
+            
             setCategoryId("");
             setCategoryName("");
             setRequiredAttrs([]);
             setDynamicValues({});
             
-            // Inicia predição
             guessCategory(data.descricao);
         }
     }, [open, data]);
 
-    useEffect(() => {
-         async function getAccounts(){
+    async function fetchAccounts() {
+        try {
+            setLoadingAccounts(true);
+            const result = await api.get(`/ml/accounts/${user.codigo}`, {
+                headers: { token: user.token }
+            });
+            
+            const accounts = result.data || [];
+            setDataAccounts(accounts);
 
-          try{
-             setLoadingAccounts(true)
-             if (open && data) {
-                 const resultApiIntegration = await api.get(`/ml/accounts/${user.codigo}`,{
-                     headers: { token: user.token }
-                 });
-                 setDataAccounts(resultApiIntegration.data )
-                 console.log(resultApiIntegration.data);
-              }
-              setLoadingAccounts(false)
-          }catch(e){
-            console.log("Erro ao buscar integraoções",e)
-            setLoadingAccounts(false)
+            // SE TIVER SÓ UMA CONTA, JÁ SELECIONA AUTOMATICO
+            if (accounts.length === 1) {
+                setSelectedAccount(accounts[0]);
             }
+
+        } catch (e) {
+            console.error("Erro ao buscar integrações", e);
+            toast.error("Erro ao carregar contas vinculadas.");
+        } finally {
+            setLoadingAccounts(false);
         }
-         getAccounts();
-
-    }, [open, data]);
-
+    }
 
     // --- FUNÇÃO: Prever Categoria ---
     async function guessCategory(title: string) {
@@ -119,19 +135,13 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
                 headers: { token: user.token }
             });
             
-            if (response.data && response.data.category_id) {
+            if (response.data?.category_id) {
                 setCategoryId(response.data.category_id);
                 setCategoryName(response.data.category_name);
-                
-                if (response.data.required_attributes) {
-                    setRequiredAttrs(response.data.required_attributes);
-                } else {
-                    setRequiredAttrs([]);
-                }
+                setRequiredAttrs(response.data.required_attributes || []);
             }
         } catch (error) {
             console.error("Erro ao prever categoria", error);
-            toast.error("Erro ao identificar categoria automaticamente.");
         } finally {
             setPredicting(false);
         }
@@ -139,12 +149,16 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
 
     // --- FUNÇÃO: Enviar ---
     const handlePublishToML = async () => {
+        if (!selectedAccount) {
+            toast.warning("Selecione uma conta para publicar.");
+            return;
+        }
+
         if (!categoryId) {
             toast.warning("Categoria não identificada. Verifique o título.");
             return;
         }
 
-        // Validação dos campos dinâmicos
         for (const attr of requiredAttrs) {
             if (!dynamicValues[attr.id]) {
                 toast.warning(`O campo "${attr.name}" é obrigatório.`);
@@ -156,18 +170,19 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
         try {
             const pictureUrls = fotos.map(f => f.link);
 
-            // Prepara atributos dinâmicos
             const attributesToSend = Object.entries(dynamicValues).map(([id, value]) => ({
                 id, value_name: value
             }));
 
-            // Adiciona atributos fixos se não estiverem na lista
-            // (Nota: O backend deve tratar a prioridade, mas mandamos aqui por garantia)
+            // Adiciona atributos fixos
             if (!dynamicValues['BRAND']) attributesToSend.push({ id: 'BRAND', value_name: data?.marca?.descricao || "Genérica" });
             if (!dynamicValues['MODEL']) attributesToSend.push({ id: 'MODEL', value_name: "Padrão" });
             if (data?.num_fabricante) attributesToSend.push({ id: 'GTIN', value_name: data.num_fabricante });
 
             const payload = {
+                // ENVIA O ID DA CONTA SELECIONADA
+                selected_ml_user_id: selectedAccount.ml_user_id, 
+                
                 title: mlTitle,
                 price: Number(mlPrice),
                 available_quantity: Number(mlStock),
@@ -175,22 +190,22 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
                 listing_type_id: mlListingType,
                 condition: mlCondition,
                 description: `Produto: ${mlTitle}\n\n${data?.observacoes1 || ''}\n${data?.observacoes2 || ''}`,
-                pictures: pictureUrls.length > 0 ? pictureUrls : ["https://via.placeholder.com/500"], // ML exige foto
+                pictures: pictureUrls.length > 0 ? pictureUrls : ["https://http2.mlstatic.com/D_NQ_NP_964047-MLA44034285816_112020-O.jpg"], 
                 attributes: attributesToSend
             };
 
-            await api.post('/ml/items/publish', payload, { // Ajuste para sua rota correta
+            await api.post('/ml/items/publish', payload, {
                 headers: { token: user.token }
             });
 
-            toast.success("Produto enviado para o Mercado Livre com sucesso!");
-            onOpenChange(false); // Fecha o modal
+            toast.success(`Anúncio enviado para ${selectedAccount.integration_name}!`);
+            onOpenChange(false);
             if (onSuccess) onSuccess();
 
         } catch (error: any) {
             console.error(error);
             const erroMsg = error.response?.data?.msg || "Erro desconhecido ao publicar.";
-            toast.error(`Erro no Mercado Livre: ${erroMsg}`);
+            toast.error(`Erro: ${erroMsg}`);
         } finally {
             setMlLoading(false);
         }
@@ -198,208 +213,189 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            {
-                dataAccounts && !selectedAccount && dataAccounts.length > 0 ? (
-             <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
-                   <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2 text-blue-800">
-                        <Store className="h-5 w-5" />  Integrações
-                    </DialogTitle>
-                    <DialogDescription>
-                      Selecione uma integração para continuar
-                    </DialogDescription>
-                    {dataAccounts.map(( i:any )=>(
-                        <>
-                            <Image
-                                src="/images/ML-logo.png"
-                                alt="ML"
-                                width={24}
-                                height={24}
-                                className="mr-2 object-contain"
-                            />
-                              <CardTitle className="text-base font-bold text-slate-800">
-                                                            {i.integration_name}
-                               </CardTitle>
-                       </>
-                      )
-                    )}
-                     
-                </DialogHeader>
-             </DialogContent>   
-             ):(
-             <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
-               <div>
+            <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto transition-all">
+                
+                {/* --- HEADER COMUM --- */}
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2 text-blue-800">
-                        <Store className="h-5 w-5" /> Publicar no Mercado Livre
+                        <Store className="h-5 w-5" /> 
+                        {selectedAccount ? "Configurar Anúncio" : "Selecionar Loja"}
                     </DialogTitle>
                     <DialogDescription>
-                        Revise os dados antes de criar o anúncio.
+                        {selectedAccount 
+                            ? `Publicando na conta: ${selectedAccount.integration_name}`
+                            : "Escolha em qual conta do Mercado Livre deseja anunciar."
+                        }
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="grid gap-6 py-4">
-                    
-                    {/* Fotos e Título */}
-                    <div className="flex flex-col md:flex-row gap-4">
-                        {/* Carrossel Pequeno */}
-                        <div className="w-full md:w-1/3 flex justify-center bg-slate-50 rounded-md p-2">
-                            {fotos.length > 0 ? (
-                                <Carousel opts={{ align: "start", loop: true }} className="w-full max-w-[150px]">
-                                    <CarouselContent>
-                                        {fotos.map((foto) => (
-                                            <CarouselItem key={foto.sequencia}>
-                                                <img
-                                                    className="object-contain aspect-square w-full h-auto rounded-md"
-                                                    src={String(foto.link)}
-                                                    alt="Foto"
-                                                    onError={(e) => { e.currentTarget.src = '/placeholder-image.png'; }}
-                                                />
-                                            </CarouselItem>
-                                        ))}
-                                    </CarouselContent>
-                                    <CarouselPrevious className="-left-4" />
-                                    <CarouselNext className="-right-4" />
-                                </Carousel>
-                            ) : (
-                                <div className="text-xs text-gray-400 flex items-center justify-center h-24">Sem fotos</div>
-                            )}
-                        </div>
+                {/* --- ESTADO 1: CARREGANDO CONTAS --- */}
+                {loadingAccounts && (
+                    <div className="flex justify-center py-10">
+                        <Loader2 className="h-8 w-8 animate-spin text-blue-600"/>
+                    </div>
+                )}
 
-                        {/* Título e Categoria */}
-                        <div className="w-full md:w-2/3 space-y-3">
-                            <div>
-                                <Label htmlFor="ml-title">Título do Anúncio</Label>
-                                <Input 
-                                    id="ml-title" 
-                                    value={mlTitle} 
-                                    onChange={(e) => setMlTitle(e.target.value)}
-                                    maxLength={60} 
-                                />
-                                <div className="flex justify-between text-xs mt-1">
-                                    <span className={mlTitle.length > 60 ? "text-red-500" : "text-gray-400"}>
-                                        {mlTitle.length}/60
-                                    </span>
-                                    {predicting ? (
-                                        <span className="flex items-center gap-1 text-blue-600"><Loader2 className="h-3 w-3 animate-spin"/> Detectando categoria...</span>
-                                    ) : (
-                                        <span className="text-green-600 font-medium truncate max-w-[200px]" title={categoryName}>
-                                            {categoryName || "Categoria não detectada"}
-                                        </span>
-                                    )}
+                {/* --- ESTADO 2: SELEÇÃO DE CONTA --- */}
+                {!loadingAccounts && !selectedAccount && (
+                    <div className="grid gap-3 py-4">
+                        {dataAccounts.length > 0 ? (
+                            dataAccounts.map((account) => (
+                                <button
+                                    key={account.id}
+                                    onClick={() => setSelectedAccount(account)}
+                                    className="flex items-center justify-between p-4 rounded-lg border border-slate-200 hover:border-blue-500 hover:bg-blue-50 transition-all text-left group"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="bg-yellow-400 p-2 rounded-full">
+                                            <Image src="/images/ML-logo.png" alt="ML" width={70} height={70} />
+                                        </div>
+                                        <div>
+                                            <p className="font-semibold text-slate-800">{account.integration_name}</p>
+                                            <p className="text-xs text-slate-500">ID: {account.ml_user_id}</p>
+                                        </div>
+                                    </div>
+                                    <ChevronRight className="text-slate-300 group-hover:text-blue-500" />
+                                </button>
+                            ))
+                        ) : (
+                            <div className="text-center py-6 text-slate-500">
+                                Nenhuma integração encontrada. <br/>
+                                <Button variant="link" onClick={() => window.location.href = '/integracoes'}>
+                                    Configurar Integração
+                                </Button>
+                            </div>
+                        )}
+                        <DialogFooter>
+                             <Button variant="ghost" onClick={() => onOpenChange(false)}>Cancelar</Button>
+                        </DialogFooter>
+                    </div>
+                )}
+
+                {/* --- ESTADO 3: FORMULÁRIO DE EDIÇÃO --- */}
+                {!loadingAccounts && selectedAccount && (
+                    <div className="grid gap-6 py-4 animate-in fade-in zoom-in duration-300">
+                        
+                        {/* Barra de Trocar Conta (Se tiver mais de uma) */}
+                        {dataAccounts.length > 1 && (
+                            <div className="flex justify-between items-center bg-slate-100 px-3 py-2 rounded text-sm">
+                                <div className="flex items-center gap-2">
+                                    <User className="h-4 w-4 text-slate-500"/>
+                                    <span className="font-medium">{selectedAccount.integration_name}</span>
+                                </div>
+                                <Button variant="link" size="sm" onClick={() => setSelectedAccount(null)} className="h-auto p-0">
+                                    Trocar
+                                </Button>
+                            </div>
+                        )}
+
+                        {/* ... RESTANTE DO SEU FORMULÁRIO (Fotos, Título, Preço, etc) ... */}
+                        
+                        <div className="flex flex-col md:flex-row gap-4">
+                             {/* Carrossel de Fotos */}
+                            <div className="w-full md:w-1/3 flex justify-center bg-slate-50 rounded-md p-2">
+                                {fotos.length > 0 ? (
+                                    <Carousel opts={{ align: "start", loop: true }} className="w-full max-w-[150px]">
+                                        <CarouselContent>
+                                            {fotos.map((foto) => (
+                                                <CarouselItem key={foto.sequencia}>
+                                                    <img className="object-contain aspect-square w-full h-auto rounded-md" src={String(foto.link)} alt="Foto" />
+                                                </CarouselItem>
+                                            ))}
+                                        </CarouselContent>
+                                        <CarouselPrevious className="-left-4" />
+                                        <CarouselNext className="-right-4" />
+                                    </Carousel>
+                                ) : (
+                                    <div className="text-xs text-gray-400 flex items-center justify-center h-24">Sem fotos</div>
+                                )}
+                            </div>
+
+                            {/* Inputs Principais */}
+                            <div className="w-full md:w-2/3 space-y-3">
+                                <div>
+                                    <Label htmlFor="ml-title">Título do Anúncio</Label>
+                                    <Input id="ml-title" value={mlTitle} onChange={(e) => setMlTitle(e.target.value)} maxLength={60} />
+                                    <div className="flex justify-between text-xs mt-1">
+                                        <span className="text-gray-400">{mlTitle.length}/60</span>
+                                        {predicting ? (
+                                            <span className="flex items-center gap-1 text-blue-600"><Loader2 className="h-3 w-3 animate-spin"/> Detectando...</span>
+                                        ) : (
+                                            <span className="text-green-600 font-medium truncate max-w-[200px]">{categoryName}</span>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Preço e Estoque */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                            <Label htmlFor="ml-price">Preço (R$)</Label>
-                            <Input 
-                                id="ml-price" 
-                                type="number" 
-                                value={mlPrice} 
-                                onChange={(e) => setMlPrice(e.target.value)} 
-                            />
-                        </div>
-                        <div className="space-y-1">
-                            <Label htmlFor="ml-stock">Estoque ML</Label>
-                            <Input 
-                                id="ml-stock" 
-                                type="number" 
-                                value={mlStock} 
-                                onChange={(e) => setMlStock(e.target.value)} 
-                            />
-                        </div>
-                    </div>
-
-                    {/* Configurações ML */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                            <Label>Tipo de Anúncio</Label>
-                            <Select value={mlListingType} onValueChange={setMlListingType}>
-                                <SelectTrigger>
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="gold_special">Clássico</SelectItem>
-                                    <SelectItem value="gold_pro">Premium (Sem Juros)</SelectItem>
-                                    <SelectItem value="free">Grátis</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="space-y-1">
-                            <Label>Condição</Label>
-                            <Select value={mlCondition} onValueChange={setMlCondition}>
-                                <SelectTrigger>
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="new">Novo</SelectItem>
-                                    <SelectItem value="used">Usado</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </div>
-
-                    {/* Atributos Obrigatórios */}
-                    {requiredAttrs.length > 0 && (
-                        <div className="bg-blue-50 p-4 rounded-md border border-blue-100 space-y-3">
-                            <h4 className="text-sm font-bold text-blue-800 flex items-center gap-2">
-                                <AlertTriangle className="h-4 w-4" /> 
-                                Dados Técnicos Obrigatórios
-                            </h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                {requiredAttrs.map((attr) => (
-                                    <div key={attr.id} className="space-y-1">
-                                        <Label htmlFor={attr.id} className="text-xs font-semibold text-gray-700">
-                                            {attr.name} <span className="text-red-500">*</span>
-                                        </Label>
-                                        <Input
-                                            id={attr.id}
-                                            placeholder={attr.hint || `Digite...`}
-                                            value={dynamicValues[attr.id] || ""}
-                                            onChange={(e) => {
-                                                setDynamicValues(prev => ({
-                                                    ...prev,
-                                                    [attr.id]: e.target.value
-                                                }));
-                                            }}
-                                            className="bg-white h-8 text-sm"
-                                        />
-                                    </div>
-                                ))}
+                        {/* Campos Preço/Estoque */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1">
+                                <Label htmlFor="ml-price">Preço</Label>
+                                <Input id="ml-price" type="number" value={mlPrice} onChange={(e) => setMlPrice(e.target.value)} />
+                            </div>
+                            <div className="space-y-1">
+                                <Label htmlFor="ml-stock">Estoque ML</Label>
+                                <Input id="ml-stock" type="number" value={mlStock} onChange={(e) => setMlStock(e.target.value)} />
                             </div>
                         </div>
-                    )}
-                </div>
 
-                <DialogFooter>
-                    <Button variant="outline" onClick={() => onOpenChange(false)} disabled={mlLoading}>
-                        Cancelar
-                    </Button>
-                    <Button 
-                        className="bg-blue-600 hover:bg-blue-700"
-                        onClick={handlePublishToML} 
-                        disabled={mlLoading || !categoryId || predicting}
-                    >
-                        {mlLoading ? (
-                            <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Publicando...
-                            </>
-                        ) : (
-                            <>
-                                <UploadCloud className="mr-2 h-4 w-4" /> Confirmar Envio
-                            </>
+                        {/* Tipo de Anuncio */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1">
+                                <Label>Tipo</Label>
+                                <Select value={mlListingType} onValueChange={setMlListingType}>
+                                    <SelectTrigger><SelectValue /></SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="gold_special">Clássico</SelectItem>
+                                        <SelectItem value="gold_pro">Premium</SelectItem>
+                                        <SelectItem value="free">Grátis</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-1">
+                                <Label>Condição</Label>
+                                <Select value={mlCondition} onValueChange={setMlCondition}>
+                                    <SelectTrigger><SelectValue /></SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="new">Novo</SelectItem>
+                                        <SelectItem value="used">Usado</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
+                        {/* Campos Dinâmicos */}
+                        {requiredAttrs.length > 0 && (
+                            <div className="bg-blue-50 p-4 rounded-md border border-blue-100 space-y-3">
+                                <h4 className="text-sm font-bold text-blue-800 flex items-center gap-2">
+                                    <AlertTriangle className="h-4 w-4" /> Obrigatórios
+                                </h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    {requiredAttrs.map((attr) => (
+                                        <div key={attr.id} className="space-y-1">
+                                            <Label className="text-xs font-semibold">{attr.name} *</Label>
+                                            <Input 
+                                                className="bg-white h-8 text-sm"
+                                                value={dynamicValues[attr.id] || ""}
+                                                onChange={(e) => setDynamicValues(prev => ({...prev, [attr.id]: e.target.value}))}
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
                         )}
-                    </Button>
-                </DialogFooter>
-               </div>
-             </DialogContent>
-             )
-            }
-          
+
+                        <DialogFooter>
+                            <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
+                            <Button className="bg-blue-600 hover:bg-blue-700" onClick={handlePublishToML} disabled={mlLoading || !categoryId}>
+                                {mlLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <UploadCloud className="mr-2 h-4 w-4" />}
+                                Publicar
+                            </Button>
+                        </DialogFooter>
+                    </div>
+                )}
+            </DialogContent>
         </Dialog>
     );
 }
