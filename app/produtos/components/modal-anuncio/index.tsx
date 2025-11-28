@@ -180,8 +180,7 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
             if (data?.num_fabricante) attributesToSend.push({ id: 'GTIN', value_name: data.num_fabricante });
 
             const payload = {
-                // ENVIA O ID DA CONTA SELECIONADA
-                selected_ml_user_id: selectedAccount.ml_user_id, 
+                ml_user_id: selectedAccount.ml_user_id, 
                 
                 title: mlTitle,
                 price: Number(mlPrice),
