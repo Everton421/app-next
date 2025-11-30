@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label'; // Import Shadcn Label
 import { Textarea } from '@/components/ui/textarea'; // Import Shadcn Textarea
 import { Button } from '@/components/ui/button'; // Import Shadcn Button
 import { useAuth } from '@/contexts/AuthContext'; // Assuming correct path
-import { Save, ArrowLeft, ChartCandlestick, Store, Loader2, UploadCloud, AlertTriangle } from 'lucide-react'; // Add ArrowLeft for back button
+import { Save, ArrowLeft, ChartCandlestick, Store, Loader2, UploadCloud, AlertTriangle, Flag } from 'lucide-react'; // Add ArrowLeft for back button
 import { useRouter } from 'next/navigation'; // Use useRouter for back navigation
 import { useCallback, useEffect, useState } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area'; // Ensure ScrollArea is imported
@@ -292,9 +292,15 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
                             <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
                           </Button>
                               <Button variant="outline" onClick={() => router.push(`/produtos/${data.codigo}/tributacao`)}>
-                            <ChartCandlestick  className="mr-2 h-4 w-4" />
-                            Tributação
-                        </Button>
+                                <ChartCandlestick  className="mr-2 h-4 w-4" />
+                              Tributação
+                            </Button>
+                              <Button variant="outline" onClick={() => router.push(`/produtos/${data.codigo}/anuncios`)}>
+                                <Flag className="mr-2 h-4 w-4" />
+                                Anúncios
+                            </Button>
+
+
                         </div>
                        
                     </div>

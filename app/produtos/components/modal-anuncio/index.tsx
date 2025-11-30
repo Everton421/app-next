@@ -62,6 +62,7 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
     const [mlStock, setMlStock] = useState("");
     const [mlListingType, setMlListingType] = useState("gold_special");
     const [mlCondition, setMlCondition] = useState("new");
+    const [ codigoProduto, setCodigoProduto ] = useState<number>();
     
     // Estados da Categoria
     const [categoryId, setCategoryId] = useState("");
@@ -93,7 +94,7 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
             setMlPrice(String(data.preco || ""));
             setMlStock(String(data.estoque || ""));
             setMlCondition("new");
-            
+            setCodigoProduto( data.codigo)
             setCategoryId("");
             setCategoryName("");
             setRequiredAttrs([]);
@@ -149,22 +150,23 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
 
     // --- FUNÇÃO: Enviar ---
     const handlePublishToML = async () => {
-        if (!selectedAccount) {
+         if (!selectedAccount) {
             toast.warning("Selecione uma conta para publicar.");
-            return;
+            return alert("Selecione uma conta para publicar." );
         }
 
         if (!categoryId) {
             toast.warning("Categoria não identificada. Verifique o título.");
-            return;
+            return alert("Categoria não identificada. Verifique o título.");
         }
 
         for (const attr of requiredAttrs) {
             if (!dynamicValues[attr.id]) {
                 toast.warning(`O campo "${attr.name}" é obrigatório.`);
-                return;
+                return alert(`O campo "${attr.name}" é obrigatório.`);
             }
         }
+         
 
         setMlLoading(true);
         try {
@@ -181,7 +183,7 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
 
             const payload = {
                 ml_user_id: selectedAccount.ml_user_id, 
-                
+                 codigo_produto: codigoProduto,
                 title: mlTitle,
                 price: Number(mlPrice),
                 available_quantity: Number(mlStock),
@@ -190,12 +192,18 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
                 condition: mlCondition,
                 description: `Produto: ${mlTitle}\n\n${data?.observacoes1 || ''}\n${data?.observacoes2 || ''}`,
                 pictures: pictureUrls.length > 0 ? pictureUrls : ["https://http2.mlstatic.com/D_NQ_NP_964047-MLA44034285816_112020-O.jpg"], 
-                attributes: attributesToSend
+                attributes: attributesToSend,
+                thumbnail: pictureUrls.length > 0 ? pictureUrls[0] : "https://http2.mlstatic.com/D_NQ_NP_964047-MLA44034285816_112020-O.jpg"
             };
 
-            await api.post('/ml/items/publish', payload, {
+          
+               const response = await api.post('/ml/anuncios/create', payload, {
                 headers: { token: user.token }
             });
+                
+            if(response.status === 201 ){
+
+            }
 
             toast.success(`Anúncio enviado para ${selectedAccount.integration_name}!`);
             onOpenChange(false);
@@ -387,7 +395,7 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
 
                         <DialogFooter>
                             <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
-                            <Button className="bg-blue-600 hover:bg-blue-700" onClick={handlePublishToML} disabled={mlLoading || !categoryId}>
+                            <Button  type="button" className="bg-blue-600 hover:bg-blue-700" onClick={handlePublishToML} disabled={mlLoading || !categoryId}>
                                 {mlLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <UploadCloud className="mr-2 h-4 w-4" />}
                                 Publicar
                             </Button>
