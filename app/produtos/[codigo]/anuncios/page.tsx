@@ -141,13 +141,17 @@ export default function Anuncios({ params }: { params: { codigo: string } }) {
             {/* Header Fixo / Topo */}
             <div className="w-full bg-white border-b border-gray-200 p-4 shadow-sm flex items-center justify-between sticky top-0 z-10">
                 <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="sm" onClick={() => router.push(`/produtos/${params.codigo}`)}>
-                        <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
-                    </Button>
-                    <h1 className="text-xl font-bold text-slate-800">
+                     <h1 className="text-xl font-bold text-slate-800">
                         Gestão de Anúncios <span className="text-slate-400 text-sm font-normal">| Produto {params.codigo}</span>
                     </h1>
                 </div>
+                 <Button 
+                        type="button"
+                        variant="outline"
+                        className="shadow-sm w-full col-span-2 sm:w-auto"
+                        onClick={() => router.push(`/produtos/${params.codigo}`)}>
+                        <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
+                    </Button>
             </div>
 
             {/* Conteúdo Principal */}
