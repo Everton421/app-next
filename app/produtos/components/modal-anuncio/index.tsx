@@ -198,8 +198,8 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
 
           
                const response = await api.post('/ml/anuncios/create', payload, {
-                headers: { token: user.token }
-            });
+                    headers: { token: user.token }
+                });
                 
             if(response.status === 201 ){
 
