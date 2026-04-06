@@ -47,8 +47,11 @@ export default function Produtos() {
     setIsLoading(true);
 
     const query = term.trim() === '' ? 'a' : term.trim();
+      console.log(user)
+    
+
     try {
-      const aux = await api.get(`/produtos`, {
+      const aux = await api.get(`/produtos/search`, {
         headers: {
           token: user.token,
         },
@@ -57,6 +60,7 @@ export default function Produtos() {
           ativo: filtroAtivo
         }
       });
+      console.log(aux)
       if (aux.status === 200) {
         setProdutos(aux.data || []);
       }
@@ -92,7 +96,7 @@ export default function Produtos() {
 
   useEffect(() => {
     busca(searchTerm);
-  }, [searchTerm, filtroAtivo]);
+  }, [searchTerm, filtroAtivo, user ]);
 
 
   if (authLoading) {
@@ -108,7 +112,6 @@ export default function Produtos() {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
-        {/* Or return null; the redirect will happen */}
       </div>
     );
   }
@@ -238,7 +241,7 @@ export default function Produtos() {
                       >
                         <TableCell className="  font-medium text-gray-700 whitespace-nowrap w-[7%]  text-xs md:text-base ">{produto.codigo}</TableCell>
                         <TableCell className=" text-left text-gray-600 w-[50%]   text-xs md:text-base "  ><span>  {produto.descricao} </span> </TableCell>
-                        <TableCell className=" text-left text-gray-600   text-xs md:text-base ">R$ {produto.preco?.toFixed(2) ?? '0.00'}</TableCell>
+                        <TableCell className=" text-left text-gray-600   text-xs md:text-base ">R$ {Number(produto.preco)?.toFixed(2) || '0.00'}</TableCell>
                         <TableCell className=" text-center text-gray-600   text-xs md:text-base ">{produto.estoque}</TableCell>
                         <TableCell className=" text-center  ">
                           <div className="flex items-center justify-center gap-2">
@@ -298,6 +301,6 @@ export default function Produtos() {
       </div>
 
     </div>
-
+    
   )
 }

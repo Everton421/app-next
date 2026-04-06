@@ -90,9 +90,9 @@ export default function Home() {
                     responseVendasPorDia,
                     responsePedidosRecentes
                 ] = await Promise.all([
-                    api.get('/pedidos_totais', { headers: header, params }),
-                    api.get('/pedidos_totais_por_data', { headers: header, params }),
-                    api.get('/pedidos_ultimos_inseridos', { headers: header, params })
+                    api.get('/pedidos/totais', { headers: header, params }),
+                    api.get('/pedidos/totais-por-data', { headers: header, params }),
+                    api.get('/pedidos/ultimos', { headers: header, params })
                 ]);
 
                 console.log("responseTotais ",responseTotais.data )
