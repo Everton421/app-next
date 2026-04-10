@@ -46,6 +46,7 @@ export default function Pedidos(){
   const [carregando, setCarregando] = useState(false)
   const [error, setError] = useState<string | null>(null);
   const [filtertipoPedidos, setFilterTipoPedidos] = useState(1);
+  const [ limit, setLimit ] = useState<number>(20);
 
   const router = useRouter() 
   const dateService = DateService();
@@ -59,15 +60,7 @@ export default function Pedidos(){
   //}, [loading, user, router]);
 
 
-  useEffect(() => {
-    if (user && !loading) {
-      const dataAtual = dateService.obterDataAtual();
-      const dataAtualPrimeiroDia = dateService.obterDataAtualPrimeiroDiaDoMes();
-      setDataFinal(dataAtual);
-      setDataInicial(dataAtualPrimeiroDia);
-      buscar(dataAtualPrimeiroDia, dataAtual, null);
-    }
-  }, [user, loading]);
+
 
   async function buscar(dataInicial: string, dataFinal: string, filter: any) {
     setDados([])
@@ -75,10 +68,10 @@ export default function Pedidos(){
     setError(null);
 
     const params: any = {        
-      dataInicial,
-      dataFinal,
+     data_inicial: dataInicial,
+      data_final:dataFinal,
       vendedor: user.codigo,
-      tipo: filtertipoPedidos,
+      limit: limit,
     };
 
     if (filter !== null) {
@@ -89,12 +82,13 @@ export default function Pedidos(){
       }
     }
 
-      console.log(user)
     try {
       const api = configApi(user?.token);
-      const aux = await api.get(`/pedidos/vendas`, {
-        params,
-      });
+          const header = { token: user.token };
+      
+      const aux = await api.get(`/pedidos`, {
+         headers: header, params })
+
       setDados(aux.data);
       setDadosFiltro(aux.data);
     } catch (e) {
@@ -104,6 +98,15 @@ export default function Pedidos(){
       setCarregando(false);
     }
   }
+  useEffect(() => {
+    if (user && !loading) {
+      const dataAtual = dateService.obterDataAtual();
+      const dataAtualPrimeiroDia = dateService.obterDataAtualPrimeiroDiaDoMes();
+      setDataFinal(dataAtual);
+      setDataInicial(dataAtualPrimeiroDia);
+      buscar(dataAtualPrimeiroDia, dataAtual, null);
+    }
+  }, [user, loading]);
 
   useEffect(() => {
     if (filtroSituacao === 'full') {
@@ -284,7 +287,7 @@ export default function Pedidos(){
                         </TableCell>
 
                         <TableCell className="text-gray-700">
-                          {item.nome}
+                          {item.cliente_nome}
                         </TableCell>
 
                         <TableCell className="text-right font-medium text-gray-900">

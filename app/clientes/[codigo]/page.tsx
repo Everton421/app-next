@@ -39,7 +39,6 @@ interface ICliente { // Definir a interface para melhor tipagem
 
 
 export default function Cliente({ params }: prop) {
-    const api = configApi()
     const [data, setData] = useState<ICliente | null>(null);
     const [visibleAlert, setVisibleAlert] = useState(false);
     const [msgAlert, setMsgAlert] = useState<string>('');
@@ -74,30 +73,33 @@ export default function Cliente({ params }: prop) {
     const [dataCadastro, setDataCadastro] = useState<string | undefined>();
     
     const [isLoading, setIsLoading] = useState(true); // Inicia true para busca inicial
+    const api = configApi()
 
     // Redireciona se não estiver autenticado
-    useEffect(() => {
-        if (!authLoading && !user) {
-            router.push('/');
-        }
-    }, [user, authLoading, router]);
-
-    useEffect(() => {
-        if (!params.codigo || !user?.token) {  
-            if(!params.codigo) router.push('/clientes');  
-            setIsLoading(false);  
-            return;
-        }
-        
-        async function buscaCliente() {
+   // useEffect(() => {
+   //     if (!authLoading && !user) {
+   //         router.push('/');
+   //     }
+   // }, [user, authLoading, router]);
+ async function buscaCliente() {
+            console.log(params)
             setIsLoading(true);
+            if(!user) return;
             try {
-                const response = await api.get(`/clientes`, {
-                    headers: { token: user.token },
-                    params: { codigo: params.codigo, limit: 1 }
+            const headers = { token: user.token, } 
+
+                let response;
+                try{
+                response = await api.get(`/clientes/${Number(params.codigo)}`, {
+                    headers ,
                 });
-                if (response.data && response.data.length > 0) {
-                    const clienteData = response.data[0] as ICliente;
+                console.log(response.data)
+                }catch(e){
+                    console.log("Error ", e)
+                }
+               
+                if (response.data ) {
+                    const clienteData = response.data as ICliente;
                     setData(clienteData); // Guarda os dados originais
 
                     // Popula os estados do formulário
@@ -137,7 +139,7 @@ export default function Cliente({ params }: prop) {
                 } else {
                     setMsgAlert("Cliente não encontrado.");
                     setVisibleAlert(true);
-                    router.push('/clientes'); // Opcional: redirecionar se não encontrar
+                //    router.push('/clientes'); // Opcional: redirecionar se não encontrar
                 }
             } catch (e) {
                 console.error("Erro ao buscar cliente:", e);
@@ -147,8 +149,16 @@ export default function Cliente({ params }: prop) {
                 setIsLoading(false);
             }
         }
+    useEffect(() => {
+        /*if (!params.codigo || !user?.token) {  
+            if(!params.codigo) router.push('/clientes');  
+            setIsLoading(false);  
+            return;
+        }*/
+        
+       
         buscaCliente();
-    }, [params.codigo, user?.token, router   ]);  
+    }, [params , user , router   ]);  
 
     useEffect(() => {
         if (pessoa === 'j') {
@@ -245,7 +255,7 @@ export default function Cliente({ params }: prop) {
     }
 
     return (
-        <div className="min-h-screen flex flex-col sm:ml-14 p-4 bg-slate-100 pb-24 md:pb-20">
+        <div className="min-h-screen flex flex-col sm:ml-64 p-4 bg-slate-100 pb-24 md:pb-20">
             <AlertDemo content={msgAlert} title="Atenção" visible={visibleAlert} setVisible={setVisibleAlert} to={msgAlert.includes("sucesso") ? '/clientes' : undefined} />
 
             {/* Cabeçalho: Título e Botão Voltar */}

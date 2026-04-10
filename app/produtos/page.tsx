@@ -43,22 +43,20 @@ export default function Produtos() {
 
 
   async function busca(term: string) {
+    if(!user || !user.token) return;
     setProdutos([])
     setIsLoading(true);
 
     const query = term.trim() === '' ? 'a' : term.trim();
-      console.log(user)
     
+    const params = { descricao: term, ativo: filtroAtivo }
+    const headers = { token: user.token, } 
+
 
     try {
       const aux = await api.get(`/produtos/search`, {
-        headers: {
-          token: user.token,
-        },
-        params: {
-          descricao: term,
-          ativo: filtroAtivo
-        }
+        headers,
+        params
       });
       console.log(aux)
       if (aux.status === 200) {
@@ -121,8 +119,8 @@ export default function Produtos() {
 
   return (
 
-    <div className=" min-h-screen flex flex-col sm:ml-14 p-2 w-full h-full justify-itens-center items-center   bg-slate-100 "  >
-      <div className="  w-full md:w-11/12  p-2 mt-22 min-h-screen    rounded-lg bg-white   " >
+    <div className=" min-h-screen flex flex-col sm:ml-64 p-2 w-full h-full justify-itens-center items-center   bg-slate-100 "  >
+      <div className="  w-full md:w-[85%]  p-2 mt-22 min-h-screen  rounded-lg bg-white   " >
         <div className="  p-2   rounded-sm bg-slate-100 w-full  ">
 
           <div className="m-2 flex flex-col md:flex-row justify-between">

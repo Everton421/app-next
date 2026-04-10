@@ -49,6 +49,9 @@ export default function Clientes() {
   }, [user, loading, router]);
 
   useEffect(() => {
+    if(!user){
+      return
+    }
     if (user && !loading) {
       buscarClientes();
     }
@@ -65,12 +68,15 @@ export default function Clientes() {
         ativo: filtroAtivo === 'all' ? undefined : filtroAtivo
       };
       
+    const headers = { token: user.token, } 
+
+
       if (pesquisa) {
         params.nome = pesquisa;
       }
       
-      const aux = await api.get(`/clientes`, {
-        params,
+      const aux = await api.get(`/clientes/search`, {
+       headers, params 
       });
       setClientes(aux.data)
     } catch (e: any) {
