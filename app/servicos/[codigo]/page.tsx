@@ -49,15 +49,6 @@ export default function ServicoEdit({ params }: { params: { codigo: string } }) 
     }
   }, [user, loading, router]);
 
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-         <p>Verificando autenticação...</p>
-      </div>
-    );
-  }
-
     useEffect(() => {
         if (  !params.codigo) {
             console.warn("User or Codigo missing");
@@ -67,18 +58,44 @@ export default function ServicoEdit({ params }: { params: { codigo: string } }) 
         function delay(ms:number) {
             return new Promise((resolve)=>{ setTimeout( resolve,ms )})
            }
+        busca();
+    }, [params ]);  
+        const handleActive = useCallback((newStatus: 'S' | 'N') => {
+         //console.log("Status change requested (implement if needed):", newStatus);
+         setData(
+            (prev:any)=> { 
+               return  {...prev, ativo:newStatus};
+            }
 
-        async function busca() {
+            )
+    }, []);
+
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+         <p>Verificando autenticação...</p>
+      </div>
+    );
+  }
+
+   async function busca() {
+            if(!user || !user.token ) {
+            
+            console.log("user.token not found.")
+                return
+            };
             setIsLoading(true);
- 
+                    const headers = { token:  user.token  } 
+             
             try {
-                const result = await api.get(`/servicos`, {
-                    params: { codigo: Number(params.codigo) , limit:1 },
-                    headers: { token:  user.token  },
+                const result = await api.get(`/servicos/search`, {
+                    headers,
+                    params: { codigo: Number(params.codigo)},
                 });
 
-                if (result.status === 200 && result.data?.length > 0) {
-                    const dadosServico: basicServico = result.data[0];
+                if (result.status === 200 )  {
+                    const dadosServico: basicServico = result.data ;
                     console.log(dadosServico);
                     setData(dadosServico);
                     setAplicacao(dadosServico.aplicacao || '');
@@ -98,8 +115,8 @@ export default function ServicoEdit({ params }: { params: { codigo: string } }) 
                 setIsLoading(false);
             }
         }
-        busca();
-    }, [params.codigo ]);  
+
+
 
     async function gravar() {
         if (!data || isSaving) return;  
@@ -140,15 +157,6 @@ export default function ServicoEdit({ params }: { params: { codigo: string } }) 
   
     }
 
-    const handleActive = useCallback((newStatus: 'S' | 'N') => {
-         //console.log("Status change requested (implement if needed):", newStatus);
-         setData(
-            (prev:any)=> { 
-               return  {...prev, ativo:newStatus};
-            }
-
-            )
-    }, []);
 
 
     if (isLoading) {
@@ -175,7 +183,7 @@ export default function ServicoEdit({ params }: { params: { codigo: string } }) 
     if (!data) return null;
 
     return (
-        <div className="h-screen flex flex-col sm:ml-14 bg-slate-100 overflow-hidden">
+        <div className="h-screen flex flex-col sm:ml-64 bg-slate-100 overflow-hidden">
      <div className="w-full max-w-screen-2xl mx-auto bg-white rounded-lg shadow-md p-4 md:p-6 lg:p-8 flex flex-col flex-1">
 
             <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} to={'/servicos'} />
@@ -236,8 +244,8 @@ export default function ServicoEdit({ params }: { params: { codigo: string } }) 
                 </div>
             </ScrollArea>
 
-            {/* Fixed Bottom Bar - Aligned with sm:ml-14 */}
-            <div className="fixed bottom-0 left-0 right-0 border-t bg-background shadow-md p-3 z-10 sm:ml-14 bg-white">
+            {/* Fixed Bottom Bar - Aligned with sm:ml-64 */}
+            <div className="fixed bottom-0 left-0 right-0 border-t bg-background shadow-md p-3 z-10 sm:ml-64 bg-white">
                 {/* Inner container matching content max-width */}
                 <div className="max-w-3xl mx-auto flex justify-end">
                     <Button onClick={gravar} disabled={isSaving || isLoading}>

@@ -32,11 +32,11 @@ const {user, loading }:any = useAuth();
       setServicos([])
       setIsLoading(true)
       try{
+        if(!user || !user.token ) return;
 
-      let result = await api.get(`/servicos`, { 
-          headers:{
-             token:  user.token 
-          }, 
+        const  headers = { token:  user.token  }  
+      let result = await api.get(`/servicos/search`, { 
+          headers, 
           params:{
             aplicacao: pesquisa,
             ativo:filtroAtivo
@@ -63,7 +63,7 @@ const {user, loading }:any = useAuth();
           router.push('/'); // Redireciona para a página de login (ajuste se for outra)
         }
       }
-    }, [user, loading, router]);
+    }, [ ]);
   
   
    useEffect(()=>{
@@ -94,7 +94,7 @@ const {user, loading }:any = useAuth();
        }
 
     return(
-      <div className= " min-h-screen flex flex-col sm:ml-14 p-4 w-full h-full  justify-itens-center items-center    bg-slate-100"  >
+      <div className= " min-h-screen flex flex-col sm:ml-64 p-4 w-full h-full  justify-itens-center items-center    bg-slate-100"  >
         <div className="  w-full md:w-5/6   p-2 mt-22 min-h-screen    rounded-lg bg-white shadow-md " >
            
           <div className="p-2 rounded-sm bg-slate-100">
@@ -182,7 +182,7 @@ const {user, loading }:any = useAuth();
                               
                                 <TableCell className=" text-xs md:text-base text-center font-medium text-gray-700 whitespace-nowrap w-[80px]" >  {i.codigo}     </TableCell>
                                 <TableCell className=" text-xs md:text-base text-left text-gray-600 w-[75%]"> {i?.aplicacao ?? ''}  </TableCell>
-                                <TableCell className=" text-xs md:text-base text-left text-gray-600 whitespace-nowrap w-[100px]"> R$ { i.valor?.toFixed(2) ?? '00' } </TableCell>
+                                <TableCell className=" text-xs md:text-base text-left text-gray-600 whitespace-nowrap w-[100px]"> R$ { Number(i.valor)?.toFixed(2) ?? '00' } </TableCell>
                                 <TableCell className=" text-left   font-bold text-gray-600">  
                       <div className="flex items-center justify-center gap-2">
                               

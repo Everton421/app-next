@@ -506,7 +506,7 @@ export default function EditPedido(){
     // --- LÓGICA DE RENDERIZAÇÃO DE LOADING (MANTIDA COMO NO ORIGINAL, MAS COM AJUSTES VISUAIS) ---
     if (loadingAuth) { // Primeiro checa o loading de autenticação
         return (
-          <div className="min-h-screen flex items-center justify-center flex-col sm:ml-14 p-4 bg-slate-100">
+          <div className="min-h-screen flex items-center justify-center flex-col sm:ml-64 p-4 bg-slate-100">
               <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="Autenticando..." textColor="#2563eb" />
           </div>
         );
@@ -514,7 +514,7 @@ export default function EditPedido(){
     
     if (!user) { // Se não houver usuário após o loading de autenticação
         return (
-           <div className="min-h-screen flex items-center justify-center flex-col sm:ml-14 p-4 bg-slate-100">
+           <div className="min-h-screen flex items-center justify-center flex-col sm:ml-64 p-4 bg-slate-100">
              <p>Redirecionando para login...</p> {/* Ou um spinner se preferir */}
            </div>
         );
@@ -522,7 +522,7 @@ export default function EditPedido(){
 
     if (isLoading && !dadosOrcamento) { // Loading para buscar os dados do pedido
         return( 
-          <div className="min-h-screen flex items-center justify-center flex-col sm:ml-14 p-4 bg-slate-100">
+          <div className="min-h-screen flex items-center justify-center flex-col sm:ml-64 p-4 bg-slate-100">
             <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="Carregando dados do pedido..." textColor="#2563eb" />
           </div> 
         );  
@@ -530,7 +530,7 @@ export default function EditPedido(){
 
     if (!dadosOrcamento && !isLoading) { // Se terminou de carregar e não tem dadosOrcamento
         return (
-            <div className="min-h-screen flex items-center justify-center flex-col sm:ml-14 p-4 bg-slate-100">
+            <div className="min-h-screen flex items-center justify-center flex-col sm:ml-64 p-4 bg-slate-100">
                  <AlertDemo content={msgApi || "Pedido não encontrado ou dados inválidos."} title="Erro" visible={!visible ? true : visible} setVisible={setVisible} to={'/pedidos'} />
                 {!msgApi && <p className="text-red-500">Não foi possível carregar os dados do pedido.</p>}
                 <Button onClick={() => router.push('/pedidos')} className="mt-4">Voltar para Pedidos</Button>
@@ -540,7 +540,7 @@ export default function EditPedido(){
 
     // --- INÍCIO DO JSX PARA O FORMULÁRIO (COM AJUSTES DE RESPONSIVIDADE) ---
     return(
-        <div className="min-h-screen sm:ml-14 p-2 md:p-4 bg-gray-100 pb-28 md:pb-24"> {/* Padding e padding inferior */}
+        <div className="min-h-screen sm:ml-64 p-2 md:p-4 bg-gray-100 pb-28 md:pb-24"> {/* Padding e padding inferior */}
             <AlertDemo content={msgApi} title="Atenção" visible={visible} setVisible={setVisible} to={msgApi?.includes("sucesso") ? '/pedidos' : undefined} />
         
             {/* Cabeçalho */}
@@ -769,7 +769,7 @@ export default function EditPedido(){
             </div>                                
         
             {/* Rodapé Fixo com Totais e Botão Gravar */}
-            <div className="bg-white p-3 md:p-4 fixed bottom-0 left-0 right-0 sm:ml-14 shadow-md-top border-t border-gray-200"> {/* Ajuste de shadow e border */}
+            <div className="bg-white p-3 md:p-4 fixed bottom-0 left-0 right-0 sm:ml-64 shadow-md-top border-t border-gray-200"> {/* Ajuste de shadow e border */}
                 <div className="max-w-full mx-auto"> {/* max-w-full para ocupar espaço */}
                     <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 md:gap-4">
                         {/* Totais */}

@@ -105,7 +105,7 @@ export default function Clientes() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col sm:ml-14 p-4 w-full bg-gray-50">
+    <div className="min-h-screen flex flex-col sm:ml-64 p-4 w-full bg-gray-50">
       <div className="w-full max-w-6xl mx-auto">
         {/* Header */}
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-6">

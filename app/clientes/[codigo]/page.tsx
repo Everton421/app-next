@@ -240,7 +240,7 @@ export default function Cliente({ params }: prop) {
 
     if (authLoading) {
         return (
-            <div className="flex justify-center items-center h-screen bg-slate-100 sm:ml-14">
+            <div className="flex justify-center items-center h-screen bg-slate-100 sm:ml-64">
                 <ThreeDot variant="pulsate" color="#2563eb" size="medium"   textColor="#2563eb" />
             </div>
         );
@@ -248,7 +248,7 @@ export default function Cliente({ params }: prop) {
     
     if (isLoading && !data) { // Mostra loading principal se estiver carregando e não houver dados ainda
         return (
-            <div className="min-h-screen flex items-center justify-center flex-col sm:ml-14 p-4 bg-slate-100">
+            <div className="min-h-screen flex items-center justify-center flex-col sm:ml-64 p-4 bg-slate-100">
                 <ThreeDot variant="pulsate" color="#2563eb" size="medium"   textColor="#2563eb" />
             </div>
         );
@@ -364,7 +364,7 @@ export default function Cliente({ params }: prop) {
 
 
             {/* Botão Gravar Fixo */}
-            <div className="bg-white p-3 fixed bottom-0 left-0 right-0 shadow-md-top sm:ml-14 border-t border-gray-200">
+            <div className="bg-white p-3 fixed bottom-0 left-0 right-0 shadow-md-top sm:ml-64 border-t border-gray-200">
                 <div className="max-w-7xl mx-auto flex justify-end">
                     <Button 
                         className="bg-black hover:bg-gray-800 flex items-center gap-2 px-4 py-2 disabled:opacity-50" 

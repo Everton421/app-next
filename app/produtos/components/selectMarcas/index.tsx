@@ -86,12 +86,12 @@ useEffect(
                                     />
 
            {loading ? (
-                <p className="sm:ml-14 p-4 absolute">carregando...</p>
+                <p className="sm:ml-64 p-4 absolute">carregando...</p>
             ) : (
                 dadosMarca.length > 0 && (
                     <div className="absolute z-10    ">
                         { dadosMarca.slice(0, 2).map((i: any) => (
-                            <div key={i.codigo} onClick={() => seleciona(i)} className="   sm:ml-14 p-2 m-1 shadow-lg bg-gray-500 border-current rounded-md cursor-pointer  ">
+                            <div key={i.codigo} onClick={() => seleciona(i)} className="   sm:ml-64 p-2 m-1 shadow-lg bg-gray-500 border-current rounded-md cursor-pointer  ">
                                 
                                  <span className=" text-white font-bold">Código: {i.codigo}  {i.nome}  </span>
                                     <br/>

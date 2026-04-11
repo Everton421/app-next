@@ -144,46 +144,49 @@ export default function Pedidos(){
   }
 
   return (
-    <div className="min-h-screen flex flex-col sm:ml-14 p-4 w-full bg-gray-50">
+    <div className="min-h-screen flex flex-col sm:ml-64 p-4 w-full bg-gray-50">
       <div className="w-full max-w-6xl mx-auto">
-        {/* Header Card */}
-        <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-6">
-          <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold text-gray-900">Pedidos</h1>
-              <p className="text-sm text-gray-500 mt-1">Gerencie pedidos e ordens de serviço</p>
+          {/* Header Card */}
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-6">
+            <div className="px-4 md:px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">Pedidos</h1>
+                <p className="text-xs sm:text-sm text-gray-500 mt-1">Gerencie pedidos e ordens de serviço</p>
+              </div>
+              <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                <Button 
+                  variant="outline" 
+                  className="border-gray-300 text-gray-700 flex-1 sm:flex-none"
+                  onClick={() => buscar(dataInicial, dataFinal, pesquisa)}
+                >
+                  <Search className="h-4 w-4 sm:mr-2" />
+                  <span className="sm:hidden">Buscar</span>
+                </Button>
+                <Button 
+                  className="bg-gray-900 hover:bg-gray-800 text-white flex-1 sm:flex-none"
+                  onClick={() => router.push('/pedidos/novo')}
+                >
+                  <Plus className="h-4 w-4 sm:mr-2" />
+                  <span className="sm:hidden">Novo</span>
+                  <span className="hidden sm:inline">Novo Pedido</span>
+                </Button>
+              </div>
             </div>
-            <div className="flex items-center gap-3">
-              <Button 
-                variant="outline" 
-                className="border-gray-300 text-gray-700"
-                onClick={() => buscar(dataInicial, dataFinal, pesquisa)}
-              >
-                <Search className="h-4 w-4 mr-2" />
-                Buscar
-              </Button>
-              <Button 
-                className="bg-gray-900 hover:bg-gray-800 text-white"
-                onClick={() => router.push('/pedidos/novo')}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Novo Pedido
-              </Button>
-            </div>
-          </div>
 
           {/* Filters */}
-          <div className="p-6 bg-gray-50">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Pesquisar por código ou nome do cliente..."
-                  className="pl-10 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
-                  value={pesquisa}
-                  onChange={(e) => setPesquisa(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && buscar(dataInicial, dataFinal, pesquisa)}
-                />
+          <div className="p-4 md:p-6 bg-gray-50">
+            <div className="flex flex-col md:flex-row gap-3 md:gap-4">
+              <div className="flex-1 w-full">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input
+                    placeholder="Pesquisar..."
+                    className="pl-10 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white w-full"
+                    value={pesquisa}
+                    onChange={(e) => setPesquisa(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && buscar(dataInicial, dataFinal, pesquisa)}
+                  />
+                </div>
               </div>
               
               <FiltroPedidos 
@@ -200,8 +203,8 @@ export default function Pedidos(){
 
         {/* Status Filters */}
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-6">
-          <div className="p-4 flex items-center gap-2 overflow-x-auto">
-            <span className="text-sm font-medium text-gray-600 mr-2">Situação:</span>
+          <div className="p-3 sm:p-4 flex items-center gap-1 sm:gap-2 overflow-x-auto">
+            <span className="text-xs sm:text-sm font-medium text-gray-600 mr-1 sm:mr-2 shrink-0">Situação:</span>
             {(['full', 'EA', 'RE', 'AI', 'FI', 'FP'] as const).map((sit) => {
               const config = situacaoConfig[sit as Situacao];
               const isActive = filtroSituacao === sit;
@@ -213,7 +216,7 @@ export default function Pedidos(){
                   variant={isActive ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setFiltroSituacao(sit)}
-                  className={`flex items-center gap-2 ${
+                  className={`flex items-center gap-1 sm:gap-2 text-xs sm:text-sm shrink-0 ${
                     isActive 
                       ? sit === 'full' 
                         ? 'bg-gray-900 hover:bg-gray-800'
@@ -221,8 +224,8 @@ export default function Pedidos(){
                       : 'border-gray-300 text-gray-600'
                   }`}
                 >
-                  {Icon && <Icon className="h-4 w-4" />}
-                  {sit === 'full' ? 'Todos' : config?.label}
+                  {Icon && <Icon className="h-3 w-3 sm:h-4 sm:w-4" />}
+                  <span className="hidden xs:inline">{sit === 'full' ? 'Todos' : config?.label}</span>
                 </Button>
               );
             })}
@@ -232,28 +235,28 @@ export default function Pedidos(){
         {/* Table */}
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
           {carregando ? (
-            <div className="flex items-center justify-center py-20">
+            <div className="flex items-center justify-center py-12 sm:py-20">
               <ThreeDot variant="pulsate" color="#4B5563" size="medium" text="" />
             </div>
           ) : error ? (
-            <div className="flex flex-col items-center justify-center py-20 gap-4">
-              <div className="text-red-500 text-lg">Erro ao carregar dados</div>
+            <div className="flex flex-col items-center justify-center py-12 sm:py-20 gap-4">
+              <div className="text-red-500 text-base sm:text-lg">Erro ao carregar dados</div>
               <Button variant="outline" onClick={() => buscar(dataInicial, dataFinal, pesquisa)}>
                 Tentar novamente
               </Button>
             </div>
           ) : dadosFiltro.length > 0 ? (
             <div className="overflow-x-auto">
-              <Table className="w-full">
+              <Table className="w-full min-w-[640px]">
                 <TableHeader className="bg-gray-50">
                   <TableRow>
-                    <TableHead className="text-gray-600 font-medium w-16 text-center">Sit.</TableHead>
-                    <TableHead className="text-gray-600 font-medium w-20">ID</TableHead>
-                    <TableHead className="text-gray-600 font-medium">Cliente</TableHead>
-                    <TableHead className="text-gray-600 font-medium text-right">Total</TableHead>
-                    <TableHead className="text-gray-600 font-medium text-center">Data</TableHead>
-                    <TableHead className="text-gray-600 font-medium text-center w-32">Tipo</TableHead>
-                    <TableHead className="text-gray-600 font-medium text-right w-28">Ações</TableHead>
+                    <TableHead className="text-gray-600 font-medium w-12 sm:w-16 text-center text-xs sm:text-sm">Sit.</TableHead>
+                    <TableHead className="text-gray-600 font-medium w-16 sm:w-20 text-xs sm:text-sm">ID</TableHead>
+                    <TableHead className="text-gray-600 font-medium text-xs sm:text-sm">Cliente</TableHead>
+                    <TableHead className="text-gray-600 font-medium text-right text-xs sm:text-sm hidden md:table-cell">Total</TableHead>
+                    <TableHead className="text-gray-600 font-medium text-center text-xs sm:text-sm hidden sm:table-cell">Data</TableHead>
+                    <TableHead className="text-gray-600 font-medium text-center w-20 sm:w-32 text-xs sm:text-sm">Tipo</TableHead>
+                    <TableHead className="text-gray-600 font-medium text-right w-20 sm:w-28 text-xs sm:text-sm">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -267,12 +270,12 @@ export default function Pedidos(){
                         className="hover:bg-gray-50 cursor-pointer"
                         onClick={() => handleOrder(item.codigo)}
                       >
-                        <TableCell className="text-center">
+                        <TableCell className="text-center py-2 sm:py-3">
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger>
-                                <span className={`inline-flex items-center justify-center w-8 h-8 rounded-md ${config?.bg} ${config?.color}`}>
-                                  {Icon && <Icon className="h-4 w-4" />}
+                                <span className={`inline-flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-md ${config?.bg} ${config?.color}`}>
+                                  {Icon && <Icon className="h-3 w-3 sm:h-4 sm:w-4" />}
                                 </span>
                               </TooltipTrigger>
                               <TooltipContent>
@@ -282,38 +285,40 @@ export default function Pedidos(){
                           </TooltipProvider>
                         </TableCell>
 
-                        <TableCell className="font-medium text-gray-900">
+                        <TableCell className="font-medium text-gray-900 text-xs sm:text-sm py-2 sm:py-3">
                           #{item.id}
                         </TableCell>
 
-                        <TableCell className="text-gray-700">
-                          {item.cliente_nome}
+                        <TableCell className="text-gray-700 text-xs sm:text-sm py-2 sm:py-3">
+                          <span className="block truncate max-w-[120px] sm:max-w-none">{item.cliente_nome}</span>
                         </TableCell>
 
-                        <TableCell className="text-right font-medium text-gray-900">
+                        <TableCell className="text-right font-medium text-gray-900 text-xs sm:text-sm py-2 sm:py-3 hidden md:table-cell">
                           {formatCurrency(item.total_geral)}
                         </TableCell>
 
-                        <TableCell className="text-center text-gray-600">
+                        <TableCell className="text-center text-gray-600 text-xs py-2 sm:py-3 hidden sm:table-cell">
                           <div className="flex items-center justify-center gap-1">
                             <Calendar className="h-3 w-3 text-gray-400" />
                             {formatDate(item.data_cadastro)}
                           </div>
                         </TableCell>
 
-                        <TableCell className="text-center">
+                        <TableCell className="text-center py-2 sm:py-3">
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger>
                                 {item.tipo === 1 ? (
-                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                                    <ClipboardList className="h-3 w-3 mr-1" />
-                                    PED
+                                  <span className="inline-flex items-center px-1.5 sm:px-2.5 py-0.5 rounded text-[10px] sm:text-xs font-medium bg-green-100 text-green-800">
+                                    <ClipboardList className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
+                                    <span className="hidden sm:inline">PED</span>
+                                    <span className="sm:hidden">P</span>
                                   </span>
                                 ) : (
-                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">
-                                    <Wrench className="h-3 w-3 mr-1" />
-                                    OS
+                                  <span className="inline-flex items-center px-1.5 sm:px-2.5 py-0.5 rounded text-[10px] sm:text-xs font-medium bg-purple-100 text-purple-800">
+                                    <Wrench className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
+                                    <span className="hidden sm:inline">OS</span>
+                                    <span className="sm:hidden">O</span>
                                   </span>
                                 )}
                               </TooltipTrigger>
@@ -324,21 +329,21 @@ export default function Pedidos(){
                           </TooltipProvider>
                         </TableCell>
 
-                        <TableCell className="text-right">
-                          <div className="flex items-center justify-end gap-1">
+                        <TableCell className="text-right py-2 sm:py-3">
+                          <div className="flex items-center justify-end gap-0.5 sm:gap-1">
                             <TooltipProvider>
                               <Tooltip>
                                 <TooltipTrigger asChild>
                                   <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-8 w-8 hover:bg-gray-100"
+                                    className="h-7 w-7 sm:h-8 sm:w-8 hover:bg-gray-100"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       router.push(`/pedidos/${item.codigo}/imprimir`);
                                     }}
                                   >
-                                    <Printer className="h-4 w-4 text-gray-600" />
+                                    <Printer className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-600" />
                                   </Button>
                                 </TooltipTrigger>
                                 <TooltipContent>
@@ -353,13 +358,13 @@ export default function Pedidos(){
                                   <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-8 w-8 hover:bg-gray-100"
+                                    className="h-7 w-7 sm:h-8 sm:w-8 hover:bg-gray-100"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       handleOrder(item.codigo);
                                     }}
                                   >
-                                    <Edit className="h-4 w-4 text-gray-600" />
+                                    <Edit className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-600" />
                                   </Button>
                                 </TooltipTrigger>
                                 <TooltipContent>
@@ -376,9 +381,9 @@ export default function Pedidos(){
               </Table>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-20 gap-4">
-              <FileText className="h-12 w-12 text-gray-300" />
-              <p className="text-gray-500">Nenhum pedido encontrado</p>
+            <div className="flex flex-col items-center justify-center py-12 sm:py-20 gap-4">
+              <FileText className="h-10 w-10 sm:h-12 sm:w-12 text-gray-300" />
+              <p className="text-gray-500 text-sm sm:text-base">Nenhum pedido encontrado</p>
               <Button 
                 variant="outline" 
                 onClick={() => router.push('/pedidos/novo')}
@@ -391,7 +396,7 @@ export default function Pedidos(){
 
         {/* Footer Stats */}
         {dadosFiltro.length > 0 && (
-          <div className="mt-4 flex items-center justify-between text-sm text-gray-500">
+          <div className="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs sm:text-sm text-gray-500">
             <span>{dadosFiltro.length} registro(s) encontrado(s)</span>
             <span className="font-medium text-gray-700">
               Total: {formatCurrency(dadosFiltro.reduce((acc, p) => acc + p.total_geral, 0))}
