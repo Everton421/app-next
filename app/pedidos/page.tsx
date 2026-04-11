@@ -143,61 +143,67 @@ export default function Pedidos(){
     );
   }
 
-  return (
-    <div className="min-h-screen flex flex-col sm:ml-56 p-4 sm:p-6 lg:p-8 w-full bg-gray-50">
-      <div className="w-full max-w-none">
-          {/* Header Card */}
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-6">
-            <div className="px-4 md:px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div>
-                <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">Pedidos</h1>
-                <p className="text-xs sm:text-sm text-gray-500 mt-1">Gerencie pedidos e ordens de serviço</p>
-              </div>
-              <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
-                <Button 
-                  variant="outline" 
-                  className="border-gray-300 text-gray-700 flex-1 sm:flex-none"
-                  onClick={() => buscar(dataInicial, dataFinal, pesquisa)}
-                >
-                  <Search className="h-4 w-4 sm:mr-2" />
-                  <span className="sm:hidden">Buscar</span>
-                </Button>
-                <Button 
-                  className="bg-gray-900 hover:bg-gray-800 text-white flex-1 sm:flex-none"
-                  onClick={() => router.push('/pedidos/novo')}
-                >
-                  <Plus className="h-4 w-4 sm:mr-2" />
-                  <span className="sm:hidden">Novo</span>
-                  <span className="hidden sm:inline">Novo Pedido</span>
-                </Button>
-              </div>
-            </div>
 
-          {/* Filters */}
-          <div className="p-4 md:p-6 bg-gray-50">
-            <div className="flex flex-col md:flex-row gap-3 md:gap-4">
-              <div className="flex-1 w-full">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    placeholder="Pesquisar..."
-                    className="pl-10 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white w-full"
-                    value={pesquisa}
-                    onChange={(e) => setPesquisa(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && buscar(dataInicial, dataFinal, pesquisa)}
-                  />
-                </div>
-              </div>
-              
-              <FiltroPedidos 
-                setDataInicial={setDataInicial} 
-                setDataFinal={setDataFinal} 
-                dataInicial={dataInicial}
-                dataFinal={dataFinal}
-                filtrTipo={filtertipoPedidos}
-                setFiltroTipo={setFilterTipoPedidos}
+  
+  
+    //************** */
+     //    <div className="min-h-screen flex flex-col sm:ml-56 p-4 sm:p-6 lg:p-8 w-full bg-gray-50">
+      // <div className="w-full max-w-none"></div>
+    
+
+  return (
+    
+    <div className="min-h-screen flex flex-col sm:ml-52 p-2 sm:p-4 lg:p-6 w-full h-full justify-itens-center items-start bg-slate-100">
+      <div className="md:w-[85%] p-2 mt-22 min-h-screen rounded-lg bg-white">
+        <div className="p-2 rounded-sm bg-slate-100 w-full">
+          <div className="m-2 flex flex-col md:flex-row justify-between">
+            <h1 className="text-2xl md:text-4xl font-bold font-sans text-gray-800">
+              Pedidos
+            </h1>
+
+            <div className="grid grid-cols-2 sm:flex sm:flex-row sm:items-center gap-2 mt-4 md:mt-0 w-full md:w-auto">
+              <Button
+                type="button"
+                variant="outline"
+                className="shadow-sm w-full sm:w-auto"
+                onClick={() => buscar(dataInicial, dataFinal, pesquisa)}
+              >
+                <Search className="h-4 w-4 mr-2" />
+                <span>Buscar</span>
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                className="shadow-sm w-full col-span-2 sm:w-auto"
+                onClick={() => router.push('/pedidos/novo')}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Novo Pedido
+              </Button>
+            </div>
+          </div>
+
+          <div className="flex md:flex-row md:w-auto md:max-w-md md:min-w-[60%] items-center gap-2 mt-3">
+            <div className="relative flex-grow">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder="Pesquisar..."
+                className="pl-10 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white w-full"
+                value={pesquisa}
+                onChange={(e) => setPesquisa(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && buscar(dataInicial, dataFinal, pesquisa)}
               />
             </div>
+
+            <FiltroPedidos 
+              setDataInicial={setDataInicial} 
+              setDataFinal={setDataFinal} 
+              dataInicial={dataInicial}
+              dataFinal={dataFinal}
+              filtrTipo={filtertipoPedidos}
+              setFiltroTipo={setFilterTipoPedidos}
+            />
           </div>
         </div>
 

@@ -104,9 +104,10 @@ if (loading) {
 
     return (
 
-        <div className=" min-h-screen flex flex-col sm:ml-56 p-4 sm:p-6 lg:p-8 w-full h-full justify-itens-center items-center   bg-slate-100"  >
-           <div className="  w-full md:w-5/6   p-2 mt-22 min-h-screen    rounded-lg bg-white shadow-md " >
-            <div className="p-2 rounded-sm bg-slate-100">
+      <div className=" min-h-screen flex flex-col sm:ml-52 p-2 sm:p-4 lg:p-6 w-full h-full justify-itens-center items-start   bg-slate-100 "  >
+      <div className="    md:w-[85%]  p-2 mt-22 min-h-screen  rounded-lg bg-white   " >
+        <div className="  p-2   rounded-sm bg-slate-100 w-full  ">
+
                 <div className="m-5  flex justify-between   ">
                       <h1 className="text-2xl md:text-4xl font-bold font-sans text-gray-800">
                             Veículos

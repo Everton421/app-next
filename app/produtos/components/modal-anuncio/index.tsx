@@ -75,6 +75,9 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
     const [dataAccounts, setDataAccounts] = useState<MlAccount[]>([]);
     const [selectedAccount, setSelectedAccount] = useState<MlAccount | null>(null);
 
+    // Estado para erro de publicação
+    const [publishError, setPublishError] = useState<string | null>(null);
+
     // --- EFEITO 1: Carregar Contas ao Abrir ---
     useEffect(() => {
         if (open && user?.codigo) {
@@ -84,6 +87,7 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
         // Resetar seleção ao fechar/abrir
         if (!open) {
             setSelectedAccount(null);
+            setPublishError(null);
         }
     }, [open, user]);
 
@@ -150,20 +154,22 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
 
     // --- FUNÇÃO: Enviar ---
     const handlePublishToML = async () => {
-         if (!selectedAccount) {
+        setPublishError(null);
+
+        if (!selectedAccount) {
             toast.warning("Selecione uma conta para publicar.");
-            return alert("Selecione uma conta para publicar." );
+            return;
         }
 
         if (!categoryId) {
             toast.warning("Categoria não identificada. Verifique o título.");
-            return alert("Categoria não identificada. Verifique o título.");
+            return;
         }
 
         for (const attr of requiredAttrs) {
             if (!dynamicValues[attr.id]) {
                 toast.warning(`O campo "${attr.name}" é obrigatório.`);
-                return alert(`O campo "${attr.name}" é obrigatório.`);
+                return;
             }
         }
          
@@ -176,14 +182,13 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
                 id, value_name: value
             }));
 
-            // Adiciona atributos fixos
             if (!dynamicValues['BRAND']) attributesToSend.push({ id: 'BRAND', value_name: data?.marca?.descricao || "Genérica" });
             if (!dynamicValues['MODEL']) attributesToSend.push({ id: 'MODEL', value_name: "Padrão" });
             if (data?.num_fabricante) attributesToSend.push({ id: 'GTIN', value_name: data.num_fabricante });
 
             const payload = {
                 ml_user_id: selectedAccount.ml_user_id, 
-                 codigo_produto: codigoProduto,
+                codigo_produto: codigoProduto,
                 title: mlTitle,
                 price: Number(mlPrice),
                 available_quantity: Number(mlStock),
@@ -196,10 +201,9 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
                 thumbnail: pictureUrls.length > 0 ? pictureUrls[0] : "https://http2.mlstatic.com/D_NQ_NP_964047-MLA44034285816_112020-O.jpg"
             };
 
-          
-               const response = await api.post('/ml/anuncios/create', payload, {
-                    headers: { token: user.token }
-                });
+            const response = await api.post('/ml/anuncios/create', payload, {
+                headers: { token: user.token }
+            });
                 
             if(response.status === 201 ){
 
@@ -210,8 +214,17 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
             if (onSuccess) onSuccess();
 
         } catch (error: any) {
-            console.error(error);
-            const erroMsg = error.response?.data?.msg || "Erro desconhecido ao publicar.";
+            console.error("Erro ao publicar:", error);
+            
+            const erroMsg = 
+                error.response?.data?.msg || 
+                error.response?.data?.message || 
+                error.response?.data?.error ||
+                error.response?.data?.errors?.[0]?.message ||
+                error.message || 
+                "Erro desconhecido ao publicar.";
+            
+            setPublishError(erroMsg);
             toast.error(`Erro: ${erroMsg}`);
         } finally {
             setMlLoading(false);
@@ -389,6 +402,18 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
                                             />
                                         </div>
                                     ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {publishError && (
+                            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                                <div className="flex items-start gap-3">
+                                    <AlertTriangle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+                                    <div>
+                                        <h4 className="text-sm font-semibold text-red-800">Erro ao publicar anúncio</h4>
+                                        <p className="text-sm text-red-600 mt-1">{publishError}</p>
+                                    </div>
                                 </div>
                             </div>
                         )}

@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { CirclePlus, Loader2, Save, Trash2, Calendar, Store, LogOut } from "lucide-react";
 import Image from "next/image";
-import { configApi } from "../services/api";
+import { configApi } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner"; 
@@ -93,9 +93,9 @@ export default function Integracoes() {
     async function handleConnectML() {
         setIsRedirecting(true);
         try {
-            const result = await api.post(`/ml/integrations/getCode`, {}, {
-                params: { vendedor: user.codigo },
+            const result = await api.get(`/ml/integration/getCode`,   {
                 headers: { token: user.token },
+                params: { vendedor: user.codigo } 
             });
 
             const externalUrl = result.data.uri;
@@ -120,7 +120,7 @@ export default function Integracoes() {
 
         setIsSaving(true);
         try {
-            await api.post('/ml/integrations/finalizeIntegration', {
+            await api.post('/ml/integration/finalizeIntegration', {
                 integrationName: integrationName,
                 tempToken: tempToken
             }, {
@@ -133,7 +133,7 @@ export default function Integracoes() {
             setShowNameModal(false);
             setIntegrationName("");
             setTempToken("");
-            router.replace('/integracoes');
+            router.replace('/marketplaces');
             
             // ATUALIZA A LISTA IMEDIATAMENTE
             getIntegrations(); 

@@ -105,64 +105,66 @@ export default function Clientes() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col sm:ml-56 p-4 sm:p-6 lg:p-8 w-full bg-gray-50">
-      <div className="w-full max-w-none">
-        {/* Header */}
-        <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-6">
-          <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold text-gray-900">Clientes</h1>
-              <p className="text-sm text-gray-500 mt-1">Gerencie seus clientes cadastrados</p>
+    <div className="min-h-screen flex flex-col sm:ml-52 p-2 sm:p-4 lg:p-6 w-full h-full justify-itens-center items-start bg-slate-100">
+      <div className="md:w-[85%] p-2 mt-22 min-h-screen rounded-lg bg-white">
+        <div className="p-2 rounded-sm bg-slate-100 w-full">
+          <div className="m-2 flex flex-col md:flex-row justify-between">
+            <h1 className="text-2xl md:text-4xl font-bold font-sans text-gray-800">
+              Clientes
+            </h1>
+
+            <div className="flex items-center gap-2 mt-4 md:mt-0 w-full md:w-auto">
+              <Button
+                type="button"
+                variant="outline"
+                className="shadow-sm w-full sm:w-auto"
+                onClick={() => router.push('/clientes/novo')}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Novo Cliente
+              </Button>
             </div>
-            <Button 
-              onClick={() => router.push('/clientes/novo')}
-              className="bg-gray-900 hover:bg-gray-800 text-white"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Novo Cliente
-            </Button>
           </div>
 
-          {/* Filters */}
-          <div className="p-6 bg-gray-50">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Pesquisar por nome ou CNPJ..."
-                  className="pl-10 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
-                  value={pesquisa}
-                  onChange={(e) => setPesquisa(e.target.value)}
-                />
+          <div className="flex md:flex-row md:w-auto md:max-w-md md:min-w-[60%] items-center gap-2 mt-3">
+            <div className="relative flex-grow">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder="Pesquisar por nome ou CNPJ..."
+                className="pl-10 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white w-full"
+                value={pesquisa}
+                onChange={(e) => setPesquisa(e.target.value)}
+              />
+            </div>
+
+            <div className="flex items-center justify-center sm:justify-start gap-4 m-3">
+              <div className="flex items-center gap-1" title="Ativo">
+                {filtroAtivo === 'S' ?
+                  (<Button onClick={() => setFiltroAtivo('S')}
+                    className="bg-green-600 p-1 w-5 h-5 rounded-full flex items-center justify-center">
+                    <Check size={16} color="#FFF" strokeWidth={3} />
+                  </Button>) : (
+                    <Button onClick={() => setFiltroAtivo('S')}
+                      className="bg-gray-400 p-1 w-5 h-5 rounded-full flex items-center justify-center">
+                      <Check size={16} color="#FFF" strokeWidth={3} />
+                    </Button>
+                  )
+                }
               </div>
-              
-              <div className="flex items-center gap-2">
-                <Button
-                  variant={filtroAtivo === 'S' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setFiltroAtivo('S')}
-                  className={filtroAtivo === 'S' ? 'bg-green-600 hover:bg-green-700' : 'border-gray-300 text-gray-700'}
-                >
-                  <Check className="h-4 w-4 mr-1" />
-                  Ativos
-                </Button>
-                <Button
-                  variant={filtroAtivo === 'N' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setFiltroAtivo('N')}
-                  className={filtroAtivo === 'N' ? 'bg-red-600 hover:bg-red-700' : 'border-gray-300 text-gray-700'}
-                >
-                  <X className="h-4 w-4 mr-1" />
-                  Inativos
-                </Button>
-                <Button
-                  variant={filtroAtivo === 'all' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setFiltroAtivo('all')}
-                  className={filtroAtivo === 'all' ? 'bg-gray-600 hover:bg-gray-700' : 'border-gray-300 text-gray-700'}
-                >
-                  Todos
-                </Button>
+
+              <div className="flex items-center gap-1" title="Inativo">
+                {filtroAtivo === 'N' ? (
+                  <Button onClick={() => setFiltroAtivo('N')}
+                    className="bg-red-600 p-1 w-5 h-5 rounded-full flex items-center justify-center">
+                    <X size={16} color="#FFF" strokeWidth={3} />
+                  </Button>
+                ) : (
+                  <Button onClick={() => setFiltroAtivo('N')}
+                    className="bg-gray-400 p-1 w-5 h-5 rounded-full flex items-center justify-center">
+                    <X size={16} color="#FFF" strokeWidth={3} />
+                  </Button>
+                )
+                }
               </div>
             </div>
           </div>

@@ -104,9 +104,12 @@ useEffect(() => {
       );
     }
 
+    
     return(
-        <div className= " min-h-screen flex flex-col sm:ml-56 p-4 w-full h-full  justify-itens-center items-center    bg-slate-100"  >
+        <div className= " min-h-screen flex flex-col sm:ml-52 p-4 w-full h-full  justify-itens-center items-center    bg-slate-100"  >
           <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} to={'/veiculos'}/>
+      <div className=" md:w-[85%]  max-w-none">
+
            <div className="  w-full md:w-5/6   p-2 mt-22 min-h-screen    rounded-lg bg-white shadow-md " >
 
               <div className="flex justify-between items-center mb-2">
@@ -204,7 +207,8 @@ useEffect(() => {
                                    Salvar  
                               </Button>
                           </div>
-                      </div>
+               </div>
+     </div>
      </div>
 
     )

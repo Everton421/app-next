@@ -68,9 +68,16 @@ export default function PerfisPage() {
     );
   }
 
+
+   ///     <div className=" min-h-screen flex flex-col sm:ml-52 p-2 sm:p-4 lg:p-6 w-full h-full justify-itens-center items-start   bg-slate-100 "  >
+   ///   <div className="    md:w-[85%]  p-2 mt-22 min-h-screen  rounded-lg bg-white   " >
+   ///     <div className="  p-2   rounded-sm bg-slate-100 w-full  ">
+
+
   return (
-    <div className="min-h-screen bg-slate-100 p-4">
+    <div className="min-h-screen sm:ml-52 bg-slate-100 p-4">
       <div className="max-w-6xl mx-auto">
+        
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
           <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
             <div className="flex items-center gap-4">

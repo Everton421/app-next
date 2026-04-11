@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Button } from "../ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+import { Button } from "@/components/ui/button";
+import { Sheet , SheetContent, SheetTrigger} from "@/components/ui/sheet";
 import {
   Car,
   Home,
@@ -19,13 +19,8 @@ import {
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/home", label: "Início", icon: Home },
-  { href: "/pedidos", label: "Pedidos", icon: ShoppingCart },
-  { href: "/produtos", label: "Produtos", icon: Package },
-  { href: "/clientes", label: "Clientes", icon: User },
-  { href: "/servicos", label: "Serviços", icon: Wrench },
-  { href: "/veiculos", label: "Veículos", icon: Car },
-  { href: "/marketplaces", label: "Marketplace", icon: ShoppingBag },
+  { href: "/marketplaces", label: "Anúncios", icon: Home },
+  { href: "/marketplaces/integracoes", label: "integracoes", icon: Car },
 ];
 
 const NavItem = ({
@@ -64,14 +59,16 @@ export function Sidebar() {
       {/* Desktop Sidebar */}
       <aside className="fixed inset-y-0 left-0 z-50 hidden w-56 flex-col border-r border-sidebar-border bg-sidebar sm:flex print:hidden">
         {/* Logo */}
-        <div className="flex h-16 items-center gap-3 border-b border-sidebar-border px-6">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar-accent">
-            <LayoutDashboard className="h-5 w-5 text-sidebar-foreground" />
+         <Link  href={'/home'} >
+          <div className="flex h-16 items-center gap-3 border-b border-sidebar-border px-6">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar-accent">
+              <LayoutDashboard className="h-5 w-5 text-sidebar-foreground" />
+            </div>
+            <span className="text-lg font-semibold text-sidebar-foreground">
+              Gestão Pro
+            </span>
           </div>
-          <span className="text-lg font-semibold text-sidebar-foreground">
-            Gestão Pro
-          </span>
-        </div>
+         </Link>
 
         {/* Navigation */}
         <nav className="flex-1 space-y-1 px-3 py-4">
@@ -158,6 +155,7 @@ export function Sidebar() {
         </header>
         {/* Spacer for fixed header */}
         <div className="h-14" />
+        
       </div>
     </>
   );

@@ -93,69 +93,72 @@ const {user, loading }:any = useAuth();
   
        }
 
+    
+       
     return(
-      <div className= " min-h-screen flex flex-col sm:ml-56 p-4 sm:p-6 lg:p-8 w-full h-full  justify-itens-center items-center    bg-slate-100"  >
-        <div className="  w-full md:w-5/6   p-2 mt-22 min-h-screen    rounded-lg bg-white shadow-md " >
-           
-          <div className="p-2 rounded-sm bg-slate-100">
+      <div className=" min-h-screen flex flex-col sm:ml-52 p-2 sm:p-4 lg:p-6 w-full h-full justify-itens-center items-start   bg-slate-100 "  >
+      <div className="    md:w-[85%]  p-2 mt-22 min-h-screen  rounded-lg bg-white   " >
+        <div className="  p-2   rounded-sm bg-slate-100 w-full  ">
 
-            <div className="m-5  flex justify-between   ">
-                 <h1 className="text-2xl md:text-4xl font-bold font-sans text-gray-800">
-                     Serviços
-                  </h1>
-                </div>
+            <div className="m-2 flex flex-col md:flex-row justify-between">
+              <h1 className="text-2xl md:text-4xl font-bold font-sans text-gray-800">
+                Serviços
+              </h1>
 
-           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6  ">
-          <div className="  md:w-auto md:max-w-md md:min-w-[60%] items-center gap-2 mt-3" >
-
-            <Input
-              placeholder="Pesquisar por código ou descrição..."
-              className="shadow-sm flex-grow bg-white" // Takes available space
-              value={pesquisa}
-              onChange={(e) => setPesquisa(e.target.value)}
-            />
-           <div className="flex items-center justify-center sm:justify-start gap-4 m-3">
-              <div className="flex items-center gap-1" title="Ativo">
-              { filtroAtivo === 'S' ?
-                ( <Button onClick={()=> setFiltroAtivo('S')}
-                 className="bg-green-600 p-1 w-5 h-5 rounded-full flex items-center justify-center">
-                  <Check size={16} color="#FFF" strokeWidth={3} />
-                </Button> ) :(
-                  <Button onClick={()=> setFiltroAtivo('S')}
-                     className="bg-gray-400 p-1 w-5 h-5 rounded-full flex items-center justify-center">
-                   <Check size={16} color="#FFF" strokeWidth={3} />
-                 </Button>    
-                )
-              } 
-              </div>
-              <div className="flex items-center gap-1" title="Inativo">
-              { filtroAtivo === 'N' ? (
-                 <Button  onClick={()=> setFiltroAtivo('N')}
-                 className="bg-red-600 p-1 w-5 h-5 rounded-full flex items-center justify-center">
-                  <X size={16} color="#FFF" strokeWidth={3} />
+              <div className="flex items-center gap-2 mt-4 md:mt-0 w-full md:w-auto">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="shadow-sm w-full sm:w-auto"
+                  onClick={() => router.push('/servicos/novo')}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Novo Serviço
                 </Button>
-                ) : (
-                  <Button onClick={()=> setFiltroAtivo('N')}
-                   className="bg-gray-400 p-1 w-5 h-5 rounded-full flex items-center justify-center">
-                  <X size={16} color="#FFF" strokeWidth={3} />
-                </Button>
-                )
-              }
-              
               </div>
             </div>
-          </div>
-      <div className="flex flex-col sm:flex-row sm:items-center gap-4   md:mt-0">
-              <Button type="button" className="shadow-sm w-full sm:w-auto" 
-              onClick={()=> router.push('/servicos/novo')}
-            >
-              <Plus className="h-4 w-4 mr-2" /> Novo
-            </Button>
 
-          
-          </div>
+            <div className="flex md:flex-row md:w-auto md:max-w-md md:min-w-[60%] items-center gap-2 mt-3">
+              <div className="relative flex-grow">
+                <Input
+                  placeholder="Pesquisar por código ou descrição..."
+                  className="shadow-sm flex-grow bg-white pl-10"
+                  value={pesquisa}
+                  onChange={(e) => setPesquisa(e.target.value)}
+                />
+              </div>
 
-        </div>  
+              <div className="flex items-center justify-center sm:justify-start gap-4 m-3">
+                <div className="flex items-center gap-1" title="Ativo">
+                  {filtroAtivo === 'S' ?
+                    (<Button onClick={() => setFiltroAtivo('S')}
+                      className="bg-green-600 p-1 w-5 h-5 rounded-full flex items-center justify-center">
+                      <Check size={16} color="#FFF" strokeWidth={3} />
+                    </Button>) : (
+                      <Button onClick={() => setFiltroAtivo('S')}
+                        className="bg-gray-400 p-1 w-5 h-5 rounded-full flex items-center justify-center">
+                        <Check size={16} color="#FFF" strokeWidth={3} />
+                      </Button>
+                    )
+                  }
+                </div>
+
+                <div className="flex items-center gap-1" title="Inativo">
+                  {filtroAtivo === 'N' ? (
+                    <Button onClick={() => setFiltroAtivo('N')}
+                      className="bg-red-600 p-1 w-5 h-5 rounded-full flex items-center justify-center">
+                      <X size={16} color="#FFF" strokeWidth={3} />
+                    </Button>
+                  ) : (
+                    <Button onClick={() => setFiltroAtivo('N')}
+                      className="bg-gray-400 p-1 w-5 h-5 rounded-full flex items-center justify-center">
+                      <X size={16} color="#FFF" strokeWidth={3} />
+                    </Button>
+                  )
+                  }
+                </div>
+              </div>
+            </div>
          </div>
 
             <div className="w-full mt-4  h-screen shadow-lg ">
