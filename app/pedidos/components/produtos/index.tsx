@@ -98,12 +98,12 @@ export default function ListaProdutos( { selecionarProduto  }:props ){
                     placeholder="pesquisar por codigo ou descrição..."
                 />
             {isLoading ? (
-                <p className="sm:ml-64 p-4 absolute">carregando...</p>
+                <p className="sm:ml-56 p-4 absolute">carregando...</p>
             ) : (
                 dados.length > 0 && (
                     <div className="absolute z-10    ">
                         {dados.slice(0, 2).map((i: any) => (
-                            <div key={i.codigo} onClick={() => seleciona(i)} className="sm:ml-64 m-1   bg-gray-500 shadow-lg border-current rounded-md  cursor-pointer p-1">
+                            <div key={i.codigo} onClick={() => seleciona(i)} className="sm:ml-56 m-1   bg-gray-500 shadow-lg border-current rounded-md  cursor-pointer p-1">
                                 <span className=" text-white font-bold">Cód: {i.codigo}  {i.descricao} </span>
                                 <br/>
                                 <div className="items-center  justify-between flex">

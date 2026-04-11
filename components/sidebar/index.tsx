@@ -60,7 +60,7 @@ export function Sidebar() {
   return (
     <>
       {/* Desktop Sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-50 hidden w-64 flex-col border-r border-sidebar-border bg-sidebar sm:flex print:hidden">
+      <aside className="fixed inset-y-0 left-0 z-50 hidden w-56 flex-col border-r border-sidebar-border bg-sidebar sm:flex print:hidden">
         {/* Logo */}
         <div className="flex h-16 items-center gap-3 border-b border-sidebar-border px-6">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar-accent">
@@ -112,7 +112,7 @@ export function Sidebar() {
                 <span className="sr-only">Abrir menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-64 bg-sidebar p-0 border-sidebar-border">
+            <SheetContent side="left" className="w-56 bg-sidebar p-0 border-sidebar-border">
               {/* Mobile Logo */}
               <div className="flex h-16 items-center gap-3 border-b border-sidebar-border px-6">
                 <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar-accent">

@@ -61,7 +61,7 @@ export default function NovaConta(){
 
     return(
          
-   <div className=" min-h-screen flex flex-col sm:ml-64 p-4 w-full h-full justify-itens-center items-center   bg-slate-100 overflow-auto "  >
+   <div className=" min-h-screen flex flex-col sm:ml-56 p-4 w-full h-full justify-itens-center items-center   bg-slate-100 overflow-auto "  >
                  { loading && (
                     <div className="flex justify-center my-4"> {/* Container para centralizar */}
                         <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />

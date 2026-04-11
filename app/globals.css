@@ -101,3 +101,19 @@
     text-wrap: balance;
   }
 }
+
+/* Prevent horizontal overflow */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Page container utility */
+.page-container {
+  @apply min-h-screen w-full p-4 sm:p-6 lg:p-8;
+}
+
+/* Fluid content wrapper */
+.content-fluid {
+  @apply w-full max-w-none;
+}

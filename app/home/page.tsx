@@ -179,7 +179,7 @@ export default function Home() {
     }
 
     return (
-        <main className="min-h-screen bg-secondary/30 sm:ml-64">
+        <main className="min-h-screen bg-secondary/30 sm:ml-56">
             <div className="p-6 md:p-8">
                 {/* Header */}
                 <div className="mb-8">

@@ -274,7 +274,7 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
 
 
     return (
- <div className= " h-screen flex flex-col sm:ml-64 p-4 w-full   justify-itens-center items-center    bg-slate-100"  >
+ <div className= " h-screen flex flex-col sm:ml-56 p-4 w-full   justify-itens-center items-center    bg-slate-100"  >
 
             <ScrollArea className="flex-1 w-full max-w-screen-2xl bg-white rounded-lg shadow-md mb-20">
 
@@ -494,7 +494,7 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
 
             </ScrollArea> {/* End ScrollArea */}
 
-            <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-md p-3 z-10 sm:ml-64">
+            <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-md p-3 z-10 sm:ml-56">
                 <div className="w-full max-w-7xl mx-auto flex justify-between">
                    
                  <Button 

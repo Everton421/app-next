@@ -109,7 +109,7 @@ export default function NovaCategoria() {
      }
 
     return (
-        <div className="min-h-screen flex flex-col sm:ml-64 p-4 bg-slate-100 space-y-6 pb-20"> {/* Adiciona space-y e padding-bottom */}
+        <div className="min-h-screen flex flex-col sm:ml-56 p-4 bg-slate-100 space-y-6 pb-20"> {/* Adiciona space-y e padding-bottom */}
             
                              <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} to={'/categorias'}/>
             
@@ -154,7 +154,7 @@ export default function NovaCategoria() {
                         </CardContent>
                     </Card>
 
-                <div className="fixed bottom-0 left-0 right-0 border-t bg-background shadow-md p-3 z-10 sm:ml-64 bg-white">
+                <div className="fixed bottom-0 left-0 right-0 border-t bg-background shadow-md p-3 z-10 sm:ml-56 bg-white">
                      <div className="max-w-3xl mx-auto flex justify-end">
                          <Button
                            onClick={gravar}

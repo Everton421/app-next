@@ -104,7 +104,7 @@ if (loading) {
 
     return (
 
-        <div className=" min-h-screen flex flex-col sm:ml-64 p-4 w-full h-full justify-itens-center items-center   bg-slate-100"  >
+        <div className=" min-h-screen flex flex-col sm:ml-56 p-4 sm:p-6 lg:p-8 w-full h-full justify-itens-center items-center   bg-slate-100"  >
            <div className="  w-full md:w-5/6   p-2 mt-22 min-h-screen    rounded-lg bg-white shadow-md " >
             <div className="p-2 rounded-sm bg-slate-100">
                 <div className="m-5  flex justify-between   ">

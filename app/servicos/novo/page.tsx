@@ -108,7 +108,7 @@ export default function NovoServico() {
 
 
     return (
-        <div className="h-screen flex flex-col sm:ml-64 bg-slate-100 overflow-hidden">
+        <div className="h-screen flex flex-col sm:ml-56 bg-slate-100 overflow-hidden">
      <div className="w-full max-w-screen-2xl mx-auto bg-white rounded-lg shadow-md p-4 md:p-6 lg:p-8 flex flex-col flex-1">
 
             <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} to={'/servicos'} />
@@ -168,8 +168,8 @@ export default function NovoServico() {
                 </div>
             </ScrollArea>
 
-            {/* Fixed Bottom Bar - Aligned with sm:ml-64 */}
-            <div className="fixed bottom-0 left-0 right-0 border-t bg-background shadow-md p-3 z-10 sm:ml-64 bg-white">
+            {/* Fixed Bottom Bar - Aligned with sm:ml-56 */}
+            <div className="fixed bottom-0 left-0 right-0 border-t bg-background shadow-md p-3 z-10 sm:ml-56 bg-white">
                 {/* Inner container matching content max-width */}
                 <div className="max-w-3xl mx-auto flex justify-end">
                     <Button onClick={gravar} 

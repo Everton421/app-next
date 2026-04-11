@@ -27,7 +27,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-40 hidden sm:flex h-16 items-center justify-between border-b bg-background px-6 sm:ml-64 print:hidden">
+    <nav className="sticky top-0 z-40 hidden sm:flex h-16 items-center justify-between border-b bg-background px-6 sm:ml-56 print:hidden">
       {/* Search */}
       <div className="flex items-center gap-4">
         <div className="relative">

@@ -144,8 +144,8 @@ export default function Pedidos(){
   }
 
   return (
-    <div className="min-h-screen flex flex-col sm:ml-64 p-4 w-full bg-gray-50">
-      <div className="w-full max-w-6xl mx-auto">
+    <div className="min-h-screen flex flex-col sm:ml-56 p-4 sm:p-6 lg:p-8 w-full bg-gray-50">
+      <div className="w-full max-w-none">
           {/* Header Card */}
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-6">
             <div className="px-4 md:px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -247,7 +247,7 @@ export default function Pedidos(){
             </div>
           ) : dadosFiltro.length > 0 ? (
             <div className="overflow-x-auto">
-              <Table className="w-full min-w-[640px]">
+              <Table className="w-full">
                 <TableHeader className="bg-gray-50">
                   <TableRow>
                     <TableHead className="text-gray-600 font-medium w-12 sm:w-16 text-center text-xs sm:text-sm">Sit.</TableHead>

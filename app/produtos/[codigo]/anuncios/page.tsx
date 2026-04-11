@@ -136,7 +136,7 @@ export default function Anuncios({ params }: { params: { codigo: string } }) {
     }
 
     return (
-        <div className="min-h-screen flex flex-col sm:ml-64 bg-slate-100">
+        <div className="min-h-screen flex flex-col sm:ml-56 bg-slate-100">
             
             {/* Header Fixo / Topo */}
             <div className="w-full bg-white border-b border-gray-200 p-4 shadow-sm flex items-center justify-between sticky top-0 z-10">

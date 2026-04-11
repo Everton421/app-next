@@ -183,7 +183,7 @@ export default function Integracoes() {
     }
 
     return (
-        <main className="sm:ml-64 p-6 bg-slate-50 min-h-screen">
+        <main className="sm:ml-56 p-4 sm:p-6 lg:p-8 bg-slate-50 min-h-screen">
             
             <div className="max-w-6xl mx-auto space-y-8">
                 

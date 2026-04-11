@@ -349,7 +349,7 @@ export default function NovoPedido( ){
 
     if (isLoadingAuth || authHookLoading) {
         return (
-          <div className="flex justify-center items-center h-screen bg-slate-100 sm:ml-64">
+          <div className="flex justify-center items-center h-screen bg-slate-100 sm:ml-56">
              <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="Verificando autenticação..." textColor="#2563eb" />
           </div>
         );
@@ -357,7 +357,7 @@ export default function NovoPedido( ){
   
     if (!user || !dadosOrcamento?.codigo) { // Se não tem usuário ou código do pedido não foi gerado
         return (
-           <div className="flex justify-center items-center h-screen bg-slate-100 sm:ml-64">
+           <div className="flex justify-center items-center h-screen bg-slate-100 sm:ml-56">
              <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="Preparando formulário..." textColor="#2563eb" />
            </div>
         );
@@ -365,14 +365,14 @@ export default function NovoPedido( ){
 
     if (isLoading && !visible) { // Loading para operações como gravar, mas não para o alerta
         return( 
-          <div className="min-h-screen flex items-center justify-center flex-col sm:ml-64 p-4 bg-slate-100">
+          <div className="min-h-screen flex items-center justify-center flex-col sm:ml-56 p-4 bg-slate-100">
             <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="Processando..." textColor="#2563eb" />
           </div> 
         );  
     }
 
     return (
-        <div className="min-h-screen sm:ml-64 p-2 md:p-4 bg-gray-100 pb-28 md:pb-24"> {/* Padding inferior para o rodapé fixo */}
+        <div className="min-h-screen sm:ml-56 p-2 md:p-4 bg-gray-100 pb-28 md:pb-24"> {/* Padding inferior para o rodapé fixo */}
             <AlertDemo content={msgApi} title="Atenção" visible={visible} setVisible={setVisible} to={msgApi?.includes("sucesso") ? '/pedidos' : undefined} />
         
             {/* Cabeçalho */}
@@ -583,8 +583,8 @@ export default function NovoPedido( ){
             </div>                                
         
             {/* Rodapé Fixo com Totais e Botão Gravar */}
-            <div className="bg-white p-3 md:p-4 fixed bottom-0 left-0 right-0 sm:ml-64 shadow-md-top border-t border-gray-200">
-                <div className="max-w-full mx-auto"> {/* Alterado para max-w-full para usar todo o espaço no sm:ml-64 */}
+            <div className="bg-white p-3 md:p-4 fixed bottom-0 left-0 right-0 sm:ml-56 shadow-md-top border-t border-gray-200">
+                <div className="max-w-full mx-auto"> {/* Alterado para max-w-full para usar todo o espaço no sm:ml-56 */}
                     <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2">
                         <div className="text-center md:text-left">
                             <span className="text-gray-600 font-semibold text-xs sm:text-sm md:text-base">Total: R$ {total?.toFixed(2)}</span>

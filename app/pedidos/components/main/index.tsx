@@ -584,7 +584,7 @@ useEffect(
  
  if (isLoading  ) {
     return( 
-      <div className=" min-h-screen flex items-center justify-center flex-col sm:ml-64 p-4 bg-slate-100"  >
+      <div className=" min-h-screen flex items-center justify-center flex-col sm:ml-56 p-4 bg-slate-100"  >
       <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
      </div> 
      )  
@@ -592,7 +592,7 @@ useEffect(
 
 
 return(
-        <div className="  min-h-screen sm:ml-64 p-4   w-full     bg-gray-100  ">
+        <div className="  min-h-screen sm:ml-56 p-4   w-full     bg-gray-100  ">
 
              <AlertDemo content={msgApi}  visible={visible} setVisible={setVisible} to={'/pedidos'} />
         
@@ -844,7 +844,7 @@ return(
             </div>                                
         
  
-            <div className="bg-white p-7  sm:ml-64  fixed bottom-0 left-0 right-0 rounded-xl shadow-md  ">
+            <div className="bg-white p-7  sm:ml-56  fixed bottom-0 left-0 right-0 rounded-xl shadow-md  ">
                 <Table className="w-full">
                     <TableBody>
                         <TableRow>

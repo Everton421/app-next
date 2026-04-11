@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 export default function Configuracoes(){
     const router = useRouter();
     return(
-    <main className="sm:ml-64 p-4 bg-slate-100 min-h-screen  h-full  " > {/* Garantir altura mínima */}
+    <main className="sm:ml-56 p-4 sm:p-6 lg:p-8 bg-slate-100 min-h-screen  h-full  " > {/* Garantir altura mínima */}
 
                 <Button variant="outline" onClick={()=> router.push('/home')} className="mb-5 shadow-md">
                             <ArrowLeft className="mr-2 h-4 w-4" /> Voltar

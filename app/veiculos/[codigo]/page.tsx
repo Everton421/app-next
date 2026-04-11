@@ -166,7 +166,7 @@ export default function veiculo({params}:any){
 
  
     return(
-        <div className= " min-h-screen flex flex-col sm:ml-64 p-4 w-full h-full  justify-itens-center items-center    bg-slate-100"  >
+        <div className= " min-h-screen flex flex-col sm:ml-56 p-4 w-full h-full  justify-itens-center items-center    bg-slate-100"  >
        
           <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} to={'/veiculos'}/>
        
@@ -264,7 +264,7 @@ export default function veiculo({params}:any){
           </div>
          </div>
 
-              <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-md p-3 z-10 sm:ml-64">
+              <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-md p-3 z-10 sm:ml-56">
                           <div className="w-full max-w-7xl mx-auto flex justify-end">
                               <Button
                                    onClick={gravar}

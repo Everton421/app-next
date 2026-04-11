@@ -162,7 +162,7 @@ export default function NovoCliente() {
      
     return (
         // Adicionado pb-20 para dar espaço para o botão fixo no final em telas menores
-        <div className="min-h-screen flex flex-col sm:ml-64 p-4 bg-slate-100 pb-20 md:pb-16">
+        <div className="min-h-screen flex flex-col sm:ml-56 p-4 bg-slate-100 pb-20 md:pb-16">
             <AlertDemo content={msgAlert} title="Atenção" visible={visible} setVisible={setVisible} to={rota} />
 
             {/* Cabeçalho: Data e Botão Voltar */}
@@ -341,8 +341,8 @@ export default function NovoCliente() {
             </div>
 
             {/* Botão Gravar Fixo */}
-            {/* Adicionado sm:ml-64 para alinhar com o conteúdo principal se a sidebar estiver presente */}
-            <div className="bg-white p-3 fixed bottom-0 left-0 right-0 shadow-md-top sm:ml-64 border-t border-gray-200">
+            {/* Adicionado sm:ml-56 para alinhar com o conteúdo principal se a sidebar estiver presente */}
+            <div className="bg-white p-3 fixed bottom-0 left-0 right-0 shadow-md-top sm:ml-56 border-t border-gray-200">
                 {/* shadow-md-top é uma customização, pode usar shadow-md e ajustar se necessário */}
                 <div className="max-w-7xl mx-auto flex justify-end"> {/* Centraliza conteúdo e alinha botão à direita */}
                     <Button className="bg-black hover:bg-gray-800 flex items-center gap-2 px-4 py-2" onClick={() => gravar()}>

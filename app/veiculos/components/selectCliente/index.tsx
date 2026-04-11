@@ -112,14 +112,14 @@ function selecionar(e:cliente){
                                         placeholder="Pesquisar por codigo ou nome..."
                           />
               {loading ? (
-                <p className="sm:ml-64 p-4 absolute">carregando...</p>
+                <p className="sm:ml-56 p-4 absolute">carregando...</p>
                      ) : (
                         dados && dados.length > 0 && (
                              <div className="absolute z-10    ">
                                { dados.slice(0, 2).map((i: any) => (
                                    <div key={i.codigo} 
                                    onClick={() => selecionar(i)} 
-                                   className="   sm:ml-64 p-2 m-1 shadow-lg bg-gray-500 border-current rounded-md cursor-pointer  ">
+                                   className="   sm:ml-56 p-2 m-1 shadow-lg bg-gray-500 border-current rounded-md cursor-pointer  ">
                                 
                                  <span className=" text-xs md:text-base text-white font-bold">Código: {i.codigo}  {i.nome}  </span>
                                     <br/>
