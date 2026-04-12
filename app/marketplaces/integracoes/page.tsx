@@ -11,7 +11,7 @@ import {
     DialogDescription,
     DialogFooter 
 } from "@/components/ui/dialog";
-import { CirclePlus, Loader2, Save, Trash2, Calendar, Store, LogOut } from "lucide-react";
+import { CirclePlus, Loader2, Save, Trash2, Calendar, Store, LogOut, LogIn } from "lucide-react";
 import Image from "next/image";
 import { configApi } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
@@ -133,7 +133,7 @@ export default function Integracoes() {
             setShowNameModal(false);
             setIntegrationName("");
             setTempToken("");
-            router.replace('/marketplaces');
+            router.replace('/marketplaces/integracoes');
             
             // ATUALIZA A LISTA IMEDIATAMENTE
             getIntegrations(); 
@@ -163,10 +163,10 @@ export default function Integracoes() {
 
             // 3. Agora iniciamos o fluxo normal, o ML vai pedir login pois o cookie morreu
             try {
-                const result = await api.post(`/ml/integrations/getCode`, {}, {
-                    params: { vendedor: user.codigo },
-                    headers: { token: user.token },
-                });
+                 const result = await api.get(`/ml/integration/getCode`,   {
+                        headers: { token: user.token },
+                        params: { vendedor: user.codigo } 
+                    });
 
                 const externalUrl = result.data.uri;
                 if (externalUrl) {
@@ -198,10 +198,9 @@ export default function Integracoes() {
                  
                 </div>
                   <div className="flex gap-2">
-                        {/* Botão Principal (Fluxo Rápido) */}
                         <Button
                             className="bg-[#ffe600] text-slate-900 hover:bg-[#e6cf00] font-medium"
-                            onClick={() => handleConnectML()} // Chama o método normal
+                            onClick={() => handleSwitchAccountAndConnect()}  
                             disabled={isRedirecting}
                         >
                             {isRedirecting ? (
@@ -228,13 +227,17 @@ export default function Integracoes() {
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
+                                {/**
                                 <DropdownMenuItem onClick={() => handleConnectML()}>
                                     Conectar conta atual (Navegador)
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleSwitchAccountAndConnect()} className="text-red-600">
-                                    <LogOut className="mr-2 h-4 w-4" />
-                                    Trocar de conta e conectar
+                                 */ }
+                            <DropdownMenuItem onClick={() => handleSwitchAccountAndConnect()}  >
+                                    <LogIn className="mr-2 h-4 w-4" />
+                                    Conectar
                                 </DropdownMenuItem>
+                                
+
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
