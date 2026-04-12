@@ -15,6 +15,7 @@ import {
   Menu,
   LayoutDashboard,
   ShoppingBag,
+  Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,6 +27,7 @@ const navItems = [
   { href: "/servicos", label: "Serviços", icon: Wrench },
   { href: "/veiculos", label: "Veículos", icon: Car },
   { href: "/marketplaces", label: "Marketplace", icon: ShoppingBag },
+  { href: "/marketplaces/consulta", label: "Consultar Anúncios", icon: Search },
 ];
 
 const NavItem = ({
