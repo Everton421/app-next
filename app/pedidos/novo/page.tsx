@@ -23,6 +23,7 @@ import { ThreeDot } from "react-loading-indicators";
 import { AlertDemo } from "@/components/alert/alert";
 import { DateService } from "@/app/services/dateService";
 import { constructNow } from "date-fns";
+import { Produto_pedido, Servico_pedido, clientePedido, formaPagamento, pedido, parcela } from "@/types/pedido";
 
 // Interfaces (mantenha ou melhore conforme sua estrutura de dados)
 

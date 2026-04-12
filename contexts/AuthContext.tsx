@@ -1,56 +1,70 @@
- 
 'use client'
- 
- import React, { createContext, useState, useContext, useEffect, Children } from "react";
-import {   useRouter } from "next/navigation"
-type user = {
-    codigo:number,
-    cnpj:string
-    vendedor:number
-    nome:string
+
+import React, { createContext, useState, useContext, useEffect } from "react";
+import { useRouter } from "next/navigation";
+
+export interface User {
+  codigo: number;
+  cnpj?: string;
+  vendedor?: number;
+  nome: string;
+  token: string;
 }
-const AuthContext  = createContext({});
 
-export const AuthProvider = ({children}: any )=>{
-    
-    const [ user, setUser ]= useState<user | null >(null); //armazena os dados do usuario, { usuario, cnpj, etc..}
-    const [ loading, setloading ] = useState<boolean>(true); // para saber se já foi verificado o localStorage
-    
-    useEffect(()=>{
-        const storedUser = localStorage.getItem('authUser');
+interface AuthContextType {
+  user: User | null;
+  loading: boolean;
+  logout: () => void;
+  setUser: (user: User | null) => void;
+}
 
-        if(storedUser)  {
-            try{
-                setUser(JSON.parse(storedUser));
-            }catch(e){
-                console.error('Erro ao transformar usuario do localStorage ', e );
-                localStorage.removeItem('authUser');
-            }
-        }
-        setloading(false);
-    },[]);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const router = useRouter();
 
-    const logout = ()=>{
-        setUser(null);
-        localStorage.removeItem('authUser')
+  useEffect(() => {
+    const storedUser = localStorage.getItem('authUser');
+
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (e) {
+        console.error('Erro ao transformar usuario do localStorage ', e);
+        localStorage.removeItem('authUser');
+      }
     }
+    setLoading(false);
+  }, []);
 
-    const value = {
-        user,
-        loading,
-        logout,
-        setUser,
-        
-    }
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('authUser');
+    document.cookie = 'authUser=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    document.cookie = 'authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    router.push('/');
+  };
 
-    return ( 
+  const value: AuthContextType = {
+    user,
+    loading,
+    logout,
+    setUser,
+  };
+
+  return (
     <AuthContext.Provider value={value}>
-        {children}
+      {children}
     </AuthContext.Provider>
-    )
-}
+  );
+};
 
-export const useAuth = ()=>{
-    return useContext(AuthContext);
-}
+export const useAuth = (): AuthContextType => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};

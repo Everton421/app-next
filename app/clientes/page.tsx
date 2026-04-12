@@ -63,7 +63,7 @@ export default function Clientes() {
     setError(null)
     
     try {
-      const api = configApi(user?.token);
+      const api = configApi();
       const params: any = {
         ativo: filtroAtivo === 'all' ? undefined : filtroAtivo
       };

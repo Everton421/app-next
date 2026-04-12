@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { configApi } from "../services/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
-import { basicServico } from "./types/servico";
+import { basicServico } from "@/types/servico";
 import { ThreeDot } from "react-loading-indicators";
 
 

@@ -19,7 +19,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Save, ArrowLeft } from "lucide-react"; // Add ArrowLeft if you want a back button
 import { useRouter } from "next/navigation"; // Use router for navigation
 import { useCallback, useEffect, useState } from "react";
-import { basicServico } from "../types/servico";  
+import { basicServico } from "@/types/servico";  
 import { ThreeDot } from "react-loading-indicators";
 
 

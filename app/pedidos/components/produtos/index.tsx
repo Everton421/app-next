@@ -2,6 +2,7 @@
 import {   configApi } from "@/app/services/api"
 import { useAuth } from "@/contexts/AuthContext";
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
+import { Produto_pedido } from "@/types/pedido"
 
 type props = { 
     //selecionarProduto:   Dispatch<SetStateAction<Produto_pedido>> 

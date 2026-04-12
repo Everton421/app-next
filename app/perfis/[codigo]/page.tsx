@@ -97,7 +97,7 @@ export default function EditarPerfilPage() {
 
   const toggleAllInModule = (module: string) => {
     const modulePermissoes = todasPermissoes.filter((p) =>
-      p.id.startsWith(module)
+      p.id?.startsWith(module)
     );
     const moduleCodes = modulePermissoes.map((p) => p.codigo);
     const allSelected = moduleCodes.every((code) =>
@@ -109,7 +109,7 @@ export default function EditarPerfilPage() {
         prev.filter((code) => !moduleCodes.includes(code))
       );
     } else {
-      setSelectedPermissoes((prev) => [...new Set([...prev, ...moduleCodes])]);
+      setSelectedPermissoes((prev) => Array.from(new Set([...prev, ...moduleCodes])));
     }
   };
 
@@ -123,7 +123,7 @@ export default function EditarPerfilPage() {
 
   const isAllSelectedInModule = (module: string) => {
     const modulePermissoes = todasPermissoes.filter((p) =>
-      p.id.startsWith(module)
+      p.id?.startsWith(module)
     );
     const moduleCodes = modulePermissoes.map((p) => p.codigo);
     return moduleCodes.every((code) => selectedPermissoes.includes(code));
@@ -131,7 +131,7 @@ export default function EditarPerfilPage() {
 
   const isSomeSelectedInModule = (module: string) => {
     const modulePermissoes = todasPermissoes.filter((p) =>
-      p.id.startsWith(module)
+      p.id?.startsWith(module)
     );
     const moduleCodes = modulePermissoes.map((p) => p.codigo);
     const selectedInModule = moduleCodes.filter((code) =>
@@ -360,7 +360,7 @@ export default function EditarPerfilPage() {
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                             {actions.map((action) => {
                               const permissao = todasPermissoes.find(
-                                (p) => p.id === action.id
+                                (p) => p.modulo === module && p.descricao === action
                               );
                               const isChecked = permissao
                                 ? selectedPermissoes.includes(permissao.codigo)
@@ -368,7 +368,7 @@ export default function EditarPerfilPage() {
 
                               return (
                                 <label
-                                  key={action.id}
+                                  key={action}
                                   className={`flex items-center gap-2 p-2 rounded-lg border cursor-pointer transition-colors ${
                                     isChecked
                                       ? "bg-blue-50 border-blue-300"
@@ -385,7 +385,7 @@ export default function EditarPerfilPage() {
                                     className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                                   />
                                   <span className="text-sm text-gray-700">
-                                    {action.label}
+                                    {action}
                                   </span>
                                 </label>
                               );

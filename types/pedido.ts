@@ -1,4 +1,4 @@
-type clientePedido =
+export type clientePedido =
 {
    celular: string,
    cep: string,
@@ -14,7 +14,7 @@ type clientePedido =
    vendedor: number,
 }
 
-type Produto_pedido = 
+export type Produto_pedido = 
    {
        codigo: number,
        desconto:number,
@@ -25,7 +25,7 @@ type Produto_pedido =
        total :number,
    }  
 
-   type  Servico_pedido = 
+   export type  Servico_pedido = 
    {
        aplicacao: string ,
        codigo: number ,
@@ -36,11 +36,12 @@ type Produto_pedido =
        valor: number ,
    }
 
-   type pedido = {
+   export type pedido = {
     codigo?:number,
     id?:string,
     id_externo?:number | string,
-     cliente:clientePedido,
+     cliente?:clientePedido,
+     cliente_nome?:string,
      codigo_cliente:number,
      contato:string,
      data_cadastro:string,
@@ -60,15 +61,15 @@ type Produto_pedido =
      veiculo:number
      vendedor:number
    }
-type parcela = {
+export type parcela = {
     pedido: number,
      parcela: number,
      valor: number,
       vencimento:string
 }
 
-type formaPagamento = {
-    codigo:number,
+export type formaPagamento = {
+   codigo:number,
 ativo:string
 data_cadastro:string
 data_recadastro:string

@@ -1,192 +1,182 @@
 'use client'
 
 import Image from "next/image";
-import { ServerContextJSONValue, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { configApi } from "@/app/services/api";
-import { ThreeDot }  from 'react-loading-indicators';  
+import { configApi } from "@/lib/api";
+import { ThreeDot } from 'react-loading-indicators';
+
+function setCookie(name: string, value: string, days: number = 7) {
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Strict`;
+}
 
 export default function LoginForm() {
+  const router = useRouter();
+  const { setUser }: { setUser: (user: import("@/contexts/AuthContext").User | null) => void } = useAuth();
 
-    const router = useRouter();
-    const { setUser }:any = useAuth();  
+  const [email, setEmail] = useState<string>('');
+  const [senha, setSenha] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [erro, setErro] = useState(false);
+  const [msgErro, setMsgErro] = useState<string | undefined>();
 
-    const [ email, setEmail] = useState<string>('');  
-    const [ senha, setSenha ] = useState<string>('');  
-    const [ isSubmitting, setIsSubmitting] = useState(false);  
+  const api = configApi();
 
-    const [ erro, setErro ] = useState(false);
-    const [ msgErro , setMsgErro] = useState<string | undefined>();  
-
-    const api = configApi();
-
-
-   const login = async (email:string, senha:string) => {
-
-        if (!email || !senha) {
-            setErro(true);
-            setMsgErro("Por favor, preencha o email e a senha.");
-            throw new Error("Campos obrigatórios não preenchidos.");  
-        }
-
-        const data =  { email:email, senha:senha };
-
-        try{
-            const response = await api.post(`/login`, data );
-            if( response.status === 200  ){
-                setErro(false);  
-                setMsgErro(undefined);
-                const token = response.data.token
-                const resultuser = await api.get('/usuarios',{
-                    headers:{
-                        token
-                    }
-                });
-                
-
-                 const userData = { 
-                    token: response.data.token,
-                    codigo:resultuser.data.codigo,
-                    nome: resultuser.data.nome
-                }
-                setUser(userData); 
-              localStorage.setItem('authUser', JSON.stringify(userData));  
-                router.push('/home');  
-            } else {
-                 setErro(true);
-                 setMsgErro(response.data.msg || "Ocorreu um erro inesperado.");
-                 setUser(null);
-                 localStorage.removeItem('authUser');
-                 throw new Error(response.data.msg || "Erro na resposta da API");
-            }
-        } catch(e: any) { 
-            console.error('Ocorreu um erro ao tentar fazer o login', e);
-            setErro(true);
-            setMsgErro(e?.response?.data?.msg || e?.message || "Erro de conexão ou servidor.");
-            setUser(null);
-            localStorage.removeItem('authUser');
-            throw e; 
-                }
+  const login = async (email: string, senha: string) => {
+    if (!email || !senha) {
+      setErro(true);
+      setMsgErro("Por favor, preencha o email e a senha.");
+      throw new Error("Campos obrigatórios não preenchidos.");
     }
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) =>{ // Tipar o evento
-        e.preventDefault();
-        // setError(null); // Removido se não usado
-        setErro(false); // Limpa erros anteriores específicos da API
+    const data = { email, senha };
+
+    try {
+      const response = await api.post(`/login`, data);
+      if (response.status === 200) {
+        setErro(false);
         setMsgErro(undefined);
-        setIsSubmitting(true); // <<< INICIA O LOADING AQUI
+        const token = response.data.token;
 
-        try{
-            await login(email, senha);
-            // Se chegar aqui sem erro, o redirect já foi chamado dentro de login()
-        } catch(e){
-             // O erro já foi tratado e o estado de erro (erro, msgErro) já foi definido dentro da função login
-             // O console.error também já foi chamado lá.
-             // Apenas certifica que o fluxo de erro foi pego.
-             console.log('Falha no processo de login capturada em handleSubmit.');
-        } finally {
-            setIsSubmitting(false); // <<< TERMINA O LOADING AQUI (SEMPRE)
-        }
+        const resultuser = await api.get('/usuarios', {
+          headers: { token }
+        });
+
+        const userData = {
+          token: response.data.token,
+          codigo: resultuser.data.codigo,
+          nome: resultuser.data.nome
+        };
+
+        setUser(userData);
+        localStorage.setItem('authUser', JSON.stringify(userData));
+        setCookie('authToken', token);
+        setCookie('authUser', JSON.stringify(userData));
+        router.push('/home');
+      } else {
+        setErro(true);
+        setMsgErro(response.data.msg || "Ocorreu um erro inesperado.");
+        setUser(null);
+        localStorage.removeItem('authUser');
+        throw new Error(response.data.msg || "Erro na resposta da API");
+      }
+    } catch (e: unknown) {
+      console.error('Ocorreu um erro ao tentar fazer o login', e);
+      setErro(true);
+      const errorMessage = e instanceof Error ? e.message : "Erro de conexão ou servidor.";
+      setMsgErro(e && typeof e === 'object' && 'response' in e
+        ? (e as { response?: { data?: { msg?: string } } }).response?.data?.msg || errorMessage
+        : errorMessage);
+      setUser(null);
+      localStorage.removeItem('authUser');
+      throw e;
     }
+  }
 
-    async function delay(ms:number ){
-        return new Promise( (resolve) => resolve( setTimeout(()=>{},ms) ))
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setErro(false);
+    setMsgErro(undefined);
+    setIsSubmitting(true);
+
+    try {
+      await login(email, senha);
+    } catch (e) {
+      console.log('Falha no processo de login capturada em handleSubmit.');
+    } finally {
+      setIsSubmitting(false);
     }
+  }
 
-    async function navegateNovaConta(){
-         router.push('/novaConta')
-        setIsSubmitting(false) 
-        
-        }
+  function navegateNovaConta() {
+    router.push('/novaConta');
+    setIsSubmitting(false);
+  }
 
-    return (
-        <div className="flex items-center w-full justify-center min-h-screen bg-gray-100">
-            <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-md">
-                <div className="w-full items-center flex justify-center mb-4"> {/* Adicionado mb-4 */}
-                    <Image
-                        className="rounded-3xl" // Removido ml-1 se não necessário
-                        alt="Logo da Empresa" // Alt text mais descritivo
-                        width={200}
-                        height={200}
-                        priority // Adicionar priority se for LCP (Largest Contentful Paint)
-                         src="/images/icon.png"
-               />
-                </div>
-
-                {/* --- INDICADOR DE LOADING --- */}
-                {isSubmitting && (
-                    <div className="flex justify-center my-4"> {/* Container para centralizar */}
-                        <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
-                    </div>
-                )}
-
-                {/* --- MENSAGEM DE ERRO (só mostra se não estiver carregando) --- */}
-                { erro && !isSubmitting && (
-                    <p className="text-red-500 text-sm text-center mb-4 font-bold">{msgErro}</p>  
-                )}
-
-                {/* Ocultar o formulário durante o loading é uma opção, mas desabilitar campos é mais comum */}
-                    <form onSubmit={handleSubmit}>
-                        <div className="mb-4 ">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-                                Email
-                            </label>
-                            <input
-                                id="email" // Adicionar id para o label htmlFor
-                                type="email" // Usar type="email" para validação básica do navegador
-                                className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${erro && !email ? 'border-red-500' : ''} ${isSubmitting ? 'bg-gray-200 cursor-not-allowed' : ''}`} // Estilo opcional para erro e desabilitado
-                                value={email} // Controlar o valor do input
-                                onChange={(e)=>{ setEmail(e.target.value)}}
-                                placeholder="seuemail@exemplo.com"
-                                disabled={isSubmitting} // <<< DESABILITA ENQUANTO CARREGA
-                                required // Adicionar validação HTML básica
-                            />
-                        </div>
-                        <div className="mb-6">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
-                                Senha
-                            </label>
-                            <input
-                                id="password" // Adicionar id
-                                type="password" // Usar type="password" para ocultar a senha
-                                className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline ${erro && !senha ? 'border-red-500' : ''} ${isSubmitting ? 'bg-gray-200 cursor-not-allowed' : ''}`} // Estilo opcional para erro e desabilitado
-                                value={senha} // Controlar o valor do input
-                                onChange={(e)=>{ setSenha(e.target.value)}}
-                                placeholder="********"
-                                disabled={isSubmitting} // <<< DESABILITA ENQUANTO CARREGA
-                                required // Adicionar validação HTML básica
-                            />
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <button
-                                className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`} // Estilo para desabilitado
-                                type="submit"
-                                disabled={isSubmitting} // <<< DESABILITA ENQUANTO CARREGA
-                            >
-                                {isSubmitting ? 'Entrando...' : 'Entrar'} {/* Opcional: Mudar texto do botão */}
-                            </button>
-                            <a className={`inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 ${isSubmitting ? 'pointer-events-none opacity-50' : ''}`} href="#">
-                                Esqueceu a senha?
-                            </a>
-                        </div>
-
-                    </form>
-
-                    <div className="m-3 items-center justify-end flex w-full ">
-                          <button
-                                 className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`} // Estilo para desabilitado
-                                  disabled={isSubmitting} // <<< DESABILITA ENQUANTO CARREGA
-                                onClick={()=> navegateNovaConta() }
-                              >
-                                 { 'Teste Grátis' }  
-                            </button>
-                         </div>
-                {/* )} */}
-                <p className="text-center text-gray-500 text-xs mt-4">
-                    © {new Date().getFullYear()} Minha Empresa. Todos os direitos reservados.
-                </p>
-            </div>
+  return (
+    <div className="flex items-center w-full justify-center min-h-screen bg-gray-100">
+      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-md">
+        <div className="w-full items-center flex justify-center mb-4">
+          <Image
+            className="rounded-3xl"
+            alt="Logo da Empresa"
+            width={200}
+            height={200}
+            priority
+            src="/images/icon.png"
+          />
         </div>
-    );
+
+        {isSubmitting && (
+          <div className="flex justify-center my-4">
+            <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
+          </div>
+        )}
+
+        {erro && !isSubmitting && (
+          <p className="text-red-500 text-sm text-center mb-4 font-bold">{msgErro}</p>
+        )}
+
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${erro && !email ? 'border-red-500' : ''} ${isSubmitting ? 'bg-gray-200 cursor-not-allowed' : ''}`}
+              value={email}
+              onChange={(e) => { setEmail(e.target.value) }}
+              placeholder="seuemail@exemplo.com"
+              disabled={isSubmitting}
+              required
+            />
+          </div>
+          <div className="mb-6">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+              Senha
+            </label>
+            <input
+              id="password"
+              type="password"
+              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline ${erro && !senha ? 'border-red-500' : ''} ${isSubmitting ? 'bg-gray-200 cursor-not-allowed' : ''}`}
+              value={senha}
+              onChange={(e) => { setSenha(e.target.value) }}
+              placeholder="********"
+              disabled={isSubmitting}
+              required
+            />
+          </div>
+          <div className="flex items-center justify-between">
+            <button
+              className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+              type="submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Entrando...' : 'Entrar'}
+            </button>
+            <a className={`inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 ${isSubmitting ? 'pointer-events-none opacity-50' : ''}`} href="#">
+              Esqueceu a senha?
+            </a>
+          </div>
+        </form>
+
+        <div className="m-3 items-center justify-end flex w-full ">
+          <button
+            className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+            disabled={isSubmitting}
+            onClick={() => navegateNovaConta()}
+          >
+            {'Teste Grátis'}
+          </button>
+        </div>
+        <p className="text-center text-gray-500 text-xs mt-4">
+          © {new Date().getFullYear()} Minha Empresa. Todos os direitos reservados.
+        </p>
+      </div>
+    </div>
+  );
 }

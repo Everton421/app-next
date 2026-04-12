@@ -1,12 +1,7 @@
-'use client'
-
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import { Sidebar } from "@/components/sidebar";
-import Navbar from "@/components/navbar";
-import { usePathname } from "next/navigation";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { ClientLayout } from "./client-layout";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -18,24 +13,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const pathname = usePathname();
-  const isLoginPage = pathname === '/login';
-  const novaConta = pathname === '/novaConta';
-  const init = pathname === '/';
-
   return (
-    <AuthProvider>
-      <html lang="pt-br" className={inter.variable}>
-        <body className={cn("min-h-screen bg-background font-sans antialiased")}>
-          {!isLoginPage && !novaConta && !init && (
-            <>
-              <Sidebar />
-              <Navbar />
-            </>
-          )}
-          {children}
-        </body>
-      </html>
-    </AuthProvider>
+    <ClientLayout inter={inter}>
+      {children}
+    </ClientLayout>
   );
 }

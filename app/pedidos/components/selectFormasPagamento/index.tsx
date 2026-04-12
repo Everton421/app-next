@@ -2,6 +2,7 @@ import { configApi } from "@/app/services/api";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/select";
 import { useAuth } from "@/contexts/AuthContext";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { formaPagamento } from "@/types/pedido";
 
 
 type props = {

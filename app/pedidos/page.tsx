@@ -26,6 +26,7 @@ interface Pedido {
   data_cadastro: string;
   situacao: Situacao;
   tipo: number;
+  cliente_nome?: string;
 }
 
 const situacaoConfig: Record<Situacao, { label: string; color: string; bg: string; icon: any }> = {
@@ -83,7 +84,7 @@ export default function Pedidos(){
     }
 
     try {
-      const api = configApi(user?.token);
+      const api = configApi();
           const header = { token: user.token };
       
       const aux = await api.get(`/pedidos`, {

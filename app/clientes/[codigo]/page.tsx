@@ -81,23 +81,18 @@ export default function Cliente({ params }: prop) {
    //         router.push('/');
    //     }
    // }, [user, authLoading, router]);
- async function buscaCliente() {
+  async function buscaCliente() {
             console.log(params)
             setIsLoading(true);
             if(!user) return;
             try {
             const headers = { token: user.token, } 
 
-                let response;
-                try{
-                response = await api.get(`/clientes/${Number(params.codigo)}`, {
+                const response = await api.get(`/clientes/${Number(params.codigo)}`, {
                     headers ,
                 });
                 console.log(response.data)
-                }catch(e){
-                    console.log("Error ", e)
-                }
-               
+                
                 if (response.data ) {
                     const clienteData = response.data as ICliente;
                     setData(clienteData); // Guarda os dados originais
