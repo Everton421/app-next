@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
-import { configApi } from '../services/api'; // Assuming correct path
+import { configApi } from '../../services/api'; // Assuming correct path
 import { Button } from '@/components/ui/button';
 import { Check, Edit, X, Search, Plus, AlignLeft, Tag, Columns3Icon, FileSliders, Store } from 'lucide-react'; // Added Search and Plus icons
 import { ScrollArea } from '@/components/ui/scroll-area'; // Use Shadcn ScrollArea
@@ -136,7 +136,7 @@ export default function Produtos() {
                 type="button"
                 variant="outline"
                 className="shadow-sm w-full col-span-2 sm:w-auto"
-                onClick={() => router.push('/produtos/novo')}
+                onClick={() => router.push('/cadastros/produtos/novo')}
               >
                 <Plus className="h-4 w-4 mr-2" /> Novo
               </Button>
@@ -145,7 +145,7 @@ export default function Produtos() {
                 type="button"
                 variant="outline"
                 className="shadow-sm w-full sm:w-auto"
-                onClick={() => router.push('/categorias')}
+                onClick={() => router.push('/cadastros/categorias')}
               >
                 <AlignLeft className="h-4 w-4 mr-2" />
                 <span>Categorias</span>
@@ -155,7 +155,7 @@ export default function Produtos() {
                 type="button"
                 variant="outline"
                 className="shadow-sm w-full sm:w-auto"
-                onClick={() => router.push('/marcas')}
+                onClick={() => router.push('/cadastros/marcas')}
               >
                 <Tag className="h-4 w-4 mr-2" />
                 Marcas

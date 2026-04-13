@@ -15,17 +15,15 @@ import {
   Menu,
   LayoutDashboard,
   ShoppingBag,
-  ArrowLeftRight,
-  Unplug, 
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/marketplaces", label: "Anúncios", icon: Home },
-  { href: "/marketplaces/consulta", label: "sincronizar anuncios", icon: ArrowLeftRight  },
-  { href: "/marketplaces/integracoes", label: "integracoes", icon: Unplug  },
-
-
+  
+   { href: "/cadastros/produtos", label: "Produtos", icon: Package },
+   { href: "/cadastros/clientes", label: "Clientes", icon: User },
+   { href: "/cadastros/servicos", label: "Serviços", icon: Wrench },
+   { href: "/cadastros/veiculos", label: "Veículos", icon: Car },
 ];
 
 const NavItem = ({
@@ -69,6 +67,8 @@ export function Sidebar() {
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar-accent">
               <LayoutDashboard className="h-5 w-5 text-sidebar-foreground" />
             </div>
+            <span className="text-lg font-semibold text-sidebar-foreground">
+            </span>
           </div>
          </Link>
 

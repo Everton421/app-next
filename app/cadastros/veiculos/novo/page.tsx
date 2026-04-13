@@ -7,12 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { SelectCliente } from "../components/selectCliente";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { configApi } from "@/app/services/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { AlertDemo } from "@/components/alert/alert";
 import { ThreeDot } from "react-loading-indicators";
+import { SelectCliente } from "../_components/selectCliente";
 
 
 interface veiculo  
@@ -23,118 +23,70 @@ interface veiculo
     marca:string,
     ano:string,
     combustivel:string,
-    cliente:number,
-    ativo:string
-}
-type cliente =
-{
-   codigo:number,
-   nome:string
+    cliente:number
 }
 
-export default function veiculo({params}:any){
+export default function veiculo(){
 
-    const [data, setData ] = useState<veiculo | null> (null);
-    const [ msgAlert, setMsgAlert] = useState<string>('');
-    const [ visibleAlert, setVisibleAlert] = useState(false);
-    const [isLoading, setIsLoading] = useState(true); // Add loading state for initial fetch
+    const [ cliente, setCliente] = useState<any>();
+    const [data, setData ] = useState<veiculo | null> ();
+    const [ placa, setPlaca] = useState<string | null >();
+    const [ modelo, setModelo] = useState<string>();
+    const [ marca, setMarca ] = useState<string>();
+    const  [ ano, setAno ] = useState<string>();
+    const [ combustivel, setCombustivel ] = useState<string>();
+    const [msgAlert, setMsgAlert] = useState<string>('');
+    const [visibleAlert, setVisibleAlert] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);  
 
     const router = useRouter();
 
      const { user, loading  }: any = useAuth();
     const api = configApi();
-    
-    
- 
-    async function busca(){
-        try{
-            setIsLoading(true);
-
-           let result = await api.get('/veiculos', {
-                 headers:{ token: user.token },
-                    params:{ codigo:  params.codigo  }
-                })
-
-                if( result.status === 200 ){
-                    if(result.data.length > 0 ){
-                      setData(result.data[0])
-                      console.log(result.data[0])
-                    }
-
-                }
-
-        }catch(e:any){
-            console.error("Erro ao consultar Veículo:", e);
-            setMsgAlert(`${e.reponse.data.msg}`);
-            setVisibleAlert(true)
-        } finally{
-            setIsLoading(false)
-        }
-    }
-    
-    const handleInputChange = (field: keyof veiculo, value: string | number) => {
-        setData(prevData => {
-            if (!prevData) return null;
-            return { ...prevData, [field]: value };
-        });
-    };
-
-    const handleClientChange = (cliente:any)=>{
-            setData((prev:any)=> {
-                if(!prev) return;
-                return { ...prev, cliente:cliente.codigo}
-            })
-
-    }
-
-    useEffect(() => {
-   
-        if (!params.codigo) {
-            router.push('/veiculos');  
-            return;
-        }
-        busca();
-
-    }, [ params.codigo, user, router ]);  
-
-   useEffect(() => {
-        if (!loading) {
-          if (!user) {
-            router.push('/login'); // Redireciona para a página de login (ajuste se for outra)
-          }
-        }
-      }, [user, loading, router]);
-    
-    
 
     async  function gravar( ){
-            setIsLoading(true)
+
+        setIsLoading(false);
+
+        let aux:any =
+         {
+            ano: ano ,
+            cliente:cliente.codigo,
+            combustivel:combustivel,
+            marca:marca,
+            modelo:modelo,
+            placa:placa,
+            }
+
             try{
-                let result = await api.put('/veiculo',  data,{
-                     headers:{ token:  user.token   }
+                let result = await api.post('/veiculo',  aux,{
+                     headers:{ token:  user.token  }
                 })
                 if(result.status === 200 ){
                     setVisibleAlert(true);
-                    setMsgAlert(`Veículo ${ data && data.modelo} atualizado com Sucesso!`);
+                    setMsgAlert(`Veículo ${aux.modelo} cadastrado com Sucesso!`);
                 }
 
             }catch(e:any){
-                console.error("Erro ao atualizar Veículo:", e);
+                console.error("Erro ao gravar Veículo:", e);
                 setMsgAlert(`${e.reponse.data.msg}`);
                 setVisibleAlert(true);
-            }finally{
-                setIsLoading(false)
-
+            }finally {
+                setIsLoading(false);
             }
+    
+    
     }
+    
+useEffect(() => {
+    if (!loading) {
+      if (!user) {
+        router.push('/login'); // Redireciona para a página de login (ajuste se for outra)
+      }
+    }
+  }, [user, loading, router]);
 
-  
-     const handleActive = useCallback((param: 'S' | 'N') => {
-          setData((prevData) => {
-             if (!prevData) return prevData;
-             return { ...prevData, ativo: param };
-         });
-     }, []);
+
 
     if (loading) {
       return (
@@ -152,28 +104,16 @@ export default function veiculo({params}:any){
       );
     }
 
-     if (!data && !isLoading) {
-        return (
-            <div className="flex flex-col justify-center items-center min-h-screen p-4">
-                <p className="text-xl text-red-600 mb-4">veiculo não encontrado ou erro ao carregar.</p>
-                <Button onClick={() => router.push('/veiculos')}>
-                    <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para Veiculos
-                </Button>
-                <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} />
-            </div>
-        );
-    }
-
- 
+    
     return(
-        <div className= " min-h-screen flex flex-col sm:ml-56 p-4 w-full h-full  justify-itens-center items-center    bg-slate-100"  >
-       
+        <div className= " min-h-screen flex flex-col sm:ml-52 p-4 w-full h-full  justify-itens-center items-center    bg-slate-100"  >
           <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} to={'/veiculos'}/>
-       
-        <div className="  w-full md:w-5/6   p-2 mt-22 min-h-screen    rounded-lg bg-white shadow-md " >
+      <div className=" md:w-[85%]  max-w-none">
+
+           <div className="  w-full md:w-5/6   p-2 mt-22 min-h-screen    rounded-lg bg-white shadow-md " >
 
               <div className="flex justify-between items-center mb-2">
-                        <h1 className="text-md md:text-3xl font-bold text-gray-800">
+                            <h1 className="text-md md:text-3xl font-bold text-gray-800">
                             Detalhes do Veículo
                         </h1>
                         <Button variant="outline" onClick={() => router.push('/veiculos')}>
@@ -195,9 +135,7 @@ export default function veiculo({params}:any){
                                     <Input
                                         defaultValue={data?.modelo }
                                         className="mt-1"
-                                        //onChange={(e) => setModelo(e.target.value ) }
-                                        
-                                        onChange={(e) => handleInputChange('modelo',  e.target.value ) }
+                                        onChange={(e) => setModelo(e.target.value )}
 
                                     />
                                 </div>
@@ -205,8 +143,7 @@ export default function veiculo({params}:any){
                                     <Label   className="text-sm font-medium text-gray-600">Placa  :</Label>
                                     <Input
                                          defaultValue={data?.placa ?? ''}
-                                         //onChange={(e) => setPlaca( e.target.value )}
-                                        onChange={(e) => handleInputChange('placa',  e.target.value ) }
+                                         onChange={(e) => setPlaca( e.target.value )}
                                         className="mt-1"
                                         placeholder="ABC1D34"
                                     />
@@ -217,8 +154,7 @@ export default function veiculo({params}:any){
                                      
                                         type="text"
                                         defaultValue={data?.marca ?? ''}
-                                        //onChange={(e) => setMarca(e.target.value )}
-                                        onChange={(e) => handleInputChange('marca',  e.target.value ) }
+                                        onChange={(e) => setMarca(e.target.value )}
                                         className="mt-1"
                                         placeholder=""
                                     />
@@ -228,9 +164,7 @@ export default function veiculo({params}:any){
                                     <Input
                                         placeholder="2000"
                                         defaultValue={data?.ano ?? ''}
-                                        //onChange={(e) => setAno( e.target.value )}
-                                        onChange={(e) => handleInputChange('ano',  e.target.value ) }
-
+                                        onChange={(e) => setAno( e.target.value )}
                                         className="mt-1"
                                     />
                                 </div>
@@ -240,23 +174,21 @@ export default function veiculo({params}:any){
                                         id="gtin"
                                         placeholder="Gasolina"
                                         defaultValue={data?.combustivel ?? ''}
-                                        onChange={(e) => handleInputChange('combustivel',  e.target.value ) }
-                                        //onChange={(e) => setCombustivel( e.target.value )}
-
+                                        onChange={(e) => setCombustivel( e.target.value )}
                                         className="mt-1"
                                     />
                                 </div>
                            
                                 <div>
-                                <SelectCliente codigoCliente={data && data?.cliente} selectCliente={handleClientChange}/>
+                                <SelectCliente codigoCliente={0} selectCliente={setCliente}/>
                                 </div>
 
 
                                 {/* Active Component */}
                                 <div className="md:col-span-2 pt-4">
-                                    <Label className="text-sm font-medium text-gray-600 mb-2 block">Status: { data?.ativo} </Label>
+                                    <Label className="text-sm font-medium text-gray-600 mb-2 block">Status:</Label>
                                     {    
-                                    <Active active={data?.ativo} handleActive={handleActive} />
+                                 //   <Active active={data?.ativo} handleActive={handleActive} />
                                 }
                                 </div>
                             </CardContent>
@@ -272,10 +204,11 @@ export default function veiculo({params}:any){
                                   size="lg"
                               >
                                   <Save className="mr-2 h-5 w-5" />
-                                  Salvar Alterações 
+                                   Salvar  
                               </Button>
                           </div>
-                      </div>
+               </div>
+     </div>
      </div>
 
     )

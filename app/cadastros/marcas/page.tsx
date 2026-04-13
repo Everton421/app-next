@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AlignLeft, ArrowLeft, Check, Edit, Plus, Tag, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { configApi } from "../services/api";
+import { configApi } from "../../services/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { Table, TableBody, TableCell, TableHead, TableRow } from "@/components/ui/table";

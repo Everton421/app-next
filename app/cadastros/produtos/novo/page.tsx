@@ -21,7 +21,7 @@ import SelectMarca from '../components/selectMarcas';
 import { ThreeDot } from 'react-loading-indicators';
  
  interface Produto {
-    id?:number;
+      id?:number;
      codigo?: number;
      descricao: string;
      preco: number;
@@ -94,6 +94,7 @@ interface FotoProduto {
 
             function init (){
                 let aux:any ={
+                     id:'0',
                     ativo:'S',
                     class_fiscal:'0000.00.00',
                      cst:'00',
@@ -102,7 +103,6 @@ interface FotoProduto {
                      descricao:'',
                      estoque:0,
                      grupo:0,
-                     id:0,
                      marca:0,
                      num_fabricante:'',
                      num_original:'',
@@ -125,7 +125,7 @@ interface FotoProduto {
     
  async function gravar (){
     try {
-        let result = await api.post('/produto', data ,{
+        let result = await api.post('/produtos', data ,{
             headers:{ token: user.token  }
         });
         if (result.status === 200 && result.data.codigo > 0) {

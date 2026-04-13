@@ -9,7 +9,8 @@ import {
     ExternalLink, 
     AlertCircle, 
     PackageSearch,
-    Plus
+    Plus,
+    Search
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useMemo } from "react";
@@ -21,7 +22,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { AlertDemo } from "@/components/alert/alert";
-import { ModalAnuncio } from "@/app/produtos/components/modal-anuncio";
+import { ModalAnuncio } from "@/app/cadastros/produtos/components/modal-anuncio";
 import { SelectProdutoModal } from "./_components/select-produto-modal";
 
 const PLATFORM_CONFIG: Record<string, { label: string, color: string, icon: any, logo?: string }> = {
@@ -185,6 +186,16 @@ export default function Anuncios() {
                         <Plus className="h-4 w-4" />
                         Criar Anúncio
                     </Button>
+
+                    <Button 
+                        className='bg-[#185FED] gap-2'
+                        onClick={() => router.push('/marketplaces/consulta')}
+                    > 
+                        <Search className="h-4 w-4" />
+                            Consultar Anúncios
+                    
+                    </Button>
+                    
                     <Button 
                         type="button"
                         variant="outline"

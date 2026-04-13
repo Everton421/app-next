@@ -3,6 +3,14 @@ import { useState, useEffect } from "react";
 import { marketplaceApi, MarketplaceAnunciosResponse, MarketplaceAccount, PLATFORM_CONFIG } from "@/app/services/marketplaceApi";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { 
@@ -178,83 +186,93 @@ export function ListaAnunciosPlataforma({ conta, onTrocarConta }: ListaAnunciosP
                     </p>
                 </div>
             ) : (
-                <div className="space-y-2">
+                <div className="space-y-3">
                     <p className="text-sm text-slate-500">
                         {buscaTermo 
                             ? `${anunciosFiltrados.length} de ${totalEncontrado} resultados`
                             : `${totalEncontrado} anúncio(s) encontrado(s)`}
                     </p>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                        {anunciosFiltrados.map((anuncio) => (
-                            <Card 
-                                key={anuncio.id} 
-                                className="overflow-hidden hover:shadow-md transition-shadow"
-                            >
-                                <div className="relative aspect-square bg-slate-50 flex items-center justify-center">
-                                    {anuncio.thumbnail ? (
-                                        <img
-                                            src={anuncio.thumbnail}
-                                            alt={anuncio.title}
-                                            className="object-contain w-full h-full p-2"
-                                        />
-                                    ) : (
-                                        <Package className="h-12 w-12 text-slate-300" />
-                                    )}
-                                </div>
-
-                                <CardContent className="p-4">
-                                    <p className="text-xs font-mono text-slate-400 mb-1">
-                                        {anuncio.id}
-                                    </p>
-                                    <h4 
-                                        className="text-sm font-medium text-slate-700 line-clamp-2 leading-tight min-h-[40px]"
-                                        title={anuncio.title}
+                    <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+                        <Table>
+                            <TableHeader>
+                                <TableRow className="bg-slate-50 hover:bg-slate-50">
+                                    <TableHead className="w-16">Img</TableHead>
+                                    <TableHead>Título</TableHead>
+                                    <TableHead className="text-right">Preço</TableHead>
+                                    <TableHead className="text-center w-24">Estoque</TableHead>
+                                    <TableHead className="w-14"></TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {anunciosFiltrados.map((anuncio) => (
+                                    <TableRow 
+                                        key={anuncio.id} 
+                                        className="hover:bg-slate-50/50 transition-colors"
                                     >
-                                        {anuncio.title}
-                                    </h4>
-                                    
-                                    <div className="mt-3 flex items-center justify-between">
-                                        <div>
-                                            <p className="text-lg font-bold text-blue-700">
-                                                {formatCurrency(anuncio.price)}
+                                        <TableCell>
+                                            <div className="w-12 h-12 rounded-md bg-slate-100 flex items-center justify-center overflow-hidden">
+                                                {anuncio.thumbnail ? (
+                                                    <img
+                                                        src={anuncio.thumbnail}
+                                                        alt={anuncio.title}
+                                                        className="w-full h-full object-contain"
+                                                    />
+                                                ) : (
+                                                    <Package className="h-6 w-6 text-slate-300" />
+                                                )}
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            <p className="text-xs font-mono text-slate-400 mb-0.5">
+                                                {anuncio.id}
                                             </p>
-                                            <p className="text-xs text-slate-500">
-                                                Estoque: {anuncio.quantity}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </CardContent>
-
-                                <CardFooter className="p-3 pt-0">
-                                    {anuncio.permalink ? (
-                                        <Button 
-                                            asChild 
-                                            variant="outline" 
-                                            size="sm" 
-                                            className="w-full text-xs gap-2 hover:text-blue-600 hover:border-blue-300"
-                                        >
-                                            <Link 
-                                                href={anuncio.permalink} 
-                                                target="_blank"
+                                            <p 
+                                                className="text-sm font-medium text-slate-700 line-clamp-2 max-w-md"
+                                                title={anuncio.title}
                                             >
-                                                Ver no {platformConfig.label}
-                                                <ExternalLink size={12} />
-                                            </Link>
-                                        </Button>
-                                    ) : (
-                                        <Button 
-                                            variant="ghost" 
-                                            size="sm" 
-                                            className="w-full text-xs text-slate-400" 
-                                            disabled
-                                        >
-                                            Sem link
-                                        </Button>
-                                    )}
-                                </CardFooter>
-                            </Card>
-                        ))}
+                                                {anuncio.title}
+                                            </p>
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            <span className="text-lg font-bold text-blue-700">
+                                                {formatCurrency(anuncio.price)}
+                                            </span>
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <span className={cn(
+                                                "inline-flex items-center justify-center px-2.5 py-1 rounded-full text-xs font-medium min-w-[60px]",
+                                                anuncio.quantity > 0 
+                                                    ? "bg-emerald-100 text-emerald-700" 
+                                                    : "bg-red-100 text-red-700"
+                                            )}>
+                                                {anuncio.quantity}
+                                            </span>
+                                        </TableCell>
+                                        <TableCell>
+                                            {anuncio.permalink ? (
+                                                <Button 
+                                                    asChild 
+                                                    variant="ghost" 
+                                                    size="sm"
+                                                    className="h-8 w-8 p-0 text-slate-400 hover:text-blue-600 hover:bg-blue-50"
+                                                >
+                                                    <Link 
+                                                        href={anuncio.permalink} 
+                                                        target="_blank"
+                                                        title={`Ver no ${platformConfig.label}`}
+                                                    >
+                                                        <ExternalLink size={16} />
+                                                    </Link>
+                                                </Button>
+                                            ) : (
+                                                <span className="text-xs text-slate-300">—</span>
+                                            )}
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
                     </div>
                 </div>
             )}

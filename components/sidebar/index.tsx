@@ -16,18 +16,15 @@ import {
   LayoutDashboard,
   ShoppingBag,
   Search,
+  Archive,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/home", label: "Início", icon: Home },
   { href: "/pedidos", label: "Pedidos", icon: ShoppingCart },
-  { href: "/produtos", label: "Produtos", icon: Package },
-  { href: "/clientes", label: "Clientes", icon: User },
-  { href: "/servicos", label: "Serviços", icon: Wrench },
-  { href: "/veiculos", label: "Veículos", icon: Car },
+  { href: "/cadastros", label: "Cadastros", icon: Archive  },
   { href: "/marketplaces", label: "Marketplace", icon: ShoppingBag },
-  { href: "/marketplaces/consulta", label: "Consultar Anúncios", icon: Search },
 ];
 
 const NavItem = ({
@@ -67,12 +64,12 @@ export function Sidebar() {
       <aside className="fixed inset-y-0 left-0 z-50 hidden w-56 flex-col border-r border-sidebar-border bg-sidebar sm:flex print:hidden">
         {/* Logo */}
         <div className="flex h-16 items-center gap-3 border-b border-sidebar-border px-6">
+         <Link  href={'/home'} >
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar-accent">
             <LayoutDashboard className="h-5 w-5 text-sidebar-foreground" />
           </div>
-          <span className="text-lg font-semibold text-sidebar-foreground">
-            Gestão Pro
-          </span>
+       </Link>
+
         </div>
 
         {/* Navigation */}

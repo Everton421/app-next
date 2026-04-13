@@ -7,7 +7,7 @@ import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { Check, Edit, Plus, X } from "lucide-react";
 import { config } from "process";
 import { useEffect, useState } from "react";
-import { configApi } from "../services/api";
+import { configApi } from "../../services/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { basicServico } from "@/types/servico";

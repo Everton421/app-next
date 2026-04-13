@@ -4,15 +4,14 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
-import { AlignLeft, Check, Edit, Plus, Tag, X } from "lucide-react";
+import {   Check, Edit, Plus, Tag, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { configApi } from "../services/api";
 import { Table, TableBody, TableCell, TableHead, TableRow } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { FiltroVeiculos } from "./components/filtroVeiculos";
 import { Checkbox } from "@radix-ui/react-checkbox";
 import { ThreeDot } from "react-loading-indicators";
+import { configApi } from "@/lib/api";
 
 export default function Veiculos(){
       

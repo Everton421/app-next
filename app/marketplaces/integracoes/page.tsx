@@ -253,47 +253,62 @@ export default function Integracoes() {
                                     <ThreeDot color='#185FED'/>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4  ">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                             {dataIntegration && dataIntegration.length > 0 ? (
                                 dataIntegration.map((item) => (
-                                    <Card key={item.id} className="border-l-4 border-l-[#ffe600] hover:shadow-md transition-shadow">
-                                        <CardHeader className="pb-2">
-                                            <div className="flex justify-between items-start">
+                                    <Card 
+                                        key={item.id} 
+                                        className="relative overflow-hidden border border-slate-200 hover:border-[#ffe600]/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-gradient-to-br from-white to-slate-50/50 group"
+                                    >
+                                        <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[#ffe600] to-[#ffe600]/30" />
+                                        
+                                        <CardHeader className="pb-2 pt-4 pl-5">
+                                            <div className="flex justify-between items-start gap-3">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="bg-slate-100 p-2 rounded-full">
+                                                    <div className="bg-gradient-to-br from-slate-100 to-slate-50 p-2.5 rounded-xl shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all duration-300">
                                                         <Image
                                                             src="/images/ML-logo.png"
                                                             alt="Logo Mercado Livre"
-                                                            width={50}
-                                                            height={50}
+                                                            width={48}
+                                                            height={48}
+                                                            className="object-contain"
                                                         />
                                                     </div>
-                                                    <div>
-                                                        <CardTitle className="text-base font-bold text-slate-800">
+                                                    <div className="min-w-0">
+                                                        <CardTitle className="text-base font-bold text-slate-800 truncate group-hover:text-slate-900 transition-colors">
                                                             {item.integration_name}
                                                         </CardTitle>
-                                                        <CardDescription className="text-xs">
-                                                            ID ML: {item.ml_user_id}
+                                                        <CardDescription className="text-xs text-slate-400 font-mono mt-0.5">
+                                                            ID: {item.ml_user_id}
                                                         </CardDescription>
                                                     </div>
                                                 </div>
-                                                {/* Badge de Status (Pode adicionar lógica se tiver campo ativo/inativo) */}
-                                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm shrink-0">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                                                     Ativo
                                                 </span>
                                             </div>
                                         </CardHeader>
-                                        <CardContent>
-                                            <div className="flex items-center gap-2 text-sm text-slate-500 mt-2">
-                                                <Calendar className="h-4 w-4" />
-                                                <span>
-                                                    Conectado em: {new Date(item.created_at).toLocaleDateString('pt-BR')}
+                                        
+                                        <CardContent className="px-5 pb-4 pt-2">
+                                            <div className="flex items-center gap-2 text-sm text-slate-500">
+                                                <div className="bg-slate-100 p-1.5 rounded-md">
+                                                    <Calendar className="h-3.5 w-3.5 text-slate-400" />
+                                                </div>
+                                                <span className="text-slate-600">
+                                                    Conectado em
+                                                </span>
+                                                <span className="font-medium text-slate-700">
+                                                    {new Date(item.created_at).toLocaleDateString('pt-BR')}
                                                 </span>
                                             </div>
                                             
-                                            {/* Espaço para botões de ação futuros (Configurar, Excluir) */}
-                                            <div className="mt-4 flex justify-end">
-                                                <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700 hover:bg-red-50">
+                                            <div className="mt-4 pt-3 border-t border-slate-100 flex justify-end">
+                                                <Button 
+                                                    variant="ghost" 
+                                                    size="sm" 
+                                                    className="text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all duration-200 hover:shadow-sm"
+                                                >
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </div>
@@ -301,9 +316,24 @@ export default function Integracoes() {
                                     </Card>
                                 ))
                             ) : (
-                                <div className="col-span-full flex flex-col items-center justify-center p-10 bg-white rounded-lg border border-dashed border-slate-300">
-                                    <Store className="h-12 w-12 text-slate-300 mb-2" />
-                                    <p className="text-slate-500">Nenhuma loja vinculada encontrada.</p>
+                                <div className="col-span-full flex flex-col items-center justify-center py-16 px-6 bg-white rounded-xl border border-dashed border-slate-200 hover:border-[#ffe600]/50 transition-colors duration-300">
+                                    <div className="bg-gradient-to-br from-slate-100 to-slate-50 p-5 rounded-2xl mb-4 shadow-sm">
+                                        <Store className="h-12 w-12 text-slate-300" />
+                                    </div>
+                                    <h3 className="text-lg font-semibold text-slate-700 mb-1">
+                                        Nenhuma loja vinculada
+                                    </h3>
+                                    <p className="text-slate-400 text-sm text-center max-w-xs">
+                                        Comece a vender no Mercado Livre conectando sua primeira conta
+                                    </p>
+                                    <Button
+                                        className="mt-5 bg-[#ffe600] text-slate-900 hover:bg-[#e6cf00] font-medium shadow-sm hover:shadow-md transition-all"
+                                        onClick={() => handleSwitchAccountAndConnect()}
+                                        disabled={isRedirecting}
+                                    >
+                                        <LogIn className="mr-2 h-4 w-4" />
+                                        Conectar Mercado Livre
+                                    </Button>
                                 </div>
                             )}
                         </div>

@@ -14,12 +14,10 @@ export default function init( ) {
  
 
   useEffect(() => {
-    if (!loading) {
       if (!user) {
         router.push('/login'); // Redireciona para a página de login (ajuste se for outra)
       }
-    }
-  }, [user, loading, router]);
+  }, []);
 
 
   if (loading) {
