@@ -19,9 +19,10 @@
 import SelectCategorias from '../components/selectCategorias';
 import SelectMarca from '../components/selectMarcas';
 import { ThreeDot } from 'react-loading-indicators';
- 
+    import { v4 as uuidv4 } from 'uuid'
+
  interface Produto {
-      id?:number;
+      id?:string;
      codigo?: number;
      descricao: string;
      preco: number;
@@ -78,7 +79,6 @@ interface FotoProduto {
      const useDateService = UseDateFunction();
      const { user, loading  }: any = useAuth();
      const router = useRouter();
- 
   
  
      
@@ -94,7 +94,7 @@ interface FotoProduto {
 
             function init (){
                 let aux:any ={
-                     id:'0',
+                     id: uuidv4(),
                     ativo:'S',
                     class_fiscal:'0000.00.00',
                      cst:'00',
@@ -129,7 +129,6 @@ interface FotoProduto {
             headers:{ token: user.token  }
         });
         if (result.status === 200 && result.data.codigo > 0) {
-            console.log(result)
             setVisibleAlert(true);
             setMsgAlert(`Produto ${data?.descricao} cadastrado com Sucesso!`);
         }
@@ -199,7 +198,7 @@ interface FotoProduto {
  
              <ScrollArea className="flex-1 w-full max-w-screen-2xl bg-white rounded-lg shadow-md mb-20">
  
-                 <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} to={'/produtos'}/>
+                 <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} to={'/cadastros/produtos'}/>
  
                  <div className="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 pb-24"> {/* Added pb-24 */}
  
@@ -215,8 +214,19 @@ interface FotoProduto {
                      <Card>
                          <CardContent className="p-4 md:p-6 flex flex-col gap-4">
                              <div className="flex items-center gap-2">
-                                 <Label htmlFor="codigo" className="text-lg font-semibold text-gray-700">Código:</Label>
-                                 <span id="codigo" className="text-lg font-bold text-gray-900">{data?.codigo}</span>
+                                 { data?.codigo && ( 
+                                    <>
+                                     <Label htmlFor="codigo" className="text-lg font-semibold text-gray-700">Código:</Label>
+                                     <span id="codigo" className="text-lg font-bold text-gray-900">{data?.codigo}</span>
+                                    </>
+                                    )
+                                 }
+                                 { data?.id &&
+                                   <>
+                                     <Label htmlFor="id" className="text-lg font-semibold text-gray-700">ID:</Label>
+                                     <span id="id" className="text-lg font-bold text-gray-400">{data?.id}</span>
+                                    </>
+                                     }
                              </div>
                              <div>
                                  <Label htmlFor="descricao" className="text-base font-medium text-gray-600 mb-1 block">Descrição:</Label>

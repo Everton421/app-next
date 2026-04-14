@@ -96,7 +96,7 @@ export default function Clientes() {
   }
 
   function handleClick(item: client) {
-    router.push(`/clientes/${item.codigo}`)
+    router.push(`/cadastros/clientes/${item.codigo}`)
   }
 
   function formatCNPJ(cnpj: string) {
@@ -118,7 +118,7 @@ export default function Clientes() {
                 type="button"
                 variant="outline"
                 className="shadow-sm w-full sm:w-auto"
-                onClick={() => router.push('/clientes/novo')}
+                onClick={() => router.push('/cadastros/clientes/novo')}
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Novo Cliente
@@ -256,7 +256,7 @@ export default function Clientes() {
               <p className="text-gray-500">Nenhum cliente encontrado</p>
               <Button 
                 variant="outline" 
-                onClick={() => router.push('/clientes/novo')}
+                onClick={() => router.push('/cadastros/clientes/novo')}
               >
                 Cadastrar primeiro cliente
               </Button>

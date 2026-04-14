@@ -92,10 +92,9 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
     const [dynamicValues, setDynamicValues] = useState<Record<string, string>>({});
     const [requiredAttrs, setRequiredAttrs] = useState<any[]>([]);
 
-    useEffect(() => {
-       
+    
         async function busca() {
-            if ( !user || !user.token) {
+            if ( !user ) {
                 return
             }
 
@@ -140,8 +139,10 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
                 setIsLoading(false);
             }
         }
+
+        useEffect(() => {
              busca();
-    }, [ params , user, router ]);  
+    }, [ ]);  
 
  // --- 1. PREDITOR DE CATEGORIA ---
     // Assim que a tela abre, tenta adivinhar a categoria pelo nome do produto
@@ -181,7 +182,7 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
           console.log("Enviando para API:", dataParaGravar);  
     
           try {
-            let result = await api.put('/produto', dataParaGravar,{
+            let result = await api.put('/produtos', dataParaGravar,{
                 headers:{ token:  user.token }
 
             });
@@ -278,7 +279,7 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
 
             <ScrollArea className="flex-1 w-full max-w-screen-2xl bg-white rounded-lg shadow-md mb-20">
 
-                <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} to={'/produtos'}/>
+                <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} to={'/cadastros/produtos'}/>
 
                 <div className="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 pb-24"> {/* Added pb-24 */}
 
@@ -288,7 +289,7 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
                         </h1>
                        
                         <div className='flex gap-3'>
-                           <Button variant="outline" onClick={() => router.push('/produtos')}>
+                           <Button variant="outline" onClick={() => router.push('/cadastros/produtos')}>
                             <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
                           </Button>
                               <Button variant="outline" onClick={() => router.push(`/produtos/${data.codigo}/tributacao`)}>

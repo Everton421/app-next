@@ -71,7 +71,7 @@ export default function Produtos() {
   }
 
   function handleEditClick(codigo: number) {
-    router.push(`/produtos/${codigo}`);
+    router.push(`/cadastros/produtos/${codigo}`);
   }
 
 
@@ -270,7 +270,7 @@ export default function Produtos() {
                               variant="ghost"
                               size="icon"
                               className={`p-1 w-8 h-8 rounded-full flex items-center justify-center  `}
-                              onClick={() => router.push(`/produtos/${produto.codigo}/anuncios`)}
+                              onClick={() => router.push(`/markeplaces`)}
                             //title="Editar Produto"
                             >
                               <Store size={16} color='#185FED' />
