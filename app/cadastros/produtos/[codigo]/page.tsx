@@ -296,17 +296,12 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
                                 <ChartCandlestick  className="mr-2 h-4 w-4" />
                               Tributação
                             </Button>
-                              <Button variant="outline" onClick={() => router.push(`/produtos/${data.codigo}/anuncios`)}>
+                              <Button variant="outline" onClick={() => router.push(`/marketplaces`)}>
                                 <Flag className="mr-2 h-4 w-4" />
                                 Anúncios
                             </Button>
-
-
                         </div>
-                       
                     </div>
-                    
-        
                     <Card>
                         <CardContent className="p-4 md:p-6 flex flex-col gap-4">
                             <div className="flex items-center gap-2 justify-between">

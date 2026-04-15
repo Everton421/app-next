@@ -117,10 +117,7 @@ export default function Produtos() {
 
   // backup primeira div
   //  <div className=" min-h-screen flex flex-col sm:ml-56 p-2 sm:p-4 lg:p-6 w-full h-full justify-itens-center items-start   bg-red-500 "  >
- 
   return (
-
-    
     <div className=" min-h-screen flex flex-col sm:ml-52 p-2 sm:p-4 lg:p-6 w-full h-full justify-itens-center items-start bg-slate-100 "  >
       <div className="    md:w-[85%]  p-2 mt-22 min-h-screen  rounded-lg bg-white   " >
         <div className="  p-2   rounded-sm bg-slate-100 w-full  ">
