@@ -22,6 +22,7 @@ import { useCallback, useEffect, useState } from "react";
 import { basicServico } from "@/types/servico";  
 import { ThreeDot } from "react-loading-indicators";
 
+  import { v4 as uuidv4 } from 'uuid'
 
 export default function NovoServico() {  
 
@@ -33,6 +34,7 @@ export default function NovoServico() {
 
     const [aplicacao, setAplicacao] = useState<string>('');
     const [valor, setValor] = useState<number | undefined>(undefined);  
+    const [ id ] = useState(uuidv4());
 
     const api = configApi();
     const useDateService = UseDateFunction();
@@ -69,6 +71,7 @@ export default function NovoServico() {
 
         setIsSaving(true);
         const dadosParaGravar: Partial<basicServico> = {  
+            id,
             aplicacao: aplicacao,
             valor: valor,
             data_recadastro: useDateService.obterDataHoraAtual(),
@@ -79,10 +82,10 @@ export default function NovoServico() {
         console.log("Enviando para API:", dadosParaGravar);  
 
         try {
-            const result = await api.post('/servico', dadosParaGravar, {
+            const result = await api.post('/servicos', dadosParaGravar, {
                 headers: { token:  user.token  },
             });
-            if (result.status === 200 && result.data?.codigo > 0) {  
+            if (result.status === 201 && result.data?.codigo > 0) {  
                 console.log(result);
                 setVisibleAlert(true);
                 setMsgAlert(`Serviço ${result.data.codigo} Registrado com Sucesso!`);
@@ -111,7 +114,7 @@ export default function NovoServico() {
         <div className="h-screen flex flex-col sm:ml-56 bg-slate-100 overflow-hidden">
      <div className="w-full max-w-screen-2xl mx-auto bg-white rounded-lg shadow-md p-4 md:p-6 lg:p-8 flex flex-col flex-1">
 
-            <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} to={'/servicos'} />
+            <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} to={'/cadastros/servicos'} />
 
             <ScrollArea className="flex-1 p-4 md:p-6">
 
@@ -122,7 +125,7 @@ export default function NovoServico() {
                         <h1 className="text-2xl font-bold text-gray-800">
                             Novo Serviço
                         </h1>
-                        <Button variant="outline" onClick={() => router.push('/servicos')}>
+                        <Button variant="outline" onClick={() => router.push('/cadastros/servicos')}>
                             <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
                         </Button>
                     </div>
@@ -130,6 +133,8 @@ export default function NovoServico() {
                     <Card>
                         <CardHeader>
                             <CardTitle>Detalhes do Serviço</CardTitle>
+                                    <Label   className="text-sm font-medium text-gray-600">ID : ${id}</Label>
+
                         </CardHeader>
                         <CardContent className="flex flex-col gap-4">
                             <div>

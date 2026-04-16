@@ -47,10 +47,11 @@ export default function veiculo({params}:any){
     
  
     async function busca(){
+        if(!user ) return;
         try{
             setIsLoading(true);
 
-           let result = await api.get('/veiculos', {
+           let result = await api.get('/veiculos/search', {
                  headers:{ token: user.token },
                     params:{ codigo:  params.codigo  }
                 })
@@ -90,7 +91,7 @@ export default function veiculo({params}:any){
     useEffect(() => {
    
         if (!params.codigo) {
-            router.push('/veiculos');  
+            router.push('/cadastros/veiculos');  
             return;
         }
         busca();
@@ -110,7 +111,7 @@ export default function veiculo({params}:any){
     async  function gravar( ){
             setIsLoading(true)
             try{
-                let result = await api.put('/veiculo',  data,{
+                let result = await api.put('/veiculos',  data,{
                      headers:{ token:  user.token   }
                 })
                 if(result.status === 200 ){
@@ -156,7 +157,7 @@ export default function veiculo({params}:any){
         return (
             <div className="flex flex-col justify-center items-center min-h-screen p-4">
                 <p className="text-xl text-red-600 mb-4">veiculo não encontrado ou erro ao carregar.</p>
-                <Button onClick={() => router.push('/veiculos')}>
+                <Button onClick={() => router.push('/cadastros/veiculos')}>
                     <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para Veiculos
                 </Button>
                 <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} />
@@ -168,7 +169,7 @@ export default function veiculo({params}:any){
     return(
         <div className= " min-h-screen flex flex-col sm:ml-56 p-4 w-full h-full  justify-itens-center items-center    bg-slate-100"  >
        
-          <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} to={'/veiculos'}/>
+          <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} to={'/cadastros/veiculos'}/>
        
         <div className="  w-full md:w-5/6   p-2 mt-22 min-h-screen    rounded-lg bg-white shadow-md " >
 
@@ -176,7 +177,7 @@ export default function veiculo({params}:any){
                         <h1 className="text-md md:text-3xl font-bold text-gray-800">
                             Detalhes do Veículo
                         </h1>
-                        <Button variant="outline" onClick={() => router.push('/veiculos')}>
+                        <Button variant="outline" onClick={() => router.push('/cadastros/veiculos')}>
                             <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
                         </Button>
                </div>

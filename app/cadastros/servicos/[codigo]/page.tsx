@@ -80,7 +80,7 @@ export default function ServicoEdit({ params }: { params: { codigo: string } }) 
   }
 
    async function busca() {
-            if(!user || !user.token ) {
+            if(!user   ) {
             
             console.log("user.token not found.")
                 return
@@ -135,7 +135,7 @@ export default function ServicoEdit({ params }: { params: { codigo: string } }) 
         console.log("Enviando para API:", dadosParaGravar);  
  
         try {
-            const result = await api.put('/servico', dadosParaGravar, {
+            const result = await api.put('/servicos', dadosParaGravar, {
                 headers: { token:  user.token  },
             });
             console.log(result);
@@ -186,7 +186,7 @@ export default function ServicoEdit({ params }: { params: { codigo: string } }) 
         <div className="h-screen flex flex-col sm:ml-56 bg-slate-100 overflow-hidden">
      <div className="w-full max-w-screen-2xl mx-auto bg-white rounded-lg shadow-md p-4 md:p-6 lg:p-8 flex flex-col flex-1">
 
-            <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} to={'/servicos'} />
+            <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} to={'/cadastros/servicos'} />
 
             <ScrollArea className="flex-1 p-4 md:p-6">
 

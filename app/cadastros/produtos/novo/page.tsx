@@ -80,6 +80,7 @@ interface FotoProduto {
      const { user, loading  }: any = useAuth();
      const router = useRouter();
   
+    const [ id ] = useState(uuidv4());
  
      
      const handleActive = useCallback((param: 'S' | 'N') => {
@@ -94,7 +95,7 @@ interface FotoProduto {
 
             function init (){
                 let aux:any ={
-                     id: uuidv4(),
+                     id ,
                     ativo:'S',
                     class_fiscal:'0000.00.00',
                      cst:'00',

@@ -39,11 +39,11 @@ export const SelectCliente = ({ codigoCliente , selectCliente}: props)=>{
             } }
             if( !isNaN(pesquisa)){
                 params= {   
-                    codigo:pesquisa,
+                    codigo:Number(pesquisa),
                     ativo:'S'    
                 }  }
 
-        const result = await api.get('/clientes',{
+        const result = await api.get('/clientes/search',{
           headers: { token:   user.token  },
           params:params
         })
@@ -51,7 +51,8 @@ export const SelectCliente = ({ codigoCliente , selectCliente}: props)=>{
         if(result.status === 200){
             setDados(result.data);
         }
-    }catch(e){ console.log(e)
+    }catch(e){ 
+        console.log("Erro ao consultar cliente do veiculo ", e)
     }finally{
         setLoading(false)
     }
@@ -63,7 +64,7 @@ async function busca2(){
     try{
 
     if(codigoCliente && codigoCliente > 0 ){
-        const result = await api.get('/clientes',{
+        const result = await api.get('/clientes/search',{
             headers: { token:  user.token },
             params:{
                codigo:codigoCliente,
@@ -71,12 +72,12 @@ async function busca2(){
             }
           })
 
-          if(result.status ===200){
+          if(result.status === 200){
             setCLiente(result.data[0])
           }
      }
     }catch(e){
-        console.log(e)
+        console.log("Erro ao consultar cliente do veiculo ", e)
     }
 
     }

@@ -18,9 +18,9 @@ export default function servicos(){
 
 const {user, loading }:any = useAuth();
 
- const [ pesquisa , setPesquisa ] = useState('');
+ const [ pesquisa , setPesquisa ] = useState<string>('');
  const [ dados, setDados ] = useState();
- const [ servicos, setServicos ] = useState([]);
+ const [ servicos, setServicos ] = useState<basicServico[] | null >(null);
  const [ filtroAtivo, setFiltroAtivo ] = useState('S');
  const [isLoading, setIsLoading] = useState(false);  
 
@@ -28,28 +28,30 @@ const {user, loading }:any = useAuth();
     const router = useRouter();
 
    
-    async function busca() {
+    async function busca(term: string) {
       setServicos([])
       setIsLoading(true)
       try{
-        if(!user || !user.token ) return;
+        if(!user  ) return;
+    const query = term.trim() === '' ? 'a' : term.trim();
 
         const  headers = { token:  user.token  }  
       let result = await api.get(`/servicos/search`, { 
           headers, 
           params:{
-            aplicacao: pesquisa,
+            aplicacao: query,
             ativo:filtroAtivo
           }
           
       })
+          console.log("Data ",result.data)
 
-      if( result.status === 200 && !result.data.erro ){
+      if( result.status === 200   ){
           setServicos( result.data);
-          console.log(result.data)
+          console.log("Data ",result.data)
       }
     }catch(e:any){
-      console.log(e.response)
+      console.log("Erro ",e.response)
     }finally{
       setIsLoading(false)
     }
@@ -67,11 +69,13 @@ const {user, loading }:any = useAuth();
   
   
    useEffect(()=>{
-       busca();
-    },[ pesquisa, filtroAtivo])
+       busca(pesquisa);
+    },[ pesquisa, filtroAtivo, ])
 
-
-
+   useEffect(()=>{
+      busca(pesquisa);
+    },[])
+ 
     if (loading) {
       return (
         <div className="flex justify-center items-center h-screen">
@@ -89,7 +93,7 @@ const {user, loading }:any = useAuth();
     }
 
     function handleClick(i:any) {
-      router.push(`/servicos/${i}`)
+      router.push(`/cadastros/servicos/${i}`)
   
        }
 
@@ -110,7 +114,7 @@ const {user, loading }:any = useAuth();
                   type="button"
                   variant="outline"
                   className="shadow-sm w-full sm:w-auto"
-                  onClick={() => router.push('/servicos/novo')}
+                  onClick={() => router.push('/cadastros/servicos/novo')}
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   Novo Serviço
@@ -169,7 +173,7 @@ const {user, loading }:any = useAuth();
                            <TableHead className=" text-base" > </TableHead>
                         </Table >
       { 
-        servicos.length > 0 ?
+        servicos && servicos.length > 0 ?
         (
               <ScrollArea className="w-full mt-4  h-[80%] overflow-auto  shadow-lg rounded-lg  ">
                     <Table  className="w-full bg-white rounded-xl ">

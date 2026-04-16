@@ -44,8 +44,8 @@ export default function NovaConta(){
             console.log(data)
 
             try{
-                let result = await api.post('/empresa', data );
-                    if( result.status === 200 && result.data.status.ok === true  ){
+                let result = await api.post('/criar-empresa', data );
+                    if( result.status === 200   ){
                         setLoading(true)
                         router.push('/')
                     }

@@ -27,29 +27,46 @@ export default function Veiculos(){
 
 
    
-      async function busca( ) {
+  async function busca(term: any) {
         setVeiculos([]);
-      setIsLoading(true);
-      let param;
+       setIsLoading(true);
+      let param: {
+         codigo:any, 
+         cliente:any,
+         placa:any,
+         modelo:any,
+         ano:any
+         marca:any
+         ativo: 'S' | 'N'
+         id:any 
+        }   ={ 
+codigo : '',
+cliente : '',
+placa : '',
+modelo : '',
+ano : '',
+marca : '',
+ativo : 'S',
+id : '' 
+        }
 
         if(!user || !user.token){
           return;
         }
-            if( isNaN(pesquisa)){
-                param =
-                 {
-                    modelo:pesquisa,
-                    ativo: filtroAtivo,
-                   }
-            }
-            if( !isNaN(pesquisa)){
-                param =
-                 {
-                    codigo:pesquisa,
-                    ativo: filtroAtivo,
-                   }
-            }
 
+            if(  term){
+                  param.codigo = Number(term);
+                  param.cliente = Number(term);
+                  param.ano = Number(term);
+                  param.id = Number(term);
+                   param.placa = term;
+                  param.modelo = term;
+                  param.marca = term;
+
+                }
+
+                   param.ativo = filtroAtivo;
+         
             const headers = { token:  user.token  } 
          try {
           const aux = await api.get(`/veiculos/search`, {
@@ -71,7 +88,7 @@ export default function Veiculos(){
 
 
       useEffect(() => {
-        busca()
+        busca(pesquisa)
         },[ pesquisa, filtroAtivo ])
 
          
@@ -158,7 +175,7 @@ if (loading) {
             
             <div className="flex flex-col sm:flex-row sm:items-center gap-4   md:mt-0">
                 <Button type="button" className="shadow-sm w-full sm:w-auto" 
-                    onClick={()=> router.push('/veiculos/novo')}
+                    onClick={()=> router.push('/cadastros/veiculos/novo')}
                 >
                     <Plus className="h-4 w-4 mr-2" /> Novo
                 </Button>
@@ -213,7 +230,7 @@ if (loading) {
                                         variant="ghost"
                                         size="icon"
                                         className="h-8 w-8"
-                                       onClick={() => router.push(`/veiculos/${i.codigo}`)}
+                                       onClick={() => router.push(`/cadastros/veiculos/${i.codigo}`)}
                                         title="Editar Produto"
                                     >
                                         <Edit className="h-4 w-4" />

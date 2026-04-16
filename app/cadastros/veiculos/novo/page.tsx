@@ -13,17 +13,18 @@ import { useAuth } from "@/contexts/AuthContext";
 import { AlertDemo } from "@/components/alert/alert";
 import { ThreeDot } from "react-loading-indicators";
 import { SelectCliente } from "../_components/selectCliente";
-
+  import { v4 as uuidv4 } from 'uuid'
 
 interface veiculo  
  {
     codigo?:number,
     modelo:string,
-    placa:string,
+    placa:string,   
     marca:string,
     ano:string,
     combustivel:string,
     cliente:number
+    cor:string
 }
 
 export default function veiculo(){
@@ -34,47 +35,50 @@ export default function veiculo(){
     const [ modelo, setModelo] = useState<string>();
     const [ marca, setMarca ] = useState<string>();
     const  [ ano, setAno ] = useState<string>();
+    const [cor, setCor] = useState<string>();
     const [ combustivel, setCombustivel ] = useState<string>();
     const [msgAlert, setMsgAlert] = useState<string>('');
     const [visibleAlert, setVisibleAlert] = useState(false);
     const [isLoading, setIsLoading] = useState(false);  
+    const [ id ] = useState(uuidv4());
 
     const router = useRouter();
 
      const { user, loading  }: any = useAuth();
     const api = configApi();
 
-    async  function gravar( ){
-
-        setIsLoading(false);
+    async  function gravar(){
+      // setIsLoading(true);
 
         let aux:any =
          {
-            ano: ano ,
-            cliente:cliente.codigo,
+             id:String(id) ,
+            ano: String(ano) ,
+            cliente:Number(cliente.codigo),
             combustivel:combustivel,
-            marca:marca,
-            modelo:modelo,
-            placa:placa,
+            marca:String(marca),
+            modelo:String(modelo),
+            placa:String(placa),
+            cor:String(cor)
             }
-
+           console.log(aux)
             try{
-                let result = await api.post('/veiculo',  aux,{
+                let result = await api.post('/veiculos',  aux,{
                      headers:{ token:  user.token  }
                 })
+
                 if(result.status === 200 ){
                     setVisibleAlert(true);
                     setMsgAlert(`Veículo ${aux.modelo} cadastrado com Sucesso!`);
                 }
-
             }catch(e:any){
-                console.error("Erro ao gravar Veículo:", e);
-                setMsgAlert(`${e.reponse.data.msg}`);
-                setVisibleAlert(true);
+                console.error("Erro ao gravar Veículo:", e.response.data.message);
+              setVisibleAlert(true);
+                setMsgAlert(e.response.data.message );
             }finally {
-                setIsLoading(false);
+             setIsLoading(false);
             }
-    
+ 
     
     }
     
@@ -107,7 +111,7 @@ useEffect(() => {
     
     return(
         <div className= " min-h-screen flex flex-col sm:ml-52 p-4 w-full h-full  justify-itens-center items-center    bg-slate-100"  >
-          <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} to={'/veiculos'}/>
+          <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} to={'/cadastros/veiculos'}/>
       <div className=" md:w-[85%]  max-w-none">
 
            <div className="  w-full md:w-5/6   p-2 mt-22 min-h-screen    rounded-lg bg-white shadow-md " >
@@ -128,9 +132,12 @@ useEffect(() => {
            <Card className="lg:col-span-2">
                             <CardHeader>
                                 <CardTitle className="text-lg">Detalhes Principais</CardTitle>
+                                    <Label   className="text-sm font-medium text-gray-600">ID : ${id}</Label>
+
                             </CardHeader>
                             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 p-4">
                                 <div>
+
                                     <Label   className="text-sm font-medium text-gray-600">Modelo :</Label>
                                     <Input
                                         defaultValue={data?.modelo }
@@ -171,6 +178,16 @@ useEffect(() => {
                                 <div>
                                     <Label   className="text-sm font-medium text-gray-600">Combustivel:</Label>
                                     <Input
+                                        id="cor"
+                                        placeholder="Verde"
+                                        defaultValue={data?.cor ?? ''}
+                                        onChange={(e) => setCor( e.target.value )}
+                                        className="mt-1"
+                                    />
+                                </div>
+                                <div>
+                                    <Label   className="text-sm font-medium text-gray-600">Combustivel:</Label>
+                                    <Input
                                         id="gtin"
                                         placeholder="Gasolina"
                                         defaultValue={data?.combustivel ?? ''}
@@ -199,8 +216,8 @@ useEffect(() => {
               <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-md p-3 z-10 sm:ml-56">
                           <div className="w-full max-w-7xl mx-auto flex justify-end">
                               <Button
-                                   onClick={gravar}
-                                //  disabled={isSaving || isLoading} // Also disable during initial load
+                                  onClick={gravar}
+                              //  disabled={    isLoading} // Also disable during initial load
                                   size="lg"
                               >
                                   <Save className="mr-2 h-5 w-5" />
