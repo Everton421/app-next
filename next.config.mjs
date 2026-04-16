@@ -1,18 +1,25 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+// const nextConfig = {};
 
-export default nextConfig;
 
-//const nextConfig = {
-//    async rewrites() {
-//      return [
-//        {
-//          source: '/api/:path*',
-//          destination: 'https://sua-api-externa.com/:path*', // Substitua pela URL da sua API
-//        },
-//      ];
-//    },
-//    async headers() {
+ const nextConfig = {
+    images: { 
+        remotePatterns :[
+             {
+                protocol: 'https',
+                hostname: '**', // Matches any hostname
+            },
+        ]
+    }
+    //     async rewrites() {
+//       return [
+//         {
+//           source: '/*',
+//           destination: 'https://*', // Substitua pela URL da sua API
+//         },
+//       ];
+//     },
+//     async headers() {
 //      return [
 //        {
 //          // matching all API routes
@@ -25,8 +32,11 @@ export default nextConfig;
 //        },
 //      ];
 //    },
-//  };
+   };
 //  
 //  export default nextConfig;
 //  
-//   
+//  
+
+export default nextConfig;
+

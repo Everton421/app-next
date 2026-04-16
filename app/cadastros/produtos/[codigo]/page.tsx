@@ -5,55 +5,51 @@ import { Active } from '@/app/pedidos/components/active'; // Assuming correct pa
 import { configApi } from '@/app/services/api'; // Assuming correct path
 import { AlertDemo } from '@/components/alert/alert'; // Assuming correct path
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/carousel'; // Assuming correct path
+import { Button } from '@/components/ui/button'; // Import Shadcn Button
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'; // Import Card components
 import { Input } from '@/components/ui/input'; // Import Shadcn Input
 import { Label } from '@/components/ui/label'; // Import Shadcn Label
+import { ScrollArea } from '@/components/ui/scroll-area'; // Ensure ScrollArea is imported
 import { Textarea } from '@/components/ui/textarea'; // Import Shadcn Textarea
-import { Button } from '@/components/ui/button'; // Import Shadcn Button
 import { useAuth } from '@/contexts/AuthContext'; // Assuming correct path
-import { Save, ArrowLeft, ChartCandlestick, Store, Loader2, UploadCloud, AlertTriangle, Flag } from 'lucide-react'; // Add ArrowLeft for back button
+import { ArrowLeft, ChartCandlestick, Flag, Loader2, Save, Store } from 'lucide-react'; // Add ArrowLeft for back button
 import { useRouter } from 'next/navigation'; // Use useRouter for back navigation
 import { useCallback, useEffect, useState } from 'react';
-import { ScrollArea } from '@/components/ui/scroll-area'; // Ensure ScrollArea is imported
+import { ThreeDot } from 'react-loading-indicators';
+import { ModalAnuncio } from '../../../marketplaces/_components/modal-anuncio';
 import SelectCategorias from '../components/selectCategorias';
 import SelectMarca from '../components/selectMarcas';
-import { ThreeDot } from 'react-loading-indicators';
-import { resolve } from 'path';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/select';
-import TooltipComponent from '@/components/tooltip';
-import { ModalAnuncio } from '../components/modal-anuncio';
-
+import Image from 'next/image';
 // Define interfaces (assuming these match your API response)
-type grupo=
-{
-    id:number;
-    codigo:number;
-    descricao:string;
-}
+type grupo =
+    {
+        id: number;
+        codigo: number;
+        descricao: string;
+    }
 
 type marca = {
-id:number;
-codigo:number;
-descricao:string;
+    id: number;
+    codigo: number;
+    descricao: string;
 }
 interface Produto {
     codigo: number;
     descricao: string;
-    grupo: grupo ;
-    marca:marca;
+    grupo: grupo;
+    marca: marca;
     preco: number;
     estoque: number;
-    sku?: string | null; 
+    sku?: string | null;
     num_fabricante?: string | null;
-    class_fiscal?: string | null;  
-    ncm?: string | null;  
+    class_fiscal?: string | null;
+    ncm?: string | null;
     observacoes1?: string | null;
     observacoes2?: string | null;
     observacoes3?: string | null;
     ativo: 'S' | 'N';
-    data_recadastro?: string; 
-    data_cadastro?: string; 
+    data_recadastro?: string;
+    data_cadastro?: string;
 }
 
 interface FotoProduto {
@@ -73,16 +69,16 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
     const [predicting, setPredicting] = useState(false);
     const [categoryId, setCategoryId] = useState("");
     const [categoryName, setCategoryName] = useState("");
-        
+
     const api = configApi();
     const useDateService = UseDateFunction();
-    const { user, loading  }: any = useAuth();
+    const { user, loading }: any = useAuth();
     const router = useRouter();
 
 
-     const [showMlModal, setShowMlModal] = useState(false);
+    const [showMlModal, setShowMlModal] = useState(false);
     const [mlLoading, setMlLoading] = useState(false);
-    
+
     // Formulario ML (Separado do produto original para permitir ajustes sem salvar no ERP)
     const [mlTitle, setMlTitle] = useState("");
     const [mlPrice, setMlPrice] = useState("");
@@ -92,78 +88,83 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
     const [dynamicValues, setDynamicValues] = useState<Record<string, string>>({});
     const [requiredAttrs, setRequiredAttrs] = useState<any[]>([]);
 
-    
-        async function busca() {
-            if ( !user ) {
-                return
-            }
+ useEffect(() => {
+    if (!loading && !user) {
+      router.push('/');
+    }
+  }, [user, loading, router]);
 
-            let cod = Number(params.codigo);
-                       const headers = { token:  user.token  };
-                
-            try {
-                const [dadosRes, fotosRes] = await Promise.all([
-                    api.get(`/produtos/${cod}`, {
-                        headers   
-                    }),
-                    api.get(`/fotos/produto`,
-                         {
-                           headers,
-                           params:{
-                            codigo: cod
-                           }
-                        }
-                    )
-                ]);
-                console.log(dadosRes)
-
-                if (dadosRes.status === 200 ) {
-                    setData(dadosRes.data);
-                } else {
-                     console.warn("Produto não encontrado");
-                     setMsgAlert(`Produto com código ${params.codigo} não encontrado.`);
-                     setVisibleAlert(true); 
-                     setData(null);  
-                }
-
-                if (fotosRes.status === 200) {
-                    setFotos(fotosRes.data || []);
-                }
-
-            } catch (error) {
-                console.error("Erro ao buscar dados do produto:", error);
-                setMsgAlert("Erro ao carregar dados do produto.");
-                setVisibleAlert(true);
-                 setData(null);  
-            } finally {
-                setIsLoading(false);
-            }
+    async function busca() {
+        if (!user) {
+            return
         }
 
-        useEffect(() => {
-             busca();
-    }, [ ]);  
+        let cod = Number(params.codigo);
+        const headers = { token: user.token };
 
- // --- 1. PREDITOR DE CATEGORIA ---
+        try {
+            const [dadosRes, fotosRes] = await Promise.all([
+                api.get(`/produtos/${cod}`, {
+                    headers
+                }),
+                api.get(`/fotos/produto`,
+                    {
+                        headers,
+                        params: {
+                            codigo: cod
+                        }
+                    }
+                )
+            ]);
+            console.log(fotosRes)
+
+            if (dadosRes.status === 200) {
+                setData(dadosRes.data);
+            } else {
+                console.warn("Produto não encontrado");
+                setMsgAlert(`Produto com código ${params.codigo} não encontrado.`);
+                setVisibleAlert(true);
+                setData(null);
+            }
+
+            if (fotosRes.status === 200) {
+                setFotos(fotosRes.data || []);
+            }
+
+        } catch (error) {
+            console.error("Erro ao buscar dados do produto:", error);
+            setMsgAlert("Erro ao carregar dados do produto.");
+            setVisibleAlert(true);
+            setData(null);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        busca();
+    }, [params , user , router   ]);  
+
+    // --- 1. PREDITOR DE CATEGORIA ---
     // Assim que a tela abre, tenta adivinhar a categoria pelo nome do produto
 
 
 
     const handleInputChange = (field: keyof Produto, value: string | number) => {
-        setData((prevData:any) => {
+        setData((prevData: any) => {
             if (!prevData) return null;
             return { ...prevData, [field]: value };
         });
     };
 
-    const handleCategory =(categoria:grupo) => {
-        setData((prevData:any) => {
+    const handleCategory = (categoria: grupo) => {
+        setData((prevData: any) => {
             if (!prevData) return null;
             return { ...prevData, grupo: categoria };
         });
     }
-    const handleMarca =(marca:marca) => {
-        setData((prevData:any) => {
+    const handleMarca = (marca: marca) => {
+        setData((prevData: any) => {
             if (!prevData) return null;
             return { ...prevData, marca: marca };
         });
@@ -175,15 +176,15 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
         setIsSaving(true);
 
         const dataParaGravar: Produto = {
-            ...data, 
+            ...data,
             data_recadastro: useDateService.obterDataHoraAtual(),
         };
 
-          console.log("Enviando para API:", dataParaGravar);  
-    
-          try {
-            let result = await api.put('/produtos', dataParaGravar,{
-                headers:{ token:  user.token }
+        console.log("Enviando para API:", dataParaGravar);
+
+        try {
+            let result = await api.put('/produtos', dataParaGravar, {
+                headers: { token: user.token }
 
             });
             if (result.status === 200 && result.data.codigo > 0) {
@@ -191,95 +192,69 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
                 setVisibleAlert(true);
                 setMsgAlert(`Produto ${data.codigo} Alterado com Sucesso!`);
             }
-        } catch(e:any) {
+        } catch (e: any) {
             console.error("Erro ao gravar produto:", e);
             setMsgAlert(`Erro ao salvar alterações do produto ${data.codigo}. ${e.response.data.msg}`);
             setVisibleAlert(true);
         } finally {
-             setIsSaving(false);  
+            setIsSaving(false);
         }
-              
+
 
 
     };
 
     const handleActive = useCallback((param: 'S' | 'N') => {
-         setData((prevData:any) => {
+        setData((prevData: any) => {
             if (!prevData) return prevData;
             return { ...prevData, ativo: param };
         });
     }, []);
 
-   //  useEffect(() => {
-   //     if (!loading && !user.token) {
-   //       router.push('/login');  
-   //     }
-   //   }, [user, loading, router]);
-    
-   const handleOpenMlModal = () => {
+    //  useEffect(() => {
+    //     if (!loading && !user.token) {
+    //       router.push('/login');  
+    //     }
+    //   }, [user, loading, router]);
+
+    const handleOpenMlModal = () => {
         if (!data) return;
-        
+
         // Copia dados do produto para o state do formulário ML
         setMlTitle(data.descricao);
         setMlPrice(String(data.preco));
         setMlStock(String(data.estoque));
-        
+
         // Abre o modal
         setShowMlModal(true);
     };
 
     // --- FUNÇÃO 2: Enviar para API ---
-   
-   
-      if (loading) {
+
+
+    if (loading) {
         return (
-          <div className="flex justify-center items-center min-h-screen">
-           <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
-          </div>
+            <div className="flex justify-center items-center h-screen bg-slate-100 sm:ml-56">
+                <ThreeDot variant="pulsate" color="#2563eb" size="medium"   textColor="#2563eb" />
+            </div>
         );
-      }
+    }
     
-      if (!user) {
-        // Optional: You can show a message or just rely on the redirect
+    if (isLoading && !data) { // Mostra loading principal se estiver carregando e não houver dados ainda
         return (
-          <div className="flex justify-center items-center min-h-screen">
-           <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
-            {/* Or return null; the redirect will happen */}
-          </div>
+            <div className="min-h-screen flex items-center justify-center flex-col sm:ml-56 p-4 bg-slate-100">
+                <ThreeDot variant="pulsate" color="#2563eb" size="medium"   textColor="#2563eb" />
+            </div>
         );
-      }
-
-    
-    if (isLoading) {
-        return (
-            <div className="flex justify-center items-center min-h-screen">
-               <div className="flex justify-center my-4"> {/* Container para centralizar */}
-               <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
-             </div>
-           </div>
-
-        );
-     }
-
-     if (!data && !isLoading) {
-         return (
-             <div className="flex flex-col justify-center items-center min-h-screen p-4">
-                 <p className="text-xl text-red-600 mb-4">Produto não encontrado ou erro ao carregar.</p>
-                 <Button onClick={() => router.push('/produtos')}>
-                     <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para Produtos
-                 </Button>
-                 <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} />
-             </div>
-         );
-     }
+    }
 
 
     return (
- <div className= " h-screen flex flex-col sm:ml-56 p-4 w-full   justify-itens-center items-center    bg-slate-100"  >
+        <div className=" h-screen flex flex-col sm:ml-56 p-4 w-full   justify-itens-center items-center    bg-slate-100"  >
 
             <ScrollArea className="flex-1 w-full max-w-screen-2xl bg-white rounded-lg shadow-md mb-20">
 
-                <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} to={'/cadastros/produtos'}/>
+                <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} to={'/cadastros/produtos'} />
 
                 <div className="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 pb-24"> {/* Added pb-24 */}
 
@@ -287,16 +262,16 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
                         <h1 className="text-xl md:text-xl font-bold font-sans text-gray-800">
                             Detalhes do Produto
                         </h1>
-                       
+
                         <div className='flex gap-3'>
-                           <Button variant="outline" onClick={() => router.push('/cadastros/produtos')}>
-                            <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
-                          </Button>
-                              <Button variant="outline" onClick={() => router.push(`/produtos/${data.codigo}/tributacao`)}>
-                                <ChartCandlestick  className="mr-2 h-4 w-4" />
-                              Tributação
+                            <Button variant="outline" onClick={() => router.push('/cadastros/produtos')}>
+                                <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
                             </Button>
-                              <Button variant="outline" onClick={() => router.push(`/marketplaces`)}>
+                            <Button variant="outline" onClick={() => router.push(`/produtos/${data.codigo}/tributacao`)}>
+                                <ChartCandlestick className="mr-2 h-4 w-4" />
+                                Tributação
+                            </Button>
+                            <Button variant="outline" onClick={() => router.push(`/marketplaces`)}>
                                 <Flag className="mr-2 h-4 w-4" />
                                 Anúncios
                             </Button>
@@ -306,21 +281,21 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
                         <CardContent className="p-4 md:p-6 flex flex-col gap-4">
                             <div className="flex items-center gap-2 justify-between">
                                 <div>
-                                   <Label htmlFor="codigo" className=" text-xs md:text-lg font-semibold text-gray-700">Código:</Label>
-                                   <span id="codigo" className="text-xs md:text-lg font-bold text-gray-900"> {data.codigo}</span>
+                                    <Label htmlFor="codigo" className=" text-xs md:text-lg font-semibold text-gray-700">Código:</Label>
+                                    <span id="codigo" className="text-xs md:text-lg font-bold text-gray-900"> {data.codigo}</span>
                                 </div>
-     
+
                                 <div  >
-                                  <Label htmlFor="codigo" className=" text-xs md:text-lg  font-semibold text-gray-700">Data cadastro:</Label>
-                                   <span id="codigo" className=" text-xs md:text-lg font-bold text-gray-900">
-                                     {  new Date(data?.data_cadastro).toLocaleDateString('pt-br', { year:'numeric',month:'numeric', day:'2-digit'})}
-                                     </span>
-                                      
+                                    <Label htmlFor="codigo" className=" text-xs md:text-lg  font-semibold text-gray-700">Data cadastro:</Label>
+                                    <span id="codigo" className=" text-xs md:text-lg font-bold text-gray-900">
+                                        {new Date(data?.data_cadastro).toLocaleDateString('pt-br', { year: 'numeric', month: 'numeric', day: '2-digit' })}
+                                    </span>
+
 
                                 </div>
                             </div>
 
-                   
+
 
                             <div>
                                 <Label htmlFor="descricao" className="text-base font-medium text-gray-600 mb-1 block">Descrição:</Label>
@@ -347,11 +322,12 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
                                         <CarouselContent>
                                             {fotos.map((foto) => (
                                                 <CarouselItem key={foto.sequencia}>
-                                                    <img
-                                                        className="object-contain aspect-square w-full h-auto rounded-md"
-                                                        src={String(foto.link)}
-                                                        alt={`Produto ${data.codigo} - Imagem ${foto.sequencia}`}
-                                                        onError={(e) => { e.currentTarget.src = '/placeholder-image.png'; }}
+                                                
+                                                    <Image
+                                                    src={foto.link}
+                                                    width={200}
+                                                    height={200}
+                                                    alt=''
                                                     />
                                                 </CarouselItem>
                                             ))}
@@ -425,15 +401,15 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
                                         placeholder="00000000"
                                     />
                                 </div>
- 
+
                                 <div>
-                                  <Label htmlFor="ncm" className="text-sm font-medium text-gray-600">Categoria:  { data.grupo &&  data.grupo.descricao }</Label>
-                                   <SelectCategorias setCodigoCategoria={  handleCategory } codigoCategoria={ data.grupo ? data.grupo.codigo : null} />
-                                 </div>
+                                    <Label htmlFor="ncm" className="text-sm font-medium text-gray-600">Categoria:  {data.grupo && data.grupo.descricao}</Label>
+                                    <SelectCategorias setCodigoCategoria={handleCategory} codigoCategoria={data.grupo ? data.grupo.codigo : null} />
+                                </div>
                                 <div>
-                                  <Label htmlFor="ncm" className="text-sm font-medium text-gray-600"> Marca:  { data.marca &&  data.marca.descricao }</Label>
-                                  <SelectMarca setMarca={handleMarca} codigoMarca={data.marca ? data.marca.codigo : null} />
-                                 </div>
+                                    <Label htmlFor="ncm" className="text-sm font-medium text-gray-600"> Marca:  {data.marca && data.marca.descricao}</Label>
+                                    <SelectMarca setMarca={handleMarca} codigoMarca={data.marca ? data.marca.codigo : null} />
+                                </div>
 
 
 
@@ -486,21 +462,21 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
                     </Card>
 
 
-                </div>  
+                </div>
 
             </ScrollArea> {/* End ScrollArea */}
 
             <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-md p-3 z-10 sm:ml-56">
                 <div className="w-full max-w-7xl mx-auto flex justify-between">
-                   
-                 <Button 
-                    className='bg-[#185FED] gap-2'
-                    onClick={handleOpenMlModal} // <--- ALTERADO AQUI
-                    disabled={isLoading || predicting} // Desabilita se estiver carregando ou prevendo categoria
-                > 
-                    {predicting ? <Loader2 className="animate-spin h-4 w-4"/> : <Store />}
-                    Anúnciar Produto
-                </Button>
+
+                    <Button
+                        className='bg-[#185FED] gap-2'
+                        onClick={handleOpenMlModal} // <--- ALTERADO AQUI
+                        disabled={isLoading || predicting} // Desabilita se estiver carregando ou prevendo categoria
+                    >
+                        {predicting ? <Loader2 className="animate-spin h-4 w-4" /> : <Store />}
+                        Anúnciar Produto
+                    </Button>
 
                     <Button
                         onClick={gravar}
@@ -513,8 +489,8 @@ export default function Prod({ params }: { params: { codigo: string } }) { // Ad
                 </div>
             </div>
 
-{/* --- AQUI ENTRA O COMPONENTE NOVO --- */}
-            <ModalAnuncio 
+            {/* --- AQUI ENTRA O COMPONENTE NOVO --- */}
+            <ModalAnuncio
                 open={showMlModal}
                 onOpenChange={setShowMlModal}
                 data={data}

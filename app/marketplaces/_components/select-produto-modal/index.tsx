@@ -96,7 +96,7 @@ export const SelectProdutoModal = ({ open, onOpenChange, onSelect }: SelectProdu
             
             const produtoCompleto = produtoRes.data;
             const fotosData = fotosRes.data || [];
-            
+            console.log("Fotos: ",fotosData )
             setLoadingPhotos(false);
             onSelect(produtoCompleto, fotosData);
             onOpenChange(false);

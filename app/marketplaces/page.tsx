@@ -22,7 +22,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { AlertDemo } from "@/components/alert/alert";
-import { ModalAnuncio } from "@/app/cadastros/produtos/components/modal-anuncio";
+import { ModalAnuncio } from "@/app/marketplaces/_components/modal-anuncio";
 import { SelectProdutoModal } from "./_components/select-produto-modal";
 
 const PLATFORM_CONFIG: Record<string, { label: string, color: string, icon: any, logo?: string }> = {

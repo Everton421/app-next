@@ -267,7 +267,7 @@ export default function Produtos() {
                               variant="ghost"
                               size="icon"
                               className={`p-1 w-8 h-8 rounded-full flex items-center justify-center  `}
-                              onClick={() => router.push(`/markeplaces`)}
+                              onClick={() => router.push(`/marketplaces`)}
                             //title="Editar Produto"
                             >
                               <Store size={16} color='#185FED' />
