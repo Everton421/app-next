@@ -4,10 +4,12 @@ import { useRouter } from "next/navigation";
 import { marketplaceApi, MarketplaceAccount } from "@/app/services/marketplaceApi";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Search, Loader2 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ArrowLeft, Search, Loader2, Download, Package } from "lucide-react";
 import { ThreeDot } from "react-loading-indicators";
 import { SelecionarContaModal } from "./_components/selecionar-conta-modal";
 import { ListaAnunciosPlataforma } from "./_components/lista-anuncios-platforma";
+///import { ListaAnunciosImportados } from "./_components/lista-anuncios-importados";
 
 export default function ConsultaAnunciosPage() {
     const router = useRouter();
@@ -16,6 +18,8 @@ export default function ConsultaAnunciosPage() {
     const [contaSelecionada, setContaSelecionada] = useState<MarketplaceAccount | null>(null);
     const [showSelecionarConta, setShowSelecionarConta] = useState(false);
     const [loadingContas, setLoadingContas] = useState(true);
+    const [importedAnuncios, setImportedAnuncios] = useState<any[]>([]);
+    const [refreshKey, setRefreshKey] = useState(0);
 
     useEffect(() => {
         if (!authLoading && !user) {
@@ -117,10 +121,34 @@ export default function ConsultaAnunciosPage() {
                         </Button>
                     </div>
                 ) : (
-                    <ListaAnunciosPlataforma
-                        conta={contaSelecionada}
-                        onTrocarConta={handleTrocarConta}
-                    />
+                    <Tabs defaultValue="marketplace" className="w-full">
+                        <TabsList className="mb-6">
+                            <TabsTrigger value="marketplace" className="flex items-center gap-2">
+                                <Download className="h-4 w-4" />
+                                Anúncios Marketplace
+                            </TabsTrigger>
+                            <TabsTrigger value="importados" className="flex items-center gap-2">
+                                <Package className="h-4 w-4" />
+                                Anúncios Importados
+                            </TabsTrigger>
+                        </TabsList>
+                        
+                        <TabsContent value="marketplace">
+                            <ListaAnunciosPlataforma
+                                conta={contaSelecionada}
+                                onTrocarConta={handleTrocarConta}
+                                onImportSuccess={() => setRefreshKey(k => k + 1)}
+                            />
+                        </TabsContent>
+                        
+                        <TabsContent value="importados">
+                           {/**  <ListaAnunciosImportados
+                                conta={contaSelecionada}
+                                onTrocarConta={handleTrocarConta}
+                                refreshKey={refreshKey}
+                            />*/}
+                        </TabsContent>
+                    </Tabs>
                 )}
             </div>
         </div>

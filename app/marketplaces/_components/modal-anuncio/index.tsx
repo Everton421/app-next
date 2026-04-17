@@ -63,7 +63,8 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
     const [mlListingType, setMlListingType] = useState("gold_special");
     const [mlCondition, setMlCondition] = useState("new");
     const [ codigoProduto, setCodigoProduto ] = useState<number>();
-    
+    const [ mlEan ,setMlEan ] = useState('');
+    const [ mlDescription,  setMlDescription] = useState('');
     // Estados da Categoria
     const [categoryId, setCategoryId] = useState("");
     const [categoryName, setCategoryName] = useState("");
@@ -98,12 +99,13 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
             setMlPrice(String(data.preco || ""));
             setMlStock(String(data.estoque || ""));
             setMlCondition("new");
+            setMlEan(String(data.num_fabricante) || "");
             setCodigoProduto( data.codigo)
             setCategoryId("");
             setCategoryName("");
             setRequiredAttrs([]);
             setDynamicValues({});
-            
+            setMlDescription(String(data.observacoes1) || String(data.observacoes2) || "" );
             guessCategory(data.descricao);
         }
     }, [open, data]);
@@ -195,12 +197,12 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
                 category_id: categoryId,
                 listing_type_id: mlListingType,
                 condition: mlCondition,
+                ean: mlEan,
                 description: `Produto: ${mlTitle}\n\n${data?.observacoes1 || ''}\n${data?.observacoes2 || ''}`,
                 pictures: pictureUrls.length > 0 ? pictureUrls : ["https://http2.mlstatic.com/D_NQ_NP_964047-MLA44034285816_112020-O.jpg"], 
                 attributes: attributesToSend,
                 thumbnail: pictureUrls.length > 0 ? pictureUrls[0] : "https://http2.mlstatic.com/D_NQ_NP_964047-MLA44034285816_112020-O.jpg"
             };
-
             const response = await api.post('/ml/anuncios/create', payload, {
                 headers: { token: user.token }
             });
@@ -383,7 +385,20 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
                                     </SelectContent>
                                 </Select>
                             </div>
+                         </div>
+                            <div className="space-y-1">
+                                <Label>Ean</Label>
+                                <Input id="ml-stock" type="number" value={mlEan} onChange={(e) => setMlEan(e.target.value)} />
                         </div>
+                            <div className="space-y-1">
+                                <Label>Descrição anuncio</Label>
+                                
+                                            <textarea
+                                            value={mlDescription} onChange={(e) => setMlDescription(e.target.value)}
+                                            >
+                                   </textarea>
+                        </div>
+
 
                         {/* Campos Dinâmicos */}
                         {requiredAttrs.length > 0 && (

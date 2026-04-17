@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from "react";
 import { marketplaceApi, MarketplaceAnunciosResponse, MarketplaceAccount, PLATFORM_CONFIG } from "@/app/services/marketplaceApi";
+import { configApi } from "@/app/services/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -13,12 +14,15 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { 
-    Store, ShoppingBag, Search, ExternalLink, Package, Loader2, RefreshCw
+    Store, ShoppingBag, Search, ExternalLink, Package, Loader2, RefreshCw, Download
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { SelectProdutoModal } from "@/app/marketplaces/_components/select-produto-modal";
+import { toast } from "sonner";
 
 interface MLAnuncioItem {
     id: string;
@@ -32,6 +36,7 @@ interface MLAnuncioItem {
 interface ListaAnunciosPlataformaProps {
     conta: MarketplaceAccount;
     onTrocarConta: () => void;
+    onImportSuccess?: () => void;
 }
 
 const ICONS = {
@@ -39,13 +44,17 @@ const ICONS = {
     ShoppingBag
 };
 
-export function ListaAnunciosPlataforma({ conta, onTrocarConta }: ListaAnunciosPlataformaProps) {
+export function ListaAnunciosPlataforma({ conta, onTrocarConta, onImportSuccess }: ListaAnunciosPlataformaProps) {
     const { user }: any = useAuth();
+    const api = configApi();
     const [anuncios, setAnuncios] = useState<MLAnuncioItem[]>([]);
     const [totalEncontrado, setTotalEncontrado] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [buscaTermo, setBuscaTermo] = useState("");
     const [anunciosFiltrados, setAnunciosFiltrados] = useState<MLAnuncioItem[]>([]);
+    const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+    const [showSelectProduto, setShowSelectProduto] = useState(false);
+    const [isImporting, setIsImporting] = useState(false);
 
     const platformConfig = PLATFORM_CONFIG[conta.platform] || {
         label: conta.platform,
@@ -105,6 +114,70 @@ export function ListaAnunciosPlataforma({ conta, onTrocarConta }: ListaAnunciosP
         }).format(value);
     };
 
+    const toggleSelect = (id: string) => {
+        const newSelected = new Set(selectedIds);
+        if (newSelected.has(id)) {
+            newSelected.delete(id);
+        } else {
+            newSelected.add(id);
+        }
+        setSelectedIds(newSelected);
+    };
+
+    const toggleSelectAll = () => {
+        if (selectedIds.size === anunciosFiltrados.length) {
+            setSelectedIds(new Set());
+        } else {
+            setSelectedIds(new Set(anunciosFiltrados.map(a => a.id)));
+        }
+    };
+
+    const handleImportar = async (produto?: any) => {
+        if (selectedIds.size === 0) return;
+        
+        const anunciosSelecionados = anunciosFiltrados.filter(a => selectedIds.has(a.id));
+        
+        setIsImporting(true);
+        try {
+            for (const item of anunciosSelecionados) {
+                const payload = {
+                    ml_user_id: conta.ml_user_id,
+                    id_externo: item.id,
+                    titulo: item.title,
+                    preco: item.price,
+                    estoque: item.quantity,
+                    thumbnail: item.thumbnail,
+                    link: item.permalink,
+                    plataforma: conta.platform,
+                    ativo: 'S',
+                    codigo_produto: produto?.codigo || null
+                };
+                
+                await api.post('/ml/anuncios', payload, {
+                    headers: { token: user.token }
+                });
+            }
+            
+            toast.success(`${anunciosSelecionados.length} anúncio(s) importado(s) com sucesso!`);
+            setSelectedIds(new Set());
+            setShowSelectProduto(false);
+            if (onImportSuccess) onImportSuccess();
+        } catch (error) {
+            console.error("Erro ao importar:", error);
+            toast.error("Erro ao importar anúncios");
+        } finally {
+            setIsImporting(false);
+        }
+    };
+
+    const handleOpenSelectProduto = () => {
+        if (selectedIds.size === 0) {
+            toast.warning("Selecione pelo menos um anúncio para importar");
+            return;
+        }
+        setShowSelectProduto(true);
+    };
+
     return (
         <div className="space-y-6">
             {/* Header */}
@@ -153,8 +226,8 @@ export function ListaAnunciosPlataforma({ conta, onTrocarConta }: ListaAnunciosP
                     </div>
                 </div>
 
-                {/* Busca */}
-                <div className="mt-4">
+                {/* Busca e Botões de Importação */}
+                <div className="mt-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="relative max-w-md">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                         <Input
@@ -164,6 +237,32 @@ export function ListaAnunciosPlataforma({ conta, onTrocarConta }: ListaAnunciosP
                             className="pl-10"
                         />
                     </div>
+                    
+                    {selectedIds.size > 0 && (
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm text-slate-600">
+                                {selectedIds.size} selecionado(s)
+                            </span>
+                            <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => handleImportar()}
+                                disabled={isImporting}
+                            >
+                                <Download className="h-4 w-4 mr-1" />
+                                Importar sem Produto
+                            </Button>
+                            <Button 
+                                size="sm"
+                                className="bg-blue-600 hover:bg-blue-700"
+                                onClick={handleOpenSelectProduto}
+                                disabled={isImporting}
+                            >
+                                <Download className="h-4 w-4 mr-1" />
+                                Importar com Produto
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -197,6 +296,12 @@ export function ListaAnunciosPlataforma({ conta, onTrocarConta }: ListaAnunciosP
                         <Table>
                             <TableHeader>
                                 <TableRow className="bg-slate-50 hover:bg-slate-50">
+                                    <TableHead className="w-12">
+                                        <Checkbox
+                                            checked={selectedIds.size === anunciosFiltrados.length && anunciosFiltrados.length > 0}
+                                            onCheckedChange={toggleSelectAll}
+                                        />
+                                    </TableHead>
                                     <TableHead className="w-16">Img</TableHead>
                                     <TableHead>Título</TableHead>
                                     <TableHead className="text-right">Preço</TableHead>
@@ -208,8 +313,17 @@ export function ListaAnunciosPlataforma({ conta, onTrocarConta }: ListaAnunciosP
                                 {anunciosFiltrados.map((anuncio) => (
                                     <TableRow 
                                         key={anuncio.id} 
-                                        className="hover:bg-slate-50/50 transition-colors"
+                                        className={cn(
+                                            "hover:bg-slate-50/50 transition-colors",
+                                            selectedIds.has(anuncio.id) && "bg-blue-50"
+                                        )}
                                     >
+                                        <TableCell>
+                                            <Checkbox
+                                                checked={selectedIds.has(anuncio.id)}
+                                                onCheckedChange={() => toggleSelect(anuncio.id)}
+                                            />
+                                        </TableCell>
                                         <TableCell>
                                             <div className="w-12 h-12 rounded-md bg-slate-100 flex items-center justify-center overflow-hidden">
                                                 {anuncio.thumbnail ? (
@@ -276,6 +390,12 @@ export function ListaAnunciosPlataforma({ conta, onTrocarConta }: ListaAnunciosP
                     </div>
                 </div>
             )}
+            
+            <SelectProdutoModal
+                open={showSelectProduto}
+                onOpenChange={setShowSelectProduto}
+                onSelect={(produto, fotos) => handleImportar(produto)}
+            />
         </div>
     );
 }
