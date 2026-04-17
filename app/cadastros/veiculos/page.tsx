@@ -124,14 +124,25 @@ if (loading) {
       <div className="    md:w-[85%]  p-2 mt-22 min-h-screen  rounded-lg bg-white   " >
         <div className="  p-2   rounded-sm bg-slate-100 w-full  ">
 
-                <div className="m-5  flex justify-between   ">
-                      <h1 className="text-2xl md:text-4xl font-bold font-sans text-gray-800">
-                            Veículos
-                      </h1>
-               </div>
+            <div className="m-2 flex flex-col md:flex-row justify-between">
+              <h1 className="text-2xl md:text-4xl font-bold font-sans text-gray-800">
+                Veículos
+              </h1>
 
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6  ">
-            <div className="  md:w-auto md:max-w-md md:min-w-[60%] items-center gap-2 mt-3" >
+              <div className="flex items-center gap-2 mt-4 md:mt-0 w-full md:w-auto">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="shadow-sm w-full sm:w-auto"
+                  onClick={() => router.push('/cadastros/veiculos/novo')}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Novo
+                </Button>
+              </div>
+            </div>
+
+        <div className="flex md:flex-row md:w-auto md:max-w-md md:min-w-[60%] items-center gap-2 mt-3" >
                 <Input
                     placeholder="Pesquisar por código ou descrição..."
                     className="shadow-md flex-grow bg-white" // Takes available space
@@ -171,24 +182,9 @@ if (loading) {
             </div>
 
            
-            <Checkbox className="bg-red-500"/>
-            
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4   md:mt-0">
-                <Button type="button" className="shadow-sm w-full sm:w-auto" 
-                    onClick={()=> router.push('/cadastros/veiculos/novo')}
-                >
-                    <Plus className="h-4 w-4 mr-2" /> Novo
-                </Button>
-    
-           
-            </div> 
+</div> 
 
-        </div> 
-                
-      
-      </div>
-
-         <div className="w-full mt-4  h-screen shadow-lg ">
+          <div className="w-full mt-4  h-screen shadow-lg ">
       
         <Table  className="w-full  bg-gray-100 rounded-sm ">
             <TableHead className= " w-[5%]   text-xs md:text-base">Codigo</TableHead>
@@ -277,12 +273,12 @@ if (loading) {
             ):
             <span className=" text-xs md:text-xl text-gray-500 text-center m-7 "> nenhum veículo encontrado!</span>
 
-            )  
+)  
             }         
-   
+
         </div>
-         </div>
-       </div>
-           
-       )
+      </div>
+
+    </div>
+  );
 }

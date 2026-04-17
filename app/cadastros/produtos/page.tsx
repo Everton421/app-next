@@ -16,6 +16,7 @@ import { Check, Edit, X, Search, Plus, AlignLeft, Tag, Columns3Icon, FileSliders
 import { ScrollArea } from '@/components/ui/scroll-area'; // Use Shadcn ScrollArea
 import { useAuth } from '@/contexts/AuthContext'; // Assuming correct path
 import { ThreeDot } from 'react-loading-indicators';
+import Image from 'next/image';
 
 // Define Product type (optional but good practice)
 interface Product {
@@ -24,6 +25,15 @@ interface Product {
   preco: number;
   estoque: number;
   ativo: 'S' | 'N';
+  fotos?: {
+    produto: number;
+    sequencia: number;
+    descricao: string;
+    link: string;
+    foto: string;
+    data_cadastro: string;
+    data_recadastro: string;
+  }[];
 }
 
 export default function Produtos() {
@@ -217,13 +227,18 @@ export default function Produtos() {
 
         <div className="w-full mt-4  h-screen shadow-lg ">
           <Table className="w-full  bg-gray-100 rounded-sm ">
-            <TableHead className=" w-[7%]   text-xs md:text-base ">Codigo</TableHead>
-            <TableHead className=" w-[50%]  text-xs md:text-base   text-start" >Descricao</TableHead>
-            <TableHead className="   text-xs md:text-base max-w-16  " > Preco</TableHead>
-            <TableHead className=" text-xs md:text-base text-center  "   >Estoque</TableHead>
-            <TableHead className="    text-xs md:text-base " > </TableHead>
-            <TableHead className="    text-xs md:text-base " > </TableHead>
-          </Table >
+            <TableHeader>
+              <TableRow className="bg-gray-100">
+                <TableHead className="w-[80px] text-xs md:text-base font-semibold text-gray-700">Foto</TableHead>
+                <TableHead className="w-[80px] text-xs md:text-base font-semibold text-gray-700">Código</TableHead>
+                <TableHead className="w-[50%] text-xs md:text-base font-semibold text-gray-700 text-left">Descrição</TableHead>
+                <TableHead className="w-[100px] text-xs md:text-base font-semibold text-gray-700 text-left">Preço</TableHead>
+                <TableHead className="w-[100px] text-xs md:text-base font-semibold text-gray-700 text-center">Estoque</TableHead>
+                <TableHead className="w-[120px] text-xs md:text-base font-semibold text-gray-700 text-center">Ações</TableHead>
+                <TableHead className="w-[60px] text-xs md:text-base font-semibold text-gray-700 text-center">Status</TableHead>
+              </TableRow>
+            </TableHeader>
+          </Table>
 
           <ScrollArea className="w-full mt-4  h-[80%] overflow-auto   rounded-lg  ">
             <Table className="w-full bg-white rounded-xl ">
@@ -236,11 +251,27 @@ export default function Produtos() {
                         key={produto.codigo}
                         className="hover:bg-gray-50 h-14"
                       >
-                        <TableCell className="  font-medium text-gray-700 whitespace-nowrap w-[7%]  text-xs md:text-base ">{produto.codigo}</TableCell>
-                        <TableCell className=" text-left text-gray-600 w-[50%]   text-xs md:text-base "  ><span>  {produto.descricao} </span> </TableCell>
-                        <TableCell className=" text-left text-gray-600   text-xs md:text-base ">R$ {Number(produto.preco)?.toFixed(2) || '0.00'}</TableCell>
-                        <TableCell className=" text-center text-gray-600   text-xs md:text-base ">{produto.estoque}</TableCell>
-                        <TableCell className=" text-center  ">
+                                <TableCell className="font-medium text-gray-700 whitespace-nowrap w-[80px] text-xs md:text-base p-2">
+                          {produto.fotos && produto.fotos.length > 0 ? (
+                            <Image
+                              alt={produto.descricao}
+                              width={60}
+                              src={produto.fotos[0].link}
+                              height={60}
+                              className="rounded-lg object-cover shadow-sm border border-gray-200"
+                              unoptimized
+                            />
+                          ) : (
+                            <div className="w-[60px] h-[60px] bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
+                              <span className="text-gray-400 text-xs">Sem foto</span>
+                            </div>
+                          )}
+                        </TableCell>
+                        <TableCell className="font-medium text-gray-700 whitespace-nowrap w-[80px] text-xs md:text-base">{produto.codigo}</TableCell>
+                        <TableCell className="text-left text-gray-600 w-[50%] text-xs md:text-base">{produto.descricao}</TableCell>
+                        <TableCell className="text-left text-gray-600 w-[100px] text-xs md:text-base">R$ {Number(produto.preco)?.toFixed(2) || '0.00'}</TableCell>
+                        <TableCell className="text-center text-gray-600 w-[100px] text-xs md:text-base">{produto.estoque}</TableCell>
+                        <TableCell className="text-center w-[120px]">
                           <div className="flex items-center justify-center gap-2">
                             <Button
                               variant="ghost"
@@ -251,27 +282,27 @@ export default function Produtos() {
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
-                            <div
-                              className={`p-1 w-5 h-5 rounded-full flex items-center justify-center ${produto.ativo === 'S' ? 'bg-green-500' : 'bg-red-500'
-                                }`}
-                              title={produto.ativo === 'S' ? 'Ativo' : 'Inativo'}
-                            >
-                              {produto.ativo === 'S' ? (
-                                <Check size={16} color="#FFF" strokeWidth={3} />
-                              ) : (
-                                <X size={16} color="#FFF" strokeWidth={3} />
-                              )}
-
-                            </div>
                             <Button
                               variant="ghost"
                               size="icon"
-                              className={`p-1 w-8 h-8 rounded-full flex items-center justify-center  `}
+                              className="p-1 w-8 h-8 rounded-full flex items-center justify-center"
                               onClick={() => router.push(`/marketplaces`)}
-                            //title="Editar Produto"
                             >
                               <Store size={16} color='#185FED' />
                             </Button>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-center w-[60px]">
+                          <div
+                            className={`p-1 w-5 h-5 rounded-full flex items-center justify-center ${produto.ativo === 'S' ? 'bg-green-500' : 'bg-red-500'
+                              }`}
+                            title={produto.ativo === 'S' ? 'Ativo' : 'Inativo'}
+                          >
+                            {produto.ativo === 'S' ? (
+                              <Check size={16} color="#FFF" strokeWidth={3} />
+                            ) : (
+                              <X size={16} color="#FFF" strokeWidth={3} />
+                            )}
                           </div>
                         </TableCell>
                       </TableRow>
