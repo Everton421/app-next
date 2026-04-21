@@ -20,7 +20,7 @@ export default function init( ) {
   }, []);
 
 
-  if (loading) {
+  if (loading && !user) {
     return (
       <div className="flex justify-center items-center h-screen">
       <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
