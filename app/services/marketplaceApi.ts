@@ -24,6 +24,89 @@ export interface MarketplaceAnunciosResponse {
     items: MLAnuncio[];
 }
 
+export interface MLAccountStatus {
+    id: number;
+    nickname: string;
+    registration_date: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    identification: {
+        number: string;
+        type: string;
+    };
+    address?: {
+        address: string;
+        city: string;
+        state: string;
+        zip_code: string;
+    };
+    phone?: {
+        area_code: string;
+        number: string;
+        verified: boolean;
+    };
+    user_type: string;
+    site_id: string;
+    seller_experience: string;
+    seller_reputation: {
+        level_id: string | null;
+        power_seller_status: string | null;
+        transactions: {
+            canceled: number;
+            completed: number;
+            period: string;
+            ratings: {
+                negative: number;
+                neutral: number;
+                positive: number;
+            };
+            total: number;
+        };
+        metrics: {
+            sales: {
+                period: string;
+                completed: number;
+            };
+            claims: {
+                period: string;
+                rate: number;
+                value: number;
+            };
+            delayed_handling_time: {
+                period: string;
+                rate: number;
+                value: number;
+            };
+            cancellations: {
+                period: string;
+                rate: number;
+                value: number;
+            };
+        };
+    };
+    credit: {
+        credit_level_id: string;
+        rank: string;
+        consumed: number;
+    };
+    status: {
+        site_status: string;
+        billing: { allow: boolean; codes: string[] };
+        buy: { allow: boolean; codes: string[]; immediate_payment: { reasons: string[]; required: boolean } };
+        sell: { allow: boolean; codes: string[]; immediate_payment: { reasons: string[]; required: boolean } };
+        list: { allow: boolean; codes: string[]; immediate_payment: { reasons: string[]; required: boolean } };
+        shopping_cart: { buy: string; sell: string };
+        mercadoenvios: string;
+        mercadopago_account_type: string;
+        mercadopago_tc_accepted: boolean;
+        confirmed_email: boolean;
+        immediate_payment: boolean;
+        required_action: string;
+        user_type: string | null;
+    };
+}
+
 const api = configApi();
 
 export const marketplaceApi = {
@@ -59,6 +142,16 @@ export const marketplaceApi = {
             headers: { 
                 token,
                 seller_id: String(sellerId)
+            }
+        });
+        return result.data;
+    },
+
+    async getMLAccountStatus(token: string, mlUserId: number): Promise<MLAccountStatus> {
+        const result = await api.get('/ml/tools/status_vendedor', {
+            headers: { 
+                token,
+                ml_user_id: String(mlUserId)
             }
         });
         return result.data;

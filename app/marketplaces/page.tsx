@@ -187,14 +187,22 @@ export default function Anuncios() {
                         Criar Anúncio
                     </Button>
 
-                    <Button 
-                        className='bg-[#185FED] gap-2'
-                        onClick={() => router.push('/marketplaces/consulta')}
-                    > 
-                        <Search className="h-4 w-4" />
-                            Consultar Anúncios
+                <Button 
+                    className='bg-[#185FED] gap-2'
+                    onClick={() => router.push('/marketplaces/consulta')}
+                > 
+                    <Search className="h-4 w-4" />
+                        Consultar Anúncios
                     
-                    </Button>
+                </Button>
+
+                <Button 
+                    className='bg-[#185FED] gap-2'
+                    onClick={() => router.push('/marketplaces/status')}
+                > 
+                    <AlertCircle className="h-4 w-4" />
+                    Status da Conta
+                </Button>
                     
                     <Button 
                         type="button"
