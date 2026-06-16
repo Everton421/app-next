@@ -3,7 +3,7 @@ module.exports = {
     {
       name: "app-next",
       script: "cmd",
-      args: "/c next build && next start -p 8081",
+      args: "next build && next start -p 8081",
       env: {
         NODE_ENV: "production",
       },
