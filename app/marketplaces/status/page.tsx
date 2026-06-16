@@ -17,7 +17,7 @@ export default function MarketplaceStatusPage() {
   const [contaSelecionada, setContaSelecionada] = useState<MarketplaceAccount | null>(null);
   const [showSelecionarConta, setShowSelecionarConta] = useState(false);
   const [loadingContas, setLoadingContas] = useState(true);
-  const [accountStatus, setAccountStatus] = useState<MLAccountStatus | null>(null);
+  const [accountStatus, setAccountStatus] = useState<any>();
   const [loadingStatus, setLoadingStatus] = useState(false);
   const [errorStatus, setErrorStatus] = useState<string | null>(null);
 
