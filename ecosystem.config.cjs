@@ -2,12 +2,11 @@ module.exports = {
   apps: [
     {
       name: "app-next",
-      script: "cmd",
-      args: "next build && next start -p 8081",
+      script: "npm",
+      args: "run start:prod",
       env: {
         NODE_ENV: "production",
       },
-      windowsHide: true,
     },
   ],
 };

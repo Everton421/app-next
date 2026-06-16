@@ -6,6 +6,7 @@
     "dev": "next dev -p 8000",
     "build": "next build",
     "start": "next start -p 8000",
+    "start:prod": "next build && next start -p 8081",
     "lint": "next lint"
   },
   "dependencies": {
