@@ -16,6 +16,7 @@ import { Store, Loader2, UploadCloud, AlertTriangle, ChevronRight, User } from "
 import { toast } from "sonner"; 
 import Image from "next/image";
 import { Card } from "@/components/ui/card"; // Importe o Card se tiver, ou use div com borda
+import { Textarea } from "@/components/ui/textarea";
 
 // Tipagens
 interface MlAccount {
@@ -393,10 +394,11 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
                             <div className="space-y-1">
                                 <Label>Descrição anuncio</Label>
                                 
-                                            <textarea
+                                     <Textarea
                                             value={mlDescription} onChange={(e) => setMlDescription(e.target.value)}
+                                             
                                             >
-                                   </textarea>
+                                   </Textarea>
                         </div>
 
 
