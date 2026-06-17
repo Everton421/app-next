@@ -82,7 +82,7 @@ export default function LoginForm() {
             {/* Substitua pelo seu logo real */}
           <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 bg-cyan-400 rounded-lg shadow-[4px_4px_0px_0px_rgba(45,55,72,1)]">
-                  
+
                </div>
              <h1 className="text-6xl font-bold tracking-tighter text-gray-200">intersig</h1>
           </div>
@@ -185,12 +185,7 @@ export default function LoginForm() {
             </div>
 
             <div className="border-t border-gray-600 pt-6">
-              <button
-                type="button"
-                className="w-full flex items-center justify-center gap-2 py-2 px-4 border border-gray-500 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors text-sm"
-              >
-                <Sun size={16} /> Modo Claro
-              </button>
+          
             </div>
           </form>
         </div>
