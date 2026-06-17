@@ -32,6 +32,7 @@ interface FotoProduto {
 
 interface Produto {
     codigo: number;
+    id:number
     descricao: string;
     preco: number;
     estoque: number;
@@ -66,6 +67,8 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
     const [ codigoProduto, setCodigoProduto ] = useState<number>();
     const [ mlEan ,setMlEan ] = useState('');
     const [ mlDescription,  setMlDescription] = useState('');
+    const [ mlSku , setMlSku ] = useState('');
+
     // Estados da Categoria
     const [categoryId, setCategoryId] = useState("");
     const [categoryName, setCategoryName] = useState("");
@@ -96,6 +99,7 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
     // --- EFEITO 2: Inicializa dados do produto quando o modal abre ---
     useEffect(() => {
         if (open && data) {
+            setMlSku(String(data.id) || '');
             setMlTitle(data.descricao || "");
             setMlPrice(String(data.preco || ""));
             setMlStock(String(data.estoque || ""));
@@ -178,8 +182,11 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
          
 
         setMlLoading(true);
-        try {
+        try {   
+            const defaultPhoto = "https://http2.mlstatic.com/D_NQ_NP_964047-MLA44034285816_112020-O.jpg";
+
             const pictureUrls = fotos.map(f => f.link);
+            const thumbnail = fotos.length > 0 ?  fotos.filter(( foto )=> foto.sequencia === 1) : defaultPhoto;
 
             const attributesToSend = Object.entries(dynamicValues).map(([id, value]) => ({
                 id, value_name: value
@@ -192,6 +199,7 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
             const payload = {
                 ml_user_id: selectedAccount.ml_user_id, 
                 codigo_produto: codigoProduto,
+                sku:mlSku,
                 title: mlTitle,
                 price: Number(mlPrice),
                 available_quantity: Number(mlStock),
@@ -199,22 +207,21 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
                 listing_type_id: mlListingType,
                 condition: mlCondition,
                 ean: mlEan,
-                description: `Produto: ${mlTitle}\n\n${data?.observacoes1 || ''}\n${data?.observacoes2 || ''}`,
-                pictures: pictureUrls.length > 0 ? pictureUrls : ["https://http2.mlstatic.com/D_NQ_NP_964047-MLA44034285816_112020-O.jpg"], 
+                description: data?.observacoes1 || data?.observacoes2 || '',
+                pictures: pictureUrls.length > 0 ? pictureUrls : [defaultPhoto], 
                 attributes: attributesToSend,
-                thumbnail: pictureUrls.length > 0 ? pictureUrls[0] : "https://http2.mlstatic.com/D_NQ_NP_964047-MLA44034285816_112020-O.jpg"
+                thumbnail: thumbnail.length > 0 ? thumbnail[0].link :  defaultPhoto
             };
-            const response = await api.post('/ml/anuncios/create', payload, {
-                headers: { token: user.token }
-            });
-                
-            if(response.status === 201 ){
-
-            }
-
-            toast.success(`Anúncio enviado para ${selectedAccount.integration_name}!`);
-            onOpenChange(false);
-            if (onSuccess) onSuccess();
+            console.log(payload)
+              const response = await api.post('/ml/anuncios/create', payload, {
+                  headers: { token: user.token }
+              });
+                  
+              if(response.status === 201 ){
+                 toast.success(`Anúncio enviado para ${selectedAccount.integration_name}!`);
+                 onOpenChange(false);
+                 if (onSuccess) onSuccess();
+              }
 
         } catch (error: any) {
             console.error("Erro ao publicar:", error);
@@ -318,10 +325,13 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
                              {/* Carrossel de Fotos */}
                             <div className="w-full md:w-1/3 flex justify-center bg-slate-50 rounded-md p-2">
                                 {fotos.length > 0 ? (
+
                                     <Carousel opts={{ align: "start", loop: true }} className="w-full max-w-[150px]">
                                         <CarouselContent>
                                             {fotos.map((foto) => (
-                                                <CarouselItem key={foto.sequencia}>
+                                                <CarouselItem key={foto.sequencia} 
+                                                    className=" "
+                                                >
                                                     <img className="object-contain aspect-square w-full h-auto rounded-md" src={String(foto.link)} alt="Foto" />
                                                 </CarouselItem>
                                             ))}
@@ -332,10 +342,18 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
                                 ) : (
                                     <div className="text-xs text-gray-400 flex items-center justify-center h-24">Sem fotos</div>
                                 )}
+                            
                             </div>
-
+                          
                             {/* Inputs Principais */}
                             <div className="w-full md:w-2/3 space-y-3">
+
+                                <div>
+                                    <Label  >SKU: </Label>
+                                    <Label > #{mlSku}</Label>
+
+                                </div>
+
                                 <div>
                                     <Label htmlFor="ml-title">Título do Anúncio</Label>
                                     <Input id="ml-title" value={mlTitle} onChange={(e) => setMlTitle(e.target.value)} maxLength={60} />
@@ -350,6 +368,7 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
                                 </div>
                             </div>
                         </div>
+
 
                         {/* Campos Preço/Estoque */}
                         <div className="grid grid-cols-2 gap-4">
