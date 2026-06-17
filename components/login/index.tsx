@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { configApi } from "@/lib/api";
 import { ThreeDot } from 'react-loading-indicators';
+import { User, Lock, Eye, EyeOff, LogIn, Sun, Rocket } from "lucide-react";
 
 function setCookie(name: string, value: string, days: number = 7) {
   const expires = new Date(Date.now() + days * 864e5).toUTCString();
@@ -18,6 +19,7 @@ export default function LoginForm() {
 
   const [email, setEmail] = useState<string>('');
   const [senha, setSenha] = useState<string>('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [erro, setErro] = useState(false);
   const [msgErro, setMsgErro] = useState<string | undefined>();
@@ -30,26 +32,18 @@ export default function LoginForm() {
       setMsgErro("Por favor, preencha o email e a senha.");
       throw new Error("Campos obrigatórios não preenchidos.");
     }
-
     const data = { email, senha };
-
     try {
       const response = await api.post(`/login`, data);
       if (response.status === 200) {
         setErro(false);
-        setMsgErro(undefined);
         const token = response.data.token;
-
-        const resultuser = await api.get('/usuarios', {
-          headers: { token }
-        });
-
+        const resultuser = await api.get('/usuarios', { headers: { token } });
         const userData = {
           token: response.data.token,
           codigo: resultuser.data.codigo,
           nome: resultuser.data.nome
         };
-
         setUser(userData);
         localStorage.setItem('authUser', JSON.stringify(userData));
         setCookie('authToken', token);
@@ -58,19 +52,11 @@ export default function LoginForm() {
       } else {
         setErro(true);
         setMsgErro(response.data.msg || "Ocorreu um erro inesperado.");
-        setUser(null);
-        localStorage.removeItem('authUser');
         throw new Error(response.data.msg || "Erro na resposta da API");
       }
-    } catch (e: unknown) {
-      console.error('Ocorreu um erro ao tentar fazer o login', e);
+    } catch (e: any) {
       setErro(true);
-      const errorMessage = e instanceof Error ? e.message : "Erro de conexão ou servidor.";
-      setMsgErro(e && typeof e === 'object' && 'response' in e
-        ? (e as { response?: { data?: { msg?: string } } }).response?.data?.msg || errorMessage
-        : errorMessage);
-      setUser(null);
-      localStorage.removeItem('authUser');
+      setMsgErro(e.response?.data?.msg || "Erro de conexão ou servidor.");
       throw e;
     }
   }
@@ -78,103 +64,140 @@ export default function LoginForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErro(false);
-    setMsgErro(undefined);
     setIsSubmitting(true);
-
     try {
       await login(email, senha);
     } catch (e) {
-      console.log('Falha no processo de login capturada em handleSubmit.');
+      console.log('Falha no login');
     } finally {
       setIsSubmitting(false);
     }
   }
 
-  function navegateNovaConta() {
-    router.push('/novaConta');
-    setIsSubmitting(false);
-  }
-
   return (
-    <div className="flex items-center w-full justify-center min-h-screen bg-gray-100">
-      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-md">
-        <div className="w-full items-center flex justify-center mb-4">
-          <Image
-            className="rounded-3xl"
-            alt="Logo da Empresa"
-            width={200}
-            height={200}
-            priority
-            src="/images/icon.png"
-          />
+    <div className="flex min-h-screen bg-[#1a202c] text-white">
+      {/* Lado Esquerdo - Branding */}
+      <div className="hidden lg:flex flex-1 flex-col items-center justify-center p-12 border-r border-gray-700 bg-[#1e2533]">
+        <div className="flex flex-col items-center">
+            {/* Substitua pelo seu logo real */}
+          <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-cyan-400 rounded-lg shadow-[4px_4px_0px_0px_rgba(45,55,72,1)]">
+                  
+               </div>
+             <h1 className="text-6xl font-bold tracking-tighter text-gray-200">intersig</h1>
+          </div>
         </div>
+      </div>
 
-        {isSubmitting && (
-          <div className="flex justify-center my-4">
-            <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
-          </div>
-        )}
+      {/* Lado Direito - Formuário */}
+      <div className="flex-1 flex flex-col items-center justify-center p-6 relative bg-[#FFF]">
+        <div className="w-full max-w-md bg-[#2d3748] p-8 rounded-2xl shadow-2xl">
+          <h2 className="text-2xl font-semibold text-center mb-8 text-gray-200">Acessar Sistema</h2>
 
-        {erro && !isSubmitting && (
-          <p className="text-red-500 text-sm text-center mb-4 font-bold">{msgErro}</p>
-        )}
+          {erro && (
+            <div className="mb-4 p-3 bg-red-500/20 border border-red-500 text-red-200 text-sm rounded text-center">
+              {msgErro}
+            </div>
+          )}
 
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${erro && !email ? 'border-red-500' : ''} ${isSubmitting ? 'bg-gray-200 cursor-not-allowed' : ''}`}
-              value={email}
-              onChange={(e) => { setEmail(e.target.value) }}
-              placeholder="seuemail@exemplo.com"
-              disabled={isSubmitting}
-              required
-            />
-          </div>
-          <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
-              Senha
-            </label>
-            <input
-              id="password"
-              type="password"
-              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline ${erro && !senha ? 'border-red-500' : ''} ${isSubmitting ? 'bg-gray-200 cursor-not-allowed' : ''}`}
-              value={senha}
-              onChange={(e) => { setSenha(e.target.value) }}
-              placeholder="********"
-              disabled={isSubmitting}
-              required
-            />
-          </div>
-          <div className="flex items-center justify-between">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Usuário / Email */}
+            <div>
+              <label className="block text-sm text-gray-400 mb-2">Selecione seu usuário</label>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500 group-focus-within:text-blue-400 transition-colors">
+                  <User size={18} />
+                </div>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="block w-full pl-10 pr-3 py-3 bg-[#1a202c] border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-200 placeholder-gray-600"
+                  placeholder="Selecione seu usuário"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Senha */}
+            <div>
+              <label className="block text-sm text-gray-400 mb-2">Senha</label>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500 group-focus-within:text-blue-400 transition-colors">
+                  <Lock size={18} />
+                </div>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
+                  className="block w-full pl-10 pr-10 py-3 bg-[#1a202c] border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-200 placeholder-gray-600"
+                  placeholder="Sua senha"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-300"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
+
+            {/* Lembrar-me */}
+            <div className="flex items-center">
+              <input
+                id="remember"
+                type="checkbox"
+                className="w-4 h-4 bg-gray-700 border-gray-600 rounded text-blue-600 focus:ring-blue-500"
+              />
+              <label htmlFor="remember" className="ml-2 text-sm text-gray-400 cursor-pointer">
+                Lembrar-me
+              </label>
+            </div>
+
+            {/* Botão Entrar */}
             <button
-              className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
               type="submit"
               disabled={isSubmitting}
+              className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-[#5a67d8] hover:bg-[#4c51bf] text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? 'Entrando...' : 'Entrar'}
+              {isSubmitting ? (
+                <ThreeDot color="#fff" size="small" />
+              ) : (
+                <>
+                  <LogIn size={18} /> Entrar
+                </>
+              )}
             </button>
-            <a className={`inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 ${isSubmitting ? 'pointer-events-none opacity-50' : ''}`} href="#">
-              Esqueceu a senha?
-            </a>
-          </div>
-        </form>
 
-        <div className="m-3 items-center justify-end flex w-full ">
-          <button
-            className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
-            disabled={isSubmitting}
-            onClick={() => navegateNovaConta()}
-          >
-            {'Teste Grátis'}
-          </button>
+            <div className="text-center">
+              <button type="button" className="text-sm text-blue-400 hover:text-blue-300 transition-colors">
+                Esqueci minha senha
+              </button>
+                  <button
+                type="button"
+                onClick={() => router.push('/novaConta')}
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition-all shadow-lg shadow-emerald-900/20 active:scale-[0.98]"
+              >
+                <Rocket size={18} /> Teste Grátis
+              </button>
+            </div>
+
+            <div className="border-t border-gray-600 pt-6">
+              <button
+                type="button"
+                className="w-full flex items-center justify-center gap-2 py-2 px-4 border border-gray-500 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors text-sm"
+              >
+                <Sun size={16} /> Modo Claro
+              </button>
+            </div>
+          </form>
         </div>
-        <p className="text-center text-gray-500 text-xs mt-4">
-          © {new Date().getFullYear()} Minha Empresa. Todos os direitos reservados.
+
+        {/* Footer */}
+        <p className="mt-8 text-gray-500 text-xs">
+          © {new Date().getFullYear()} Intersig Sistemas. Todos os direitos reservados.
         </p>
       </div>
     </div>
