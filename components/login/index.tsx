@@ -51,12 +51,12 @@ export default function LoginForm() {
         router.push('/home');
       } else {
         setErro(true);
-        setMsgErro(response.data.msg || "Ocorreu um erro inesperado.");
-        throw new Error(response.data.msg || "Erro na resposta da API");
+        setMsgErro(response.data.message || "Ocorreu um erro inesperado.");
+        throw new Error(response.data.message || "Erro na resposta da API");
       }
     } catch (e: any) {
       setErro(true);
-      setMsgErro(e.response?.data?.msg || "Erro de conexão ou servidor.");
+      setMsgErro(e.response?.data?.message || "Erro de conexão ou servidor.");
       throw e;
     }
   }
