@@ -17,6 +17,14 @@ import { ScrollArea } from '@/components/ui/scroll-area'; // Use Shadcn ScrollAr
 import { useAuth } from '@/contexts/AuthContext'; // Assuming correct path
 import { ThreeDot } from 'react-loading-indicators';
 import Image from 'next/image';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 
 // Define Product type (optional but good practice)
 interface Product {
@@ -36,6 +44,25 @@ interface Product {
   }[];
 }
 
+type category = {
+     codigo : number,
+     id :string,
+     data_cadastro : string,
+     data_recadastro : string,
+     descricao : string,
+     ativo : "S" | "N"
+}
+
+type brand = {
+     codigo : number,
+     id :string,
+     data_cadastro : string,
+     data_recadastro : string,
+     descricao : string,
+     ativo : "S" | "N"
+}
+
+
 export default function Produtos() {
 
   const [pesquisa, setPesquisa] = useState('');
@@ -44,6 +71,10 @@ export default function Produtos() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [msgApi, setMsgApi] = useState();
+  const [marcas, setMarcas] = useState<brand[]>([]);
+  const [categorias, setCategorias] = useState<category[]>([]);
+  const [marcaFiltro, setMarcaFiltro] = useState('');
+  const [categoriaFiltro, setCategoriaFiltro] = useState('');
   const [filtroAtivo, setFiltroAtivo] = useState<'S' | 'N'>('S');
 
   const api = configApi();
@@ -59,7 +90,7 @@ export default function Produtos() {
 
     const query = term.trim() === '' ? 'a' : term.trim();
     
-    const params = { descricao: term, ativo: filtroAtivo }
+    const params = { descricao: term, ativo: filtroAtivo, marca: marcaFiltro, categoria: categoriaFiltro }
     const headers = { token: user.token, } 
 
 
@@ -84,6 +115,19 @@ export default function Produtos() {
     router.push(`/cadastros/produtos/${codigo}`);
   }
 
+  useEffect(() => {
+    async function loadFilterOptions() {
+      const headers = { token: user.token };
+      const [mRes, cRes] = await Promise.all([
+        api.get('/marcas/search', { headers }),
+        api.get('/categorias/search', { headers }),
+      ]);
+      if (mRes.status === 200) setMarcas(mRes.data || []);
+      if (cRes.status === 200) setCategorias(cRes.data || []);
+    }
+    if (user) loadFilterOptions();
+  }, [user]);
+
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -104,7 +148,7 @@ export default function Produtos() {
 
   useEffect(() => {
     busca(searchTerm);
-  }, [searchTerm, filtroAtivo, user ]);
+  }, [searchTerm, filtroAtivo, marcaFiltro, categoriaFiltro, user ]);
 
 
   if (authLoading) {
@@ -148,35 +192,7 @@ export default function Produtos() {
                 <Plus className="h-4 w-4 mr-2" /> Novo
               </Button>
 
-              <Button
-                type="button"
-                variant="outline"
-                className="shadow-sm w-full sm:w-auto"
-                onClick={() => router.push('/cadastros/categorias')}
-              >
-                <AlignLeft className="h-4 w-4 mr-2" />
-                <span>Categorias</span>
-              </Button>
-
-              <Button
-                type="button"
-                variant="outline"
-                className="shadow-sm w-full sm:w-auto"
-                onClick={() => router.push('/cadastros/marcas')}
-              >
-                <Tag className="h-4 w-4 mr-2" />
-                Marcas
-              </Button>
-
-              <Button
-                type="button"
-                variant="outline"
-                className="shadow-sm w-full col-span-2 sm:col-span-1 sm:w-auto"
-                onClick={() => router.push('/caracteristicas-produtos')}
-              >
-                <FileSliders className="h-4 w-4 mr-2" />
-                Características
-              </Button>
+           
             </div>
           </div>
 
@@ -188,6 +204,41 @@ export default function Produtos() {
               value={pesquisa}
               onChange={(e) => setPesquisa(e.target.value)}
             />
+
+            <Select value={marcaFiltro} onValueChange={(v) => setMarcaFiltro(v === 'all' ? '' : v)}>
+              <SelectTrigger className="bg-white w-[180px]">
+                <SelectValue placeholder="Marca" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas</SelectItem>
+                { marcas.length > 0 ?  
+                  marcas.map(m => (
+                    <SelectItem key={m.codigo} value={String(m.codigo)}>{m.codigo} - {m.descricao}</SelectItem>
+                  )):(
+                      <Label>Nenhuma marca encontrada</Label>
+                  )
+              
+              }
+              </SelectContent>
+            </Select>
+
+            <Select value={categoriaFiltro} onValueChange={(v) => setCategoriaFiltro(v === 'all' ? '' : v)}>
+              <SelectTrigger className="bg-white w-[180px]">
+                <SelectValue placeholder="Categoria" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas</SelectItem>
+                {
+                categorias.length > 0 ?  (
+                categorias.map(c => (
+                  <SelectItem key={c.codigo} value={String(c.codigo)}>{c.codigo} - {c.descricao}</SelectItem>
+                ) )
+                ):(
+                      <Label>Nenhuma categoria encontrada</Label>
+                )
+              }
+              </SelectContent>
+            </Select>
 
             <div className="flex items-center justify-center sm:justify-start gap-4 m-3">
               <div className="flex items-center gap-1" title="Ativo">

@@ -15,17 +15,22 @@ import {
   Menu,
   LayoutDashboard,
   ShoppingBag,
+  AlignLeft,
+  Tag,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   
    { href: "/cadastros/produtos", label: "Produtos", icon: Package },
+      { href: "/cadastros/categorias", label: "Categorias", icon: AlignLeft },
+   { href: "/cadastros/marcas", label: "Marcas", icon: Tag },
    { href: "/cadastros/clientes", label: "Clientes", icon: User },
    { href: "/cadastros/servicos", label: "Serviços", icon: Wrench },
    { href: "/cadastros/veiculos", label: "Veículos", icon: Car },
-];
 
+];
+ 
 const NavItem = ({
   href,
   label,

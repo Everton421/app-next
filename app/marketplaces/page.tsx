@@ -94,7 +94,7 @@ export default function Anuncios() {
         setIsLoading(true);
 
         try {
-            const resultdata = await api.get(`/ml/anuncios`, {
+            const resultdata = await api.get(`/ml/app/anuncios`, {
                 headers: { token: user.token },
             });
 
@@ -172,13 +172,21 @@ export default function Anuncios() {
                 onSuccess={handleAnuncioSuccess}
             />
 
+        {/** HEADER */}
             <div className="w-full bg-white border-b border-gray-200 p-4 shadow-sm flex items-center justify-between sticky top-0 z-10">
-                <div className="flex items-center gap-4">
-                    <h1 className="text-xl font-bold text-slate-800">
-                        Gestão de Anúncios 
-                    </h1>
-                </div>   
-                <div className="flex gap-2">
+                {/**<div className="flex items-center gap-4">
+                      <h1 className="text-xl font-bold text-slate-800">  Gestão de Anúncios  </h1>
+                </div>   */}
+                <div className="flex w-full items-center gap-2 justify-between">
+                      <Button 
+                        type="button"
+                        variant="outline"
+                        className="shadow-sm"
+                        onClick={() => router.push('/home')}
+                    >
+                        <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
+                    </Button>
+
                     <Button 
                         className='bg-[#185FED] gap-2'
                         onClick={() => setShowSelectProdutoModal(true)}
@@ -186,14 +194,10 @@ export default function Anuncios() {
                         <Plus className="h-4 w-4" />
                         Criar Anúncio
                     </Button>
-
-                <Button 
-                    className='bg-[#185FED] gap-2'
-                    onClick={() => router.push('/marketplaces/consulta')}
-                > 
+            {/**
+                <Button   className='bg-[#185FED] gap-2' onClick={() => router.push('/marketplaces/consulta')} > 
                     <Search className="h-4 w-4" />
                         Consultar Anúncios
-                    
                 </Button>
 
                 <Button 
@@ -203,18 +207,11 @@ export default function Anuncios() {
                     <AlertCircle className="h-4 w-4" />
                     Status da Conta
                 </Button>
-                    
-                    <Button 
-                        type="button"
-                        variant="outline"
-                        className="shadow-sm"
-                        onClick={() => router.push('/home')}
-                    >
-                        <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
-                    </Button>
+             */}
+                  
                 </div>
             </div>
-
+                {/** BODY */}
             <div className="flex-1 w-full max-w-7xl mx-auto p-4 md:p-8 space-y-8">
                 
                 <AlertDemo content={msgAlert} title="Aviso" visible={visibleAlert} setVisible={setVisibleAlert} />
