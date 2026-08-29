@@ -17,6 +17,7 @@ import {
   ShoppingBag,
   Search,
   Archive,
+  Shield,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -89,7 +90,19 @@ export function Sidebar() {
         </nav>
 
         {/* Settings at bottom */}
-        <div className="border-t border-sidebar-border px-3 py-4">
+        <div className="space-y-1 border-t border-sidebar-border px-3 py-4">
+          <NavItem
+            href="/cadastros/usuarios"
+            label="Usuários"
+            icon={User}
+            isActive={pathname === "/cadastros/usuarios" || pathname?.startsWith("/cadastros/usuarios/")}
+          />
+          <NavItem
+            href="/cadastros/perfis"
+            label="Perfis e Permissões"
+            icon={Shield}
+            isActive={pathname === "/cadastros/perfis" || pathname?.startsWith("/cadastros/perfis/")}
+          />
           <NavItem
             href="/configuracoes"
             label="Configurações"
@@ -141,7 +154,19 @@ export function Sidebar() {
               </nav>
 
               {/* Mobile Settings */}
-              <div className="border-t border-sidebar-border px-3 py-4">
+              <div className="space-y-1 border-t border-sidebar-border px-3 py-4">
+                <NavItem
+                  href="/cadastros/usuarios"
+                  label="Usuários"
+                  icon={User}
+                  isActive={pathname === "/cadastros/usuarios" || pathname?.startsWith("/cadastros/usuarios/")}
+                />
+                <NavItem
+                  href="/cadastros/perfis"
+                  label="Perfis e Permissões"
+                  icon={Shield}
+                  isActive={pathname === "/cadastros/perfis" || pathname?.startsWith("/cadastros/perfis/")}
+                />
                 <NavItem
                   href="/configuracoes"
                   label="Configurações"

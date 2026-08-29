@@ -1,284 +1,37 @@
+import { redirect } from "next/navigation";
+import { getServerApi } from "@/lib/server-api";
+import { CadastroListaClient } from "../_components/cadastro-lista-client";
+import { veiculosColumns, veiculosOnBeforeSearch } from "./_components/veiculos-config";
 
-'use client';
+type veiculo = {
+  codigo: number;
+  modelo: string;
+  marca: string;
+  placa: string;
+  ano: string;
+  ativo: "S" | "N";
+};
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useAuth } from "@/contexts/AuthContext";
-import {   Check, Edit, Plus, Tag, X } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableRow } from "@/components/ui/table";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Checkbox } from "@radix-ui/react-checkbox";
-import { ThreeDot } from "react-loading-indicators";
-import { configApi } from "@/lib/api";
+export default async function VeiculosPage() {
+  const api = getServerApi();
+  if (!api) redirect("/");
 
-export default function Veiculos(){
-      
-      const [pesquisa, setPesquisa] = useState<any>();
-      const router = useRouter();
-      const [isLoading, setIsLoading] = useState(false);  
-      const [ veiculos, setVeiculos ] = useState([]);
-      const [ filtroAtivo, setFiltroAtivo ] = useState<'S'| 'N' >('S');
+  let data: veiculo[] = [];
+  try {
+    data = await api.get("/veiculos/search", { ativo: "S" });
+  } catch (e) {
+    console.error("Erro ao buscar veiculos:", e);
+  }
 
-      const { user, loading }:any = useAuth();
-  const api = configApi();
- 
-
-
-   
-  async function busca(term: any) {
-        setVeiculos([]);
-       setIsLoading(true);
-      let param: {
-         codigo:any, 
-         cliente:any,
-         placa:any,
-         modelo:any,
-         ano:any
-         marca:any
-         ativo: 'S' | 'N'
-         id:any 
-        }   ={ 
-codigo : '',
-cliente : '',
-placa : '',
-modelo : '',
-ano : '',
-marca : '',
-ativo : 'S',
-id : '' 
-        }
-
-        if(!user || !user.token){
-          return;
-        }
-
-            if(  term){
-                  param.codigo = Number(term);
-                  param.cliente = Number(term);
-                  param.ano = Number(term);
-                  param.id = Number(term);
-                   param.placa = term;
-                  param.modelo = term;
-                  param.marca = term;
-
-                }
-
-                   param.ativo = filtroAtivo;
-         
-            const headers = { token:  user.token  } 
-         try {
-          const aux = await api.get(`/veiculos/search`, {
-             headers,
-            params: param
-          });
-    
-          if(aux.status === 200 ){
-            setVeiculos(aux.data || []);
-    
-          }
-        } catch (e) {
-          console.error('Erro ao buscar veiculos:', e);
-          
-        } finally {
-          setIsLoading(false);
-        }
-      }
-
-
-      useEffect(() => {
-        busca(pesquisa)
-        },[ pesquisa, filtroAtivo ])
-
-         
-
-  useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        router.push('/login'); // Redireciona para a página de login (ajuste se for outra)
-      }
-    }
-  }, [user, loading, router]);
-
-
-if (loading) {
-      return (
-        <div className="flex justify-center items-center h-screen">
-                  <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
-        </div>
-      );
-    }
-  
-    if (!user) {
-      return (
-         <div className="flex justify-center items-center h-screen">
-           <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
-         </div>
-      );
-    }
-
-    return (
-
-      <div className=" min-h-screen flex flex-col sm:ml-52 p-2 sm:p-4 lg:p-6 w-full h-full justify-itens-center items-start   bg-slate-100 "  >
-      <div className="    md:w-[85%]  p-2 mt-22 min-h-screen  rounded-lg bg-white   " >
-        <div className="  p-2   rounded-sm bg-slate-100 w-full  ">
-
-            <div className="m-2 flex flex-col md:flex-row justify-between">
-              <h1 className="text-2xl md:text-4xl font-bold font-sans text-gray-800">
-                Veículos
-              </h1>
-
-              <div className="flex items-center gap-2 mt-4 md:mt-0 w-full md:w-auto">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="shadow-sm w-full sm:w-auto"
-                  onClick={() => router.push('/cadastros/veiculos/novo')}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Novo
-                </Button>
-              </div>
-            </div>
-
-        <div className="flex md:flex-row md:w-auto md:max-w-md md:min-w-[60%] items-center gap-2 mt-3" >
-                <Input
-                    placeholder="Pesquisar por código ou descrição..."
-                    className="shadow-md flex-grow bg-white" // Takes available space
-                    value={pesquisa}
-                    onChange={(e) => setPesquisa(e.target.value)}
-                />
-                 <div className="flex items-center justify-center sm:justify-start gap-4 m-3">
-              <div className="flex items-center gap-1" title="Ativo">
-              { filtroAtivo === 'S' ?
-                ( <Button onClick={()=> setFiltroAtivo('S')}
-                 className="bg-green-600 p-1 w-5 h-5 rounded-full flex items-center justify-center">
-                  <Check size={16} color="#FFF" strokeWidth={3} />
-                </Button> ) :(
-                  <Button onClick={()=> setFiltroAtivo('S')}
-                     className="bg-gray-400 p-1 w-5 h-5 rounded-full flex items-center justify-center">
-                   <Check size={16} color="#FFF" strokeWidth={3} />
-                 </Button>    
-                )
-              } 
-              </div>
-              <div className="flex items-center gap-1" title="Inativo">
-              { filtroAtivo === 'N' ? (
-                 <Button  onClick={()=> setFiltroAtivo('N')}
-                 className="bg-red-600 p-1 w-5 h-5 rounded-full flex items-center justify-center">
-                  <X size={16} color="#FFF" strokeWidth={3} />
-                </Button>
-                ) : (
-                  <Button onClick={()=> setFiltroAtivo('N')}
-                   className="bg-gray-400 p-1 w-5 h-5 rounded-full flex items-center justify-center">
-                  <X size={16} color="#FFF" strokeWidth={3} />
-                </Button>
-                )
-              }
-              
-              </div>
-            </div>
-            </div>
-
-           
-</div> 
-
-          <div className="w-full mt-4  h-screen shadow-lg ">
-      
-        <Table  className="w-full  bg-gray-100 rounded-sm ">
-            <TableHead className= " w-[5%]   text-xs md:text-base">Codigo</TableHead>
-            <TableHead className= " w-[40%]  text-xs md:text-base   " >Modelo</TableHead>
-            <TableHead className=" max-md:hidden  w-[15%] text-xs md:text-base " > Marca</TableHead>
-            <TableHead className="  w-[15%] text-xs md:text-base " > Placa</TableHead>
-            <TableHead className=" max-md:hidden  w-[15%]  text-xs md:text-base " > Ano</TableHead>
-
-         <TableHead className=" text-base" > </TableHead>
-      
-         </Table >
-
-          { 
-           veiculos && veiculos.length > 0 ?
-            (
-            <ScrollArea className="w-full mt-4  h-4/6 overflow-auto  shadow-lg rounded-lg  ">
-            <Table  className="w-full bg-white rounded-xl ">
-
-            <TableBody>
-            { 
-                veiculos.length > 0 && 
-                veiculos.map(( i:any )=>(
-                        <TableRow  
-                        className="h-14 justify-center items-center"
-                        key={i.codigo}
-                        > 
-                        
-                        <TableCell className="  text-xs md:text-base text-center font-medium text-gray-700 whitespace-nowrap w-[80px]" >  {i.codigo}     </TableCell>
-                        <TableCell className="  text-xs md:text-base text-left text-gray-600 w-[40%]"> {i?.modelo ?? ''}  </TableCell>
-                        <TableCell className="  max-md:hidden text-left text-gray-600 whitespace-nowrap w-[15%]">  { i.marca ?? '' } </TableCell>
-                        <TableCell className="  text-xs md:text-base text-left text-gray-600 whitespace-nowrap w-[15%]">  { i.placa ?? '' } </TableCell>
-
-                        <TableCell className=" max-md:hidden p-3 text-left text-gray-600 whitespace-nowrap w-[15%]">  { i.ano ?? '' } </TableCell>
-
-                        <TableCell className=" text-left   font-bold text-gray-600">  
-                <div className="flex items-center justify-center gap-2">
-                        
-                                <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-8 w-8"
-                                       onClick={() => router.push(`/cadastros/veiculos/${i.codigo}`)}
-                                        title="Editar Produto"
-                                    >
-                                        <Edit className="h-4 w-4" />
-                                    </Button>
-                        <div
-                            className={`p-1 w-5 h-5 rounded-full flex items-center justify-center ${
-                                i.ativo === 'S' ? 'bg-green-600' : 'bg-red-600'
-                            }`}
-                            title={i.ativo === 'S' ? 'Ativo' : 'Inativo'}
-                            >
-                            {i.ativo === 'S' ? (
-                                <Check size={16} color="#FFF" strokeWidth={3} />
-                            ) : (
-                                <X size={16} color="#FFF" strokeWidth={3} />
-                                )}
-                            </div>
-                        </div>
-
-                        </TableCell>
-
-                        
-                        {/*<TableCell className=" text-left   font-bold text-gray-600">  
-                            { i.ativo == "S" ? 
-                                (
-                                    <div className=" bg-green-700   p-1  w-7 rounded-sm"> <Check size={20} color="#FFF"   />  </div>
-                                    ) : (
-                                        <div className="bg-red-600  p-1  w-7 rounded-sm">   <X size={20} color="#FFF" /> </div>
-                                )   }    
-                        </TableCell> */}
-                        </TableRow>
-                        )
-                    )
-                }
-            </TableBody>
-            
-            </Table>
-            </ScrollArea>
-            ):(
-                isLoading ? 
-                (
-                  <div className="flex justify-center my-4"> {/* Container para centralizar */}
-                  <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
-                </div>
-            ):
-            <span className=" text-xs md:text-xl text-gray-500 text-center m-7 "> nenhum veículo encontrado!</span>
-
-)  
-            }         
-
-        </div>
-      </div>
-
-    </div>
+  return (
+    <CadastroListaClient
+      title="Veiculos"
+      entityPath="/cadastros/veiculos"
+      data={data}
+      apiEndpoint="/veiculos/search"
+      searchParam="modelo"
+      columns={veiculosColumns}
+      onBeforeSearch={veiculosOnBeforeSearch}
+    />
   );
 }

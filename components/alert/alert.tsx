@@ -3,18 +3,27 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { redirect, useRouter } from "next/navigation"
  
  
- 
-export function AlertDemo({ title, content , visible, setVisible , to }:any ) {
+ type props = {
+  title:string 
+  content :string
+  visible :boolean
+  setVisible:(values:boolean)=> void
+  to?:string
+  action?: ()=>void
+ }
+export function AlertDemo({ title, content , visible, setVisible , to , action }:props ) {
   const router = useRouter();
 
+       
     function handleClick(){
       setVisible(false)
-      if( to !== null || to !== '' ){
-       router.push(to)
+        if(action){
+              action()
+            }
+      if(to &&  to !== undefined  ){
+       router.push(String(to))
       }
-
   }
-
 
   return (
 

@@ -1,8 +1,13 @@
 export interface Permissao {
   codigo: number;
   descricao: string;
-  modulo: string;
+  modulo?: string;
   id?: string;
+}
+
+export function getModuloFromId(id: string | undefined): string {
+  if (!id) return "";
+  return id.split(".")[0] ?? "";
 }
 
 export interface Perfil {

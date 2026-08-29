@@ -207,7 +207,7 @@ export const ModalAnuncio = ({ open, onOpenChange, data, fotos, onSuccess }: Mod
                 listing_type_id: mlListingType,
                 condition: mlCondition,
                 ean: mlEan,
-                description: data?.observacoes1 || data?.observacoes2 || '',
+                description: mlDescription || '',
                 pictures: pictureUrls.length > 0 ? pictureUrls : [defaultPhoto], 
                 attributes: attributesToSend,
                 thumbnail: thumbnail.length > 0 ? thumbnail[0].link :  defaultPhoto
