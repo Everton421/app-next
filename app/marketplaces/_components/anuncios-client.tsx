@@ -11,6 +11,7 @@ import {
     PackageSearch,
     Plus,
     Save,
+    Edit,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useMemo, useEffect } from "react";
@@ -62,10 +63,41 @@ interface FotoProduto {
     link: string;
 }
 
+type completeAnnouncement = { 
+         id: number,
+         codigo_produto: number,
+         integration_id: number,
+         plataforma: string,
+         estoque: string,
+         preco: string,
+         unidade_medida: string,
+         thumbnail: string,
+         descricao: string,
+         titulo: string,
+         num_fabricante: string,
+         ativo: "S" | "N",
+         sku_externo: string | null,
+         id_externo: string | null,
+         link: string,
+         data_cadastro: string,
+         data_recadastro: string,
+         id_plataforma: string,
+        atributos:atributesAnnoucement[]
+    }
+
+type atributesAnnoucement = {
+       id: number,
+       id_anuncio: number,
+       id_atributo: string,
+       nome_atributo: string,
+       valor_atributo: string,
+       id_valor_atributo: string | null,
+       data_cadastro: string,
+       data_recadastro: string
+}
+
 export function AnunciosClient({ anunciosIniciais }: { anunciosIniciais: Anuncio[] }) {
     const router = useRouter();
-    const api = configApi();
-    const { user }: any = useAuth();
 
     const [data, setData] = useState<Anuncio[] | null>(anunciosIniciais);
     const [msgAlert, setMsgAlert] = useState('');
@@ -76,35 +108,8 @@ export function AnunciosClient({ anunciosIniciais }: { anunciosIniciais: Anuncio
     const [showAnuncioModal, setShowAnuncioModal] = useState(false);
     const [selectedProduto, setSelectedProduto] = useState<any>(null);
     const [selectedFotos, setSelectedFotos] = useState<FotoProduto[]>([]);
-    /*
-    async function busca() {
-        if (!user) {
-            return;
-        }
 
-        setIsLoading(true);
 
-        try {
-            const resultdata = await api.get(`/ml/app/anuncios`, {
-                headers: { token: user.token },
-            });
-
-            if (resultdata.status === 200 && resultdata.data) {
-                setData([resultdata.data[4]]);
-            } else {
-                setData([]);
-            }
-
-        } catch (error) {
-            console.error("Erro ao buscar dados dos anuncios:", error);
-            setMsgAlert("Erro ao carregar dados dos anuncios.");
-            setVisibleAlert(true);
-            setData(null);
-        } finally {
-            setIsLoading(false);
-        }
-    }
-    */
 
     const groupedAds = useMemo(() => {
         if (!data || data.length === 0) return {};
@@ -290,6 +295,9 @@ export function AnunciosClient({ anunciosIniciais }: { anunciosIniciais: Anuncio
                                                             </Button>
                                                         )}
                                                     </CardFooter>
+
+                                                
+
                                                 </Card>
                                             </CarouselItem>
                                         ))}

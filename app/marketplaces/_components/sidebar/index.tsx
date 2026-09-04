@@ -16,14 +16,16 @@ import {
   LayoutDashboard,
   ShoppingBag,
   ArrowLeftRight,
-  Unplug, 
+  Unplug,
+  Flag, 
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/marketplaces", label: "Anúncios", icon: Home },
+  { href: "/marketplaces", label: "Anúncios", icon: Flag },
   { href: "/marketplaces/consulta", label: "sincronizar anuncios", icon: ArrowLeftRight  },
   { href: "/marketplaces/integracoes", label: "integracoes", icon: Unplug  },
+  { href: "/marketplaces/pedidos", label: "Pedidos", icon: ShoppingCart },
 
 
 ];

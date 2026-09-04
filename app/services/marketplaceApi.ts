@@ -155,8 +155,40 @@ export const marketplaceApi = {
             }
         });
         return result.data;
+    },
+
+    async syncOrders(
+        token: string,
+        mlUserId: number,
+        dateCreatedFrom: string,
+        dateCreatedTo: string
+    ): Promise<SyncOrdersResponse> {
+        const result = await api.get('/ml/orders/sync', {
+            headers: {
+                token,
+                ml_user_id: String(mlUserId)
+            },
+            params: {
+                dateCreatedFrom,
+                dateCreatedTo
+            }
+        });
+        return result.data;
     }
 };
+
+export interface SyncOrdersError {
+    orderId: number;
+    erro: string;
+}
+
+export interface SyncOrdersResponse {
+    success: boolean;
+    message: string;
+    totalEncontrados: number;
+    processados: number;
+    erros: SyncOrdersError[];
+}
 
 export interface PlatformConfig {
     label: string;

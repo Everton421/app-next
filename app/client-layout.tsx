@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import { Sidebar } from "@/components/sidebar";
 import Navbar from "@/components/navbar";
+import { Toaster } from "@/components/ui/sonner";
 import { usePathname } from "next/navigation";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
@@ -36,6 +37,7 @@ export function ClientLayout({
             </>
           )}
           {children}
+          <Toaster position="top-right" richColors />
         </body>
       </html>
     </AuthProvider>

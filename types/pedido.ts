@@ -1,29 +1,35 @@
 export type clientePedido =
 {
-   celular: string,
-   cep: string,
-   cidade: string,
-   cnpj: string,
    codigo: number,
-   data_cadastro: string,
-   data_recadastro: string,
-   endereco: string,
-   ie: string,
+   id: string,
    nome: string,
-   numero: number,
-   vendedor: number,
+ 
 }
 
 export type Produto_pedido = 
-   {
-       codigo: number,
-       desconto:number,
-       descricao: string,
-       pedido?:number,
-       preco :number,
-       quantidade :number,
-       total :number,
-   }  
+  {
+         pedido: number,
+         sequencia: number,
+         codigo: number,
+         desconto: string,
+         quantidade: string,
+         preco: string,
+         frete: string,
+         total: string,
+         quantidade_separada: string,
+         quantidade_faturada: string,
+         descricao: string,
+         id: string,
+         controle_lote_serie: "S" | "N", 
+         series:serie[]
+      }
+
+      type serie =  {
+             lote_serie: number,
+             quantidade: string,
+             serie: string | null,
+             lote: string | null
+          }
 
    export type  Servico_pedido = 
    {
@@ -41,8 +47,7 @@ export type Produto_pedido =
     id?:string,
     id_externo?:number | string,
      cliente?:clientePedido,
-     cliente_nome?:string,
-     codigo_cliente:number,
+     marketplace: string | null
      contato:string,
      data_cadastro:string,
      data_recadastro:string,
