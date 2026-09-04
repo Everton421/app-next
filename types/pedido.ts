@@ -1,31 +1,37 @@
-type clientePedido =
+export type clientePedido =
 {
-   celular: string,
-   cep: string,
-   cidade: string,
-   cnpj: string,
    codigo: number,
-   data_cadastro: string,
-   data_recadastro: string,
-   endereco: string,
-   ie: string,
+   id: string,
    nome: string,
-   numero: number,
-   vendedor: number,
+ 
 }
 
-type Produto_pedido = 
-   {
-       codigo: number,
-       desconto:number,
-       descricao: string,
-       pedido?:number,
-       preco :number,
-       quantidade :number,
-       total :number,
-   }  
+export type Produto_pedido = 
+  {
+         pedido: number,
+         sequencia: number,
+         codigo: number,
+         desconto: string,
+         quantidade: string,
+         preco: string,
+         frete: string,
+         total: string,
+         quantidade_separada: string,
+         quantidade_faturada: string,
+         descricao: string,
+         id: string,
+         controle_lote_serie: "S" | "N", 
+         series:serie[]
+      }
 
-   type  Servico_pedido = 
+      type serie =  {
+             lote_serie: number,
+             quantidade: string,
+             serie: string | null,
+             lote: string | null
+          }
+
+   export type  Servico_pedido = 
    {
        aplicacao: string ,
        codigo: number ,
@@ -36,12 +42,12 @@ type Produto_pedido =
        valor: number ,
    }
 
-   type pedido = {
+   export type pedido = {
     codigo?:number,
     id?:string,
     id_externo?:number | string,
-     cliente:clientePedido,
-     codigo_cliente:number,
+     cliente?:clientePedido,
+     marketplace: string | null
      contato:string,
      data_cadastro:string,
      data_recadastro:string,
@@ -60,15 +66,15 @@ type Produto_pedido =
      veiculo:number
      vendedor:number
    }
-type parcela = {
+export type parcela = {
     pedido: number,
      parcela: number,
      valor: number,
       vencimento:string
 }
 
-type formaPagamento = {
-    codigo:number,
+export type formaPagamento = {
+   codigo:number,
 ativo:string
 data_cadastro:string
 data_recadastro:string

@@ -1,227 +1,188 @@
+"use client";
+
 import Link from "next/link";
-import { Button } from "../ui/button"
-import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
-import { Car, Ellipsis, Home, Package, PanelBottom, Settings, ShoppingBag, ShoppingCart, SlidersVertical, User, Wrench } from "lucide-react";
-import { Tooltip, TooltipProvider } from  "../ui/tooltip"
-import { TooltipContent, TooltipTrigger } from "@radix-ui/react-tooltip";
+import { usePathname } from "next/navigation";
+import { Button } from "../ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+import {
+  Car,
+  Home,
+  Package,
+  Settings,
+  ShoppingCart,
+  User,
+  Wrench,
+  Menu,
+  LayoutDashboard,
+  ShoppingBag,
+  Search,
+  Archive,
+  Shield,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export function Sidebar(){
-    return (
-        <div className="flex w-full flex-col bg-muted/40 print:hidden"> 
+const navItems = [
+  { href: "/home", label: "Início", icon: Home },
+  { href: "/pedidos", label: "Pedidos", icon: ShoppingCart },
+  { href: "/cadastros", label: "Cadastros", icon: Archive  },
+  { href: "/marketplaces", label: "Marketplace", icon: ShoppingBag },
+];
 
-            <aside className="fixed inset-y-0 z-10 hidden w-1 border-r bg-background sm:flex  "  >
-                <nav className="flex flex-col items-center gap-4  px-2 py-5">
-                    
-                    <TooltipProvider>
-                         
-                    <Tooltip>
-                            <TooltipTrigger asChild>
-                                    <Link href="/home" 
-                                        className="flex h-9 w-9 shrink-0 items-center justify-center
-                                        rounded-lg text-muted-foreground transition-colors hover:text-foreground
-                                        cursor-default ">
-                                </Link>
-                            </TooltipTrigger>
-                    </Tooltip>
+const NavItem = ({
+  href,
+  label,
+  icon: Icon,
+  isActive,
+  collapsed = false,
+}: {
+  href: string;
+  label: string;
+  icon: React.ElementType;
+  isActive: boolean;
+  collapsed?: boolean;
+}) => (
+  <Link
+    href={href}
+    className={cn(
+      "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
+      collapsed ? "justify-center" : "",
+      isActive
+        ? "bg-sidebar-accent text-sidebar-accent-foreground"
+        : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+    )}
+  >
+    <Icon className="h-5 w-5 shrink-0" />
+    {!collapsed && <span>{label}</span>}
+  </Link>
+);
 
-                      <Tooltip>
-                            <TooltipTrigger asChild>
-                                    <Link href="/home" 
-                                        className="flex h-9 w-9 shrink-0 items-center justify-center
-                                        rounded-lg text-muted-foreground transition-colors hover:text-foreground  ">
-                                     <Home className="h-4 w-5"/>
-                                      <span className="sr-only " > Inicio</span>
+export function Sidebar() {
+  const pathname = usePathname();
 
-                                </Link>
-                            </TooltipTrigger>
-                            <TooltipContent side="right" className="m-5 bg-black text-white rounded-2xl p-1 " >Inicio </TooltipContent>
-                            
-                        </Tooltip>
-                        
-                      <Tooltip>
-                            <TooltipTrigger asChild>
-                                    <Link href="/pedidos" 
-                                        className="flex h-9 w-9 shrink-0 items-center justify-center
-                                        rounded-lg text-muted-foreground transition-colors hover:text-foreground
-                                    ">
-                                <ShoppingCart className="h-4 w-5"/>
-                                    <span className="sr-only " > Pedidos</span>
-                                </Link>
-                            </TooltipTrigger>
-                            <TooltipContent side="right" className="m-5 bg-black text-white rounded-2xl p-1 " >Pedidos </TooltipContent>
-                        </Tooltip>
+  return (
+    <>
+      {/* Desktop Sidebar */}
+      <aside className="fixed inset-y-0 left-0 z-50 hidden w-56 flex-col border-r border-sidebar-border bg-sidebar sm:flex print:hidden">
+        {/* Logo */}
+        <div className="flex h-16 items-center gap-3 border-b border-sidebar-border px-6">
+         <Link  href={'/home'} >
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar-accent">
+            <LayoutDashboard className="h-5 w-5 text-sidebar-foreground" />
+          </div>
+       </Link>
 
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                    <Link href="/produtos" 
-                                        className="flex h-9 w-9 shrink-0 items-center justify-center
-                                        rounded-lg text-muted-foreground transition-colors hover:text-foreground
-                                    ">
-                                <Package className="h-4 w-5"/>
-                                    <span className="sr-only " > produtos</span>
-                                </Link>
-                            </TooltipTrigger>
-                            <TooltipContent side="right" className="m-5 bg-black text-white rounded-2xl p-1 " >produtos </TooltipContent>
-                        
-                        </Tooltip>
-
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                    <Link href="/clientes" 
-                                        className="flex h-9 w-9 shrink-0 items-center justify-center
-                                        rounded-lg text-muted-foreground transition-colors hover:text-foreground
-                                    ">
-                                <User className="h-4 w-5"/>
-                                    <span className="sr-only " > clientes</span>
-                                </Link>
-                            </TooltipTrigger>
-                            <TooltipContent side="right" className="m-5 bg-black text-white rounded-2xl p-1 " >clientes </TooltipContent>
-
-                        </Tooltip>
-
-                        
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                    <Link href="/servicos" 
-                                        className="flex h-9 w-9 shrink-0 items-center justify-center
-                                        rounded-lg text-muted-foreground transition-colors hover:text-foreground
-                                    ">
-                                           <Wrench className="h-5 w-5 transition-all" />
-                                    <span className="sr-only " > serviços</span>
-                                </Link>
-                            </TooltipTrigger>
-                            <TooltipContent side="right" className="m-5 bg-black text-white rounded-2xl p-1 " >serviços </TooltipContent>
-                        </Tooltip>
-
-
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                    <Link href="/veiculos" 
-                                        className="flex h-9 w-9 shrink-0 items-center justify-center
-                                        rounded-lg text-muted-foreground transition-colors hover:text-foreground
-                                    ">
-                                           <Car className="h-5 w-5 transition-all"/>
-                                    <span className="sr-only " > veículos</span>
-                                </Link>
-                            </TooltipTrigger>
-                            <TooltipContent side="right" className="m-5 bg-black text-white rounded-2xl p-1 " >veículos </TooltipContent>
-                        </Tooltip>
-
-                        
-                      
-
-
-                    </TooltipProvider>
-
-            <nav className="mt-auto flex flex-col items-center gap-4 px-2 py-5">
-            < TooltipProvider>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                        <Link href="/configuracoes" 
-                                            className="flex h-9 w-9 shrink-0 items-center justify-center
-                                            rounded-lg text-muted-foreground transition-colors hover:text-foreground
-                                        ">
-                                    <Settings className="h-4 w-5"/>
-                                        <span className="sr-only " > Configurações </span>
-                                    </Link>
-                                </TooltipTrigger>
-                            <TooltipContent side="right" className="m-5 bg-black text-white rounded-2xl p-1 " >Configurações </TooltipContent>
-
-                            </Tooltip>
-                        </TooltipProvider>
-            </nav>
-
-                </nav>
-            </aside>
-
-            <div className=" sm:hidden flex flex-col sm:gap-4 sm:py-4 sm:pl-14" >
-                <header
-                 className="sticky top-0 flex h-14 z-30  items-center px-4 border-b
-                  bg-background gap-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6" >
-                    <Sheet>
-                        <SheetTrigger asChild>
-                                <Button size="icon" variant="outline" className="sm:hidden">
-                                    <Ellipsis className="w-5 h-5" />
-                                        <span className="sr-only" > Abrir / Fechar menu  </span>
-                                </Button>
-                            </SheetTrigger>
-
-                        <SheetContent className="sm:max-2-x" side="left">
-                            <nav className="grid gap gap-6 tex"> 
-                                
-                                 
-
-                                <Link 
-                                    href="/home"
-                                    className="flex items-center gap-4 px-2.5 text-foreground hover:text-foreground"
-                                    prefetch={false}
-                                    >
-                                    <Home className="h-5 w-5 transition-all" />
-                                     Início
-                                </Link>
-                                
-                                <Link 
-                                    href="/pedidos"
-                                    className="flex items-center gap-4 px-2.5 text-foreground hover:text-foreground"
-                                    prefetch={false}
-                                    >
-                                    <ShoppingBag className="h-5 w-5 transition-all" />
-                                     Pedidos
-                                </Link>
-
-                                <Link 
-                                    href="/produtos"
-                                    className="flex items-center gap-4 px-2.5 text-foreground hover:text-foreground"
-                                    prefetch={false}
-                                    >
-                                    <Package className="h-5 w-5 transition-all" />
-                                     Produtos
-                                </Link>
-                                <Link 
-                                    href="/clientes"
-                                    className="flex items-center gap-4 px-2.5 text-foreground hover:text-foreground"
-                                    prefetch={false}
-                                    >
-                                    <User className="h-5 w-5 transition-all" />
-                                     Clientes
-                                </Link>
-                                <Link 
-                                    href="/servicos"
-                                    className="flex items-center gap-4 px-2.5 text-foreground hover:text-foreground"
-                                    prefetch={false}
-                                    >
-                                <Wrench className="h-5 w-5 transition-all" />
-                                     serviços
-                                </Link>
-
-                                <Link 
-                                    href="/veiculos"
-                                    className="flex items-center gap-4 px-2.5 text-foreground hover:text-foreground"
-                                    prefetch={false}
-                                    >
-                                <Car className="h-5 w-5 transition-all"/>
-                                     veículos
-                                </Link>
-
-
-                                <Link 
-                                    href="/configuracoes"
-                                    className="flex items-center gap-4 px-2.5 text-foreground hover:text-foreground"
-                                    prefetch={false}
-                                    >
-                                    <Settings className="h-5 w-5 transition-all" />
-                                     Configurações
-                                </Link>
-
-                                
-
-                            </nav>
-                        </SheetContent>
-                    </Sheet>
-                    <h2>Menu</h2>
-                </header>
-
-            </div>
         </div>
-    )
+
+        {/* Navigation */}
+        <nav className="flex-1 space-y-1 px-3 py-4">
+          <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-sidebar-foreground/50">
+            Menu Principal
+          </p>
+          {navItems.map((item) => (
+            <NavItem
+              key={item.href}
+              href={item.href}
+              label={item.label}
+              icon={item.icon}
+              isActive={pathname === item.href || pathname?.startsWith(item.href + "/")}
+            />
+          ))}
+        </nav>
+
+        {/* Settings at bottom */}
+        <div className="space-y-1 border-t border-sidebar-border px-3 py-4">
+          <NavItem
+            href="/cadastros/usuarios"
+            label="Usuários"
+            icon={User}
+            isActive={pathname === "/cadastros/usuarios" || pathname?.startsWith("/cadastros/usuarios/")}
+          />
+          <NavItem
+            href="/cadastros/perfis"
+            label="Perfis e Permissões"
+            icon={Shield}
+            isActive={pathname === "/cadastros/perfis" || pathname?.startsWith("/cadastros/perfis/")}
+          />
+          <NavItem
+            href="/configuracoes"
+            label="Configurações"
+            icon={Settings}
+            isActive={pathname === "/configuracoes"}
+          />
+        </div>
+      </aside>
+
+      {/* Mobile Header & Sheet */}
+      <div className="sm:hidden print:hidden">
+        <header className="fixed top-0 left-0 right-0 z-50 flex h-14 items-center gap-4 border-b bg-sidebar px-4">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="text-sidebar-foreground hover:bg-sidebar-accent"
+              >
+                <Menu className="h-5 w-5" />
+                <span className="sr-only">Abrir menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-56 bg-sidebar p-0 border-sidebar-border">
+              {/* Mobile Logo */}
+              <div className="flex h-16 items-center gap-3 border-b border-sidebar-border px-6">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar-accent">
+                  <LayoutDashboard className="h-5 w-5 text-sidebar-foreground" />
+                </div>
+                <span className="text-lg font-semibold text-sidebar-foreground">
+                  Gestão Pro
+                </span>
+              </div>
+
+              {/* Mobile Navigation */}
+              <nav className="flex-1 space-y-1 px-3 py-4">
+                <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-sidebar-foreground/50">
+                  Menu Principal
+                </p>
+                {navItems.map((item) => (
+                  <NavItem
+                    key={item.href}
+                    href={item.href}
+                    label={item.label}
+                    icon={item.icon}
+                    isActive={pathname === item.href || pathname?.startsWith(item.href + "/")}
+                  />
+                ))}
+              </nav>
+
+              {/* Mobile Settings */}
+              <div className="space-y-1 border-t border-sidebar-border px-3 py-4">
+                <NavItem
+                  href="/cadastros/usuarios"
+                  label="Usuários"
+                  icon={User}
+                  isActive={pathname === "/cadastros/usuarios" || pathname?.startsWith("/cadastros/usuarios/")}
+                />
+                <NavItem
+                  href="/cadastros/perfis"
+                  label="Perfis e Permissões"
+                  icon={Shield}
+                  isActive={pathname === "/cadastros/perfis" || pathname?.startsWith("/cadastros/perfis/")}
+                />
+                <NavItem
+                  href="/configuracoes"
+                  label="Configurações"
+                  icon={Settings}
+                  isActive={pathname === "/configuracoes"}
+                />
+              </div>
+            </SheetContent>
+          </Sheet>
+          <span className="text-lg font-semibold text-sidebar-foreground">
+            Gestão Pro
+          </span>
+        </header>
+        {/* Spacer for fixed header */}
+        <div className="h-14" />
+      </div>
+    </>
+  );
 }

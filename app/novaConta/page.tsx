@@ -1,20 +1,24 @@
 'use client'
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { configApi } from "../services/api";
-import { ThreeDot } from "react-loading-indicators";
+import { toast } from "sonner";
 
 
 export default function NovaConta(){
     const router =  useRouter();
     const api = configApi();
 
-        const [ cnpj, setCnpj ] = useState();
+        const [ cnpj, setCnpj ] = useState<string>();
         const [ emailEmpresa, setEmailEmpresa ] = useState();
         const [ nomeEmpresa , setNomeEmpresa] = useState()
         const [ telefoneEmpresa, setTelefoneEmpresa ] = useState();
+
+        const [ dadosTeste, setDadosTeste ] = useState(false);
 
         const [ nomeUsuario, setNomeUsuario ] = useState();
         const [ senhaUsuario, setSenhaUsuario ] = useState();
@@ -28,10 +32,11 @@ export default function NovaConta(){
             e.preventDefault();
             let objEmpresa  =
             {
-                "cnpj" : cnpj,
+                "cnpj" : cnpj?.replace(/\D/g, ''),
                 "email_empresa" :emailEmpresa,
                 "nome_empresa" :nomeEmpresa,
                 "telefone_empresa" : telefoneEmpresa,
+                "dados_teste" : dadosTeste,
             } 
             let objUser = {
                 "nome": nomeUsuario,
@@ -41,17 +46,21 @@ export default function NovaConta(){
             }
 
             let data = { "empresa": objEmpresa, "usuario": objUser}
-            console.log(data)
+
+            setLoading(true);
 
             try{
-                let result = await api.post('/empresa', data );
-                    if( result.status === 200 && result.data.status.ok === true  ){
-                        setLoading(true)
+                let result = await api.post('/criar-empresa', data );
+                    if( result.status === 200   ){
+                        toast.success("Conta criada com sucesso!");
                         router.push('/')
                     }
             }catch(e:any){
-                
-                if(e.status === 400) console.log(e.response.data.msg);
+              console.log(e.response.data.message)
+                const msg = e.response?.data?.message || "Erro ao criar conta. Tente novamente.";
+                toast.error(msg);
+            }finally{
+                setLoading(false);
             }
 
         }
@@ -61,13 +70,7 @@ export default function NovaConta(){
 
     return(
          
-   <div className=" min-h-screen flex flex-col sm:ml-14 p-4 w-full h-full justify-itens-center items-center   bg-slate-100 overflow-auto "  >
-                 { loading && (
-                    <div className="flex justify-center my-4"> {/* Container para centralizar */}
-                        <ThreeDot variant="pulsate" color="#2563eb" size="medium" text="" textColor="" />
-                    </div>
-                )}
-
+   <div className=" min-h-screen flex flex-col p-4 w-full h-full justify-itens-center items-center   bg-slate-100 overflow-auto "  >
 
       <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-4xl">
 
@@ -149,6 +152,21 @@ export default function NovaConta(){
                   required
                 />
               </div>
+
+              <div className="flex items-center space-x-2 pt-2">
+                <Checkbox
+                  id="dadosTeste"
+                  checked={dadosTeste}
+                  onCheckedChange={(checked) => setDadosTeste(checked === true)}
+                />
+                <Label htmlFor="dadosTeste" className="text-sm font-medium text-gray-700 cursor-pointer">
+                  Usar dados de teste
+                </Label>
+              </div>
+              <p className="text-xs text-gray-500 mt-1 ml-6">
+                Ao selecionar esta opção, o sistema será populado com dados fictícios para que você possa visualizar o funcionamento do aplicativo.
+              </p>
+
               {/* Botão (opcional, apenas para visualização) */}
               {/*
               <div className="pt-4">
@@ -232,12 +250,13 @@ export default function NovaConta(){
               </div>
                {/* Botão (opcional, apenas para visualização) */}
                {/* Botão de Submissão Geral (se fizer sentido para seu fluxo) */}
-               <div className="mt-10 text-center">
+                <div className="mt-10 text-center">
             <button
-                type="submit" // Idealmente, este botão estaria dentro de um <form> que englobe tudo, ou você usaria JS para coletar dados dos dois.
-                className="bg-blue-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out text-lg"
+                type="submit"
+                disabled={loading}
+                className="bg-blue-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out text-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
-                Registrar 
+                {loading ? "Registrando..." : "Registrar"}
             </button>
             </div>  
 
